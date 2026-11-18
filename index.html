@@ -631,11 +631,26 @@
 
     const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
     const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
+    const CYCLE_ARCHIVE_KEY = "ramis_grad_tracker_2027_cycle_archive_v1";
+    const CYCLE_ARCHIVE_HUMAN_KEY = "2027 Cycle Archive";
+    const OFFER_ACCEPTED_FLAG_KEY = "offerAccepted";
+    const TRACKR_PAUSED_FLAG_KEY = "trackrRecommendationsPaused";
     const LEGACY_STORAGE_KEYS = [
       "ramis_grad_tracker_2027_v3_sept_nov",
       "ramis_grad_tracker_2027_v2",
       "ramis_grad_tracker_2027"
     ];
+
+    function loadCycleArchive() {
+      try {
+        const raw = localStorage.getItem(CYCLE_ARCHIVE_KEY) || localStorage.getItem(CYCLE_ARCHIVE_HUMAN_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed && parsed.offerAccepted ? parsed : null;
+      } catch {
+        return null;
+      }
+    }
 
     function makeRecSlug(company, role) {
       return `${(company || "").toLowerCase().trim()}::${(role || "").toLowerCase().trim()}`;
@@ -721,6 +736,15 @@
 
     function loadMergedApps() {
       try {
+        const archive = loadCycleArchive();
+        if (archive && archive.offerAccepted) {
+          const postArchiveRaw = localStorage.getItem(STORAGE_KEY);
+          if (postArchiveRaw) {
+            const parsedPost = JSON.parse(postArchiveRaw);
+            if (Array.isArray(parsedPost)) return parsedPost;
+          }
+          return [];
+        }
         let raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
           for (const legacyKey of LEGACY_STORAGE_KEYS) {
@@ -774,7 +798,23 @@
     }
 
     function App() {
-      const [apps, setApps] = useState(loadMergedApps);
+      const [rawApps, setApps] = useState(loadMergedApps);
+      const [cycleArchive, setCycleArchive] = useState(loadCycleArchive);
+      const [viewArchiveMode, setViewArchiveMode] = useState(false);
+      const [showAcceptOfferModal, setShowAcceptOfferModal] = useState(false);
+      const [selectedOfferChoice, setSelectedOfferChoice] = useState("");
+      const [customOfferCompany, setCustomOfferCompany] = useState("");
+      const [customOfferRole, setCustomOfferRole] = useState("");
+      const [customOfferSector, setCustomOfferSector] = useState("Corporate & Investment Banking");
+
+      const apps = useMemo(() => {
+        if (viewArchiveMode && cycleArchive && Array.isArray(cycleArchive.archivedApplications)) {
+          return cycleArchive.archivedApplications;
+        }
+        return rawApps;
+      }, [viewArchiveMode, cycleArchive, rawApps]);
+
+      const recsPaused = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.recommendationsPaused));
       const [rawRecs, setRawRecs] = useState(INITIAL_RECOMMENDATIONS);
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
       const [recSourceFilter, setRecSourceFilter] = useState("All");
@@ -873,8 +913,8 @@
       }, [theme]);
 
       useEffect(() => {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(apps)); } catch {}
-      }, [apps]);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rawApps)); } catch {}
+      }, [rawApps]);
 
       useEffect(() => {
         try { localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(handledRecs)); } catch {}
@@ -884,6 +924,7 @@
       const activeRecommendations = useMemo(() => {
         const handledSet = new Set(handledRecs);
         const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
+        if (recsPaused) return [];
         return rawRecs.filter(rec => {
           const slug = makeRecSlug(rec.company, rec.role);
           if (handledSet.has(rec.id) || handledSet.has(slug) || existingAppSlugs.has(slug)) {
@@ -894,16 +935,17 @@
           }
           return true;
         });
-      }, [rawRecs, handledRecs, apps, recSourceFilter]);
+      }, [rawRecs, handledRecs, apps, recSourceFilter, recsPaused]);
 
       const totalUnhandledRecsCount = useMemo(() => {
         const handledSet = new Set(handledRecs);
         const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
+        if (recsPaused) return 0;
         return rawRecs.filter(rec => {
           const slug = makeRecSlug(rec.company, rec.role);
           return !handledSet.has(rec.id) && !handledSet.has(slug) && !existingAppSlugs.has(slug);
         }).length;
-      }, [rawRecs, handledRecs, apps]);
+      }, [rawRecs, handledRecs, apps, recsPaused]);
 
       // One-Click "Applied" on a Recommended Role:
       // Moves role out of "Recommended to Apply", adds into main tracker under "Application Submitted" with today's date,
@@ -1052,7 +1094,7 @@
               if (match && match[1]) {
                 const latestInitial = new Function(`return ${match[1]}`)();
                 if (Array.isArray(latestInitial) && latestInitial.length > 0) {
-                  setApps(prev => smartMergeApps(latestInitial, prev));
+                  if (!loadCycleArchive()) setApps(prev => smartMergeApps(latestInitial, prev));
                 }
               }
               const recMatch = htmlText.match(/\/\/ __INITIAL_RECOMMENDATIONS_START__[\s\S]*?const INITIAL_RECOMMENDATIONS = (\[[\s\S]*?\]);[\s\S]*?\/\/ __INITIAL_RECOMMENDATIONS_END__/);
@@ -1232,6 +1274,100 @@
         });
       };
 
+      const acceptableOffers = useMemo(() => rawApps.filter(a => a.stage === "Offer / Successful"), [rawApps]);
+
+      const openAcceptOfferModal = (preApp = null) => {
+        const first = preApp || acceptableOffers[0] || null;
+        setSelectedOfferChoice(first ? String(first.id) : "custom");
+        setCustomOfferCompany("");
+        setCustomOfferRole("");
+        setShowAcceptOfferModal(true);
+      };
+
+      const cycleStats = useMemo(() => ({
+        totalApplications: stats.total,
+        allTrackedRoles: rawApps.length,
+        onlineAssessments: stats.stage1 + stats.stage2 + stats.stage3 + stats.closedAfterOA + stats.closedAfterVI + stats.closedAfterAC + stats.offers,
+        videoInterviews: stats.stage2 + stats.stage3 + stats.closedAfterVI + stats.closedAfterAC + stats.offers,
+        assessmentCentres: stats.stage3 + stats.closedAfterAC + stats.offers,
+        progressionRate: stats.progressionRate,
+        offers: Math.max(stats.allOffers, 1)
+      }), [stats, rawApps]);
+
+      const handleConfirmAcceptOffer = (e) => {
+        e.preventDefault();
+        const today = new Date().toISOString().slice(0, 10);
+        let chosen;
+        if (selectedOfferChoice === "custom") {
+          if (!customOfferCompany.trim() || !customOfferRole.trim()) return;
+          chosen = {
+            id: Date.now(), category: "internship",
+            company: customOfferCompany.trim(), role: customOfferRole.trim(),
+            sector: customOfferSector, appliedDate: today, stage: "Offer / Successful",
+            subStatus: "Offer accepted", deadline: null, portalLink: "", notes: ""
+          };
+        } else {
+          chosen = rawApps.find(a => String(a.id) === String(selectedOfferChoice));
+          if (!chosen) return;
+        }
+        const payload = {
+          offerAccepted: true,
+          recommendationsPaused: true,
+          archivedAt: new Date().toISOString(),
+          acceptedOffer: { ...chosen, stage: "Offer / Successful", acceptedDate: today },
+          cycleStats,
+          archivedApplications: rawApps,
+          archivedHandledRecs: handledRecs
+        };
+        try {
+          const json = JSON.stringify(payload);
+          localStorage.setItem(CYCLE_ARCHIVE_KEY, json);
+          localStorage.setItem(CYCLE_ARCHIVE_HUMAN_KEY, json);
+          localStorage.setItem(OFFER_ACCEPTED_FLAG_KEY, "true");
+          localStorage.setItem(TRACKR_PAUSED_FLAG_KEY, "true");
+          localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+        } catch {}
+        try {
+          const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `grad-tracker-2027-cycle-archive-${today}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch {}
+        setCycleArchive(payload);
+        setApps([]);
+        setViewArchiveMode(false);
+        setSelectedApp(null);
+        setStageFilter("All");
+        setShowAcceptOfferModal(false);
+        setSyncStatus({
+          ok: true,
+          time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+          message: `Accepted ${chosen.company} — cycle archived (${payload.archivedApplications.length} applications) and backup JSON downloaded.`,
+          emails: []
+        });
+      };
+
+      const handleReopenCycle = () => {
+        if (!cycleArchive) return;
+        if (!confirm("Reopen the 2027 cycle? Archived applications return to the active board and recommendations resume.")) return;
+        const restored = cycleArchive.archivedApplications || [];
+        try {
+          localStorage.removeItem(CYCLE_ARCHIVE_KEY);
+          localStorage.removeItem(CYCLE_ARCHIVE_HUMAN_KEY);
+          localStorage.removeItem(OFFER_ACCEPTED_FLAG_KEY);
+          localStorage.removeItem(TRACKR_PAUSED_FLAG_KEY);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(restored));
+        } catch {}
+        setCycleArchive(null);
+        setViewArchiveMode(false);
+        setApps(restored);
+      };
+
       const resetData = () => {
         if (confirm("Reset dashboard back to the synced Gmail applications & Trackr recommendations in index.html?")) {
           setApps(INITIAL_APPLICATIONS);
@@ -1278,7 +1414,7 @@
                     isHeaderCompact ? "w-7 h-7" : "w-9 h-9"
                   }`}
                 >
-                  <Icon name="Terminal" className={isHeaderCompact ? "w-3.5 h-3.5" : "w-4 h-4"} />
+                  <Icon name="Briefcase" className={isHeaderCompact ? "w-3.5 h-3.5" : "w-4 h-4"} />
                 </div>
                 <div className="flex items-center gap-2.5">
                   <h1
@@ -1355,6 +1491,16 @@
                   </button>
                 </div>
 
+                {cycleArchive && cycleArchive.offerAccepted && (
+                  <button
+                    onClick={() => setViewArchiveMode(v => !v)}
+                    className={`flex items-center gap-1.5 font-semibold whitespace-nowrap rounded-xl transition-all shrink-0 ${isHeaderCompact ? "text-[11px] px-2.5 py-1.5" : "text-xs px-3 py-2"} ${viewArchiveMode ? "bg-lime-500/25 text-lime-200 border border-lime-400/40" : "glass-surface text-white"}`}
+                  >
+                    <Icon name="Archive" className="w-3.5 h-3.5" />
+                    {viewArchiveMode ? "Exit 2027 Archive" : "View 2027 Archive"}
+                  </button>
+                )}
+
                 {/* Backup / Restore JSON & Refresh Email — hidden when header is collapsed */}
                 {!isHeaderCompact && (
                   <>
@@ -1420,6 +1566,41 @@
           </header>
 
           <main className="max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-5">
+            {cycleArchive && cycleArchive.offerAccepted && cycleArchive.acceptedOffer && (
+              <section className="glass-surface offer-column-glow rounded-2xl p-4 md:p-5 border border-lime-400/40">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <CompanyMonogram company={cycleArchive.acceptedOffer.company} />
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-lime-300 flex items-center gap-1.5">
+                        <Icon name="Trophy" className="w-3.5 h-3.5 text-lime-400" /> Accepted Offer
+                      </div>
+                      <h2 className="text-base md:text-lg font-extrabold text-white truncate">{cycleArchive.acceptedOffer.company}</h2>
+                      <p className="text-xs text-slate-300 truncate">{cycleArchive.acceptedOffer.role} • {cycleArchive.acceptedOffer.sector} • Accepted {cycleArchive.acceptedOffer.acceptedDate}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono-num">
+                    {[
+                      ["Total Apps", cycleArchive.cycleStats.totalApplications],
+                      ["OAs", cycleArchive.cycleStats.onlineAssessments],
+                      ["Video Int.", cycleArchive.cycleStats.videoInterviews],
+                      ["ACs", cycleArchive.cycleStats.assessmentCentres]
+                    ].map(([l, v]) => (
+                      <span key={l} className="px-2.5 py-1 rounded-lg theme-input text-slate-200">{l}: <strong className="text-white">{v}</strong></span>
+                    ))}
+                    <button onClick={() => setViewArchiveMode(v => !v)} className="px-3 py-1.5 rounded-xl theme-accent-btn font-bold">
+                      {viewArchiveMode ? "Exit 2027 Archive" : "View 2027 Archive"}
+                    </button>
+                    <button onClick={handleReopenCycle} className="px-3 py-1.5 rounded-xl theme-input text-slate-300 hover:text-white">Reopen Cycle</button>
+                  </div>
+                </div>
+                {viewArchiveMode ? (
+                  <p className="mt-3 text-[11px] text-lime-200/90">Read-only view of your archived 2027 cycle ({cycleArchive.archivedApplications.length} applications). Exit archive to return to your fresh active board.</p>
+                ) : (
+                  <p className="mt-3 text-[11px] text-slate-400">Active board reset — no pending tasks. Trackr recommendations are paused.</p>
+                )}
+              </section>
+            )}
             {/* Live Gmail Refresh Status Banner */}
             {syncStatus && (
               <div className={`glass-surface rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
@@ -1680,6 +1861,7 @@
             )}
 
             {/* RECOMMENDED TO APPLY SECTION (Daily 8:00 AM Trackr Scrape + Hourly Non-LinkedIn Email Alerts) */}
+            {!recsPaused && (
             <section className="glass-surface rec-section-glow rounded-2xl p-4 md:p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -1812,6 +1994,7 @@
                 </div>
               )}
             </section>
+            )}
 
             {/* Navigation, Layout Controls & Filter Bar (Scroll Target for KPI Summary Cards) */}
             <div
@@ -2070,6 +2253,15 @@
                             </div>
                           </div>
                           <p className="text-[11px] text-slate-400 truncate">{stage.subtitle}</p>
+                          {stage.isFinalGoal && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
+                            <button
+                              type="button"
+                              onClick={() => openAcceptOfferModal()}
+                              className="w-full text-[11px] font-extrabold px-2.5 py-1.5 rounded-lg bg-lime-500 hover:bg-lime-400 text-slate-950 flex items-center justify-center gap-1 transition"
+                            >
+                              <Icon name="Trophy" className="w-3.5 h-3.5" /> Accept Offer & Archive
+                            </button>
+                          )}
                         </div>
 
                         {/* Sub-filter chips inside Closed / Unsuccessful column */}
@@ -2163,6 +2355,15 @@
                                   </div>
                                 )}
 
+                                {stage.isFinalGoal && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
+                                  <button
+                                    type="button"
+                                    onClick={e => { e.stopPropagation(); openAcceptOfferModal(app); }}
+                                    className="w-full text-[11px] font-extrabold px-2.5 py-1.5 rounded-lg bg-lime-500 hover:bg-lime-400 text-slate-950 flex items-center justify-center gap-1 transition"
+                                  >
+                                    <Icon name="Trophy" className="w-3.5 h-3.5" /> Accept Offer & Archive
+                                  </button>
+                                )}
                                 {stage.isFinalGoal && (
                                   <div className="flex items-center gap-1.5">
                                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-lime-500/20 text-lime-300 border border-lime-400/40">
@@ -2591,6 +2792,49 @@
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {showAcceptOfferModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowAcceptOfferModal(false)}>
+              <form onSubmit={handleConfirmAcceptOffer} className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2"><Icon name="Trophy" className="w-4 h-4 text-lime-400" /> Accept Offer & Archive 2027 Cycle</h3>
+                  <button type="button" onClick={() => setShowAcceptOfferModal(false)} className="text-slate-400 hover:text-white"><Icon name="X" className="w-5 h-5" /></button>
+                </div>
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Which firm / role did you accept?</label>
+                  <select value={selectedOfferChoice} onChange={e => setSelectedOfferChoice(e.target.value)} className="w-full theme-input rounded-xl px-2.5 py-2">
+                    {acceptableOffers.map(o => <option key={o.id} value={String(o.id)}>{o.company} — {o.role}</option>)}
+                    <option value="custom">Other / custom firm & role…</option>
+                  </select>
+                </div>
+                {selectedOfferChoice === "custom" && (
+                  <div className="grid grid-cols-1 gap-2 text-xs">
+                    <input required placeholder="Firm" value={customOfferCompany} onChange={e => setCustomOfferCompany(e.target.value)} className="w-full theme-input rounded-xl px-3 py-2" />
+                    <input required placeholder="Role title" value={customOfferRole} onChange={e => setCustomOfferRole(e.target.value)} className="w-full theme-input rounded-xl px-3 py-2" />
+                    <input placeholder="Sector" value={customOfferSector} onChange={e => setCustomOfferSector(e.target.value)} className="w-full theme-input rounded-xl px-3 py-2" />
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[
+                    ["Total Applications", cycleStats.totalApplications],
+                    ["Online Assessments", cycleStats.onlineAssessments],
+                    ["Video Interviews", cycleStats.videoInterviews],
+                    ["Assessment Centres", cycleStats.assessmentCentres]
+                  ].map(([l, v]) => (
+                    <div key={l} className="glass-card rounded-xl p-3">
+                      <div className="text-[11px] text-slate-400">{l}</div>
+                      <div className="text-xl font-bold text-white font-mono-num">{v}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[11px] text-slate-400">Confirming saves a read-only snapshot, downloads a backup JSON, clears the active board, and pauses Trackr recommendations. You can view the archive or reopen the cycle anytime.</p>
+                <div className="flex justify-end gap-2 pt-1">
+                  <button type="button" onClick={() => setShowAcceptOfferModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400">Cancel</button>
+                  <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-lime-500 hover:bg-lime-400 text-slate-950">Confirm Offer & Archive 2027 Cycle</button>
+                </div>
+              </form>
             </div>
           )}
 
