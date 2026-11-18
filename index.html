@@ -85,6 +85,37 @@
       --card-shadow-hover: inset 0 1px 0 0 rgba(52, 211, 153, 0.22), 0 12px 28px -8px rgba(0, 0, 0, 0.8);
     }
 
+    /* Theme 4: Neon Orchid (Pink & Purple) — based on the Coolors palette
+       #F72585 · #B5179E · #7209B7 · #560BAD · #3A0CA3 */
+    body[data-theme="neon-orchid"] {
+      color-scheme: dark;
+      --bg-canvas: #12061F;
+      --bg-header: rgba(18, 6, 31, 0.9);
+      --bg-surface: #1A0B2E;
+      --bg-card: #221038;
+      --bg-card-hover: #2B1445;
+      --bg-input: #150826;
+      --border-color: #3A1D5C;
+      --border-hover: #F72585;
+      --text-primary: #FDF4FF;
+      --text-secondary: #E9D5FF;
+      --text-muted: #C4A5E0;
+      --accent-color: #F72585;
+      --accent-hover: #FF4DA6;
+      --accent-fg: #FFFFFF;
+      --accent-border: rgba(247, 37, 133, 0.45);
+      --spotlight-1: rgba(247, 37, 133, 0.18);
+      --spotlight-2: rgba(114, 9, 183, 0.22);
+      --card-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 8px 24px -8px rgba(58, 12, 163, 0.55);
+      --card-shadow-hover: inset 0 1px 0 0 rgba(247, 37, 133, 0.3), 0 12px 28px -8px rgba(181, 23, 158, 0.45);
+    }
+    body[data-theme="neon-orchid"] .theme-accent-btn {
+      background-image: linear-gradient(135deg, #F72585 0%, #B5179E 50%, #7209B7 100%);
+    }
+    body[data-theme="neon-orchid"] .theme-accent-btn:hover {
+      background-image: linear-gradient(135deg, #FF4DA6 0%, #C724B1 50%, #8A1FD1 100%);
+    }
+
     body {
       background-color: var(--bg-canvas, #0A0A0A);
       background-image:
@@ -268,10 +299,42 @@
         border: "#1F2E29",
         text: "#F3F6F4",
         accent: "#34D399"
+      },
+      {
+        id: "neon-orchid",
+        label: "4) Neon Orchid (Pink & Purple)",
+        shortLabel: "Neon Orchid",
+        bg: "#12061F",
+        card: "#1A0B2E",
+        border: "#3A1D5C",
+        text: "#FDF4FF",
+        accent: "#F72585"
       }
     ];
 
     const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v1";
+
+    const CAL_MONTHS = Array.from({ length: 10 }, (_, i) => {
+      const d = new Date(2026, 8 + i, 1);
+      return {
+        id: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+        label: d.toLocaleDateString("en-GB", { month: "short", year: "2-digit" })
+      };
+    });
+
+    function localTodayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    const OFFER_SOURCES = [
+      "Speculative Application",
+      "Referral / Networking",
+      "Direct Approach by Employer",
+      "Family / Personal Contact",
+      "University / Careers Service",
+      "Other External Source"
+    ];
 
     const MONOGRAM_PALETTES = [
       "from-indigo-500/90 to-violet-600/90 text-white border-indigo-400/30 shadow-indigo-500/20",
@@ -843,8 +906,15 @@
 
       const [selectedApp, setSelectedApp] = useState(null);
       const [showAddModal, setShowAddModal] = useState(false);
-      const [calMonth, setCalMonth] = useState("2026-11");
-      const [selectedDay, setSelectedDay] = useState("2026-11-18");
+      const [showExternalOfferModal, setShowExternalOfferModal] = useState(false);
+      const blankExternalOffer = () => ({
+        company: "", role: "", sector: "", category: "internship",
+        source: OFFER_SOURCES[0], offerDate: localTodayStr(), startDate: "",
+        contact: "", notes: ""
+      });
+      const [externalOffer, setExternalOffer] = useState(blankExternalOffer);
+      const [calMonth, setCalMonth] = useState(() => localTodayStr().slice(0, 7));
+      const [selectedDay, setSelectedDay] = useState(localTodayStr);
 
       // Drag and drop state
       const [draggedAppId, setDraggedAppId] = useState(null);
@@ -1241,12 +1311,32 @@
         e.preventDefault();
         const rawId = e.dataTransfer.getData("text/plain");
         const id = draggedAppId || Number(rawId);
-        if (id) {
+        if (id && !viewArchiveMode) {
           updateAppStage(id, targetStageId);
         }
         setDraggedAppId(null);
         setDragOverStage(null);
       };
+
+      const handleDeleteApp = (id) => {
+        const target = rawApps.find(a => a.id === id);
+        if (!target) return;
+        if (!confirm(`Delete "${target.company} — ${target.role}" from your tracker?`)) return;
+        setApps(prev => prev.filter(a => a.id !== id));
+        setSelectedApp(null);
+      };
+
+      useEffect(() => {
+        const onKey = (e) => {
+          if (e.key !== "Escape") return;
+          setSelectedApp(null);
+          setShowAddModal(false);
+          setShowAcceptOfferModal(false);
+          setShowExternalOfferModal(false);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, []);
 
       const handleSaveEdit = (updated) => {
         setApps(prev => prev.map(a => a.id === updated.id ? updated : a));
@@ -1370,9 +1460,41 @@
         setApps(restored);
       };
 
+      const handleAddExternalOffer = (e) => {
+        e.preventDefault();
+        if (!externalOffer.company.trim() || !externalOffer.role.trim()) return;
+        const item = {
+          id: Date.now(),
+          category: externalOffer.category,
+          company: externalOffer.company.trim(),
+          role: externalOffer.role.trim(),
+          sector: externalOffer.sector.trim() || (externalOffer.category === "parttime" ? "Part-Time" : "External Offer"),
+          appliedDate: externalOffer.offerDate || localTodayStr(),
+          stage: "Offer / Successful",
+          rejectedAfterStage: null,
+          subStatus: `Offer received via ${externalOffer.source}${externalOffer.startDate ? ` • Starts ${externalOffer.startDate}` : ""}`,
+          deadline: null,
+          portalLink: externalOffer.contact.includes("@") && !externalOffer.contact.startsWith("mailto:") ? `mailto:${externalOffer.contact}` : externalOffer.contact,
+          calendarSynced: false,
+          offerSource: externalOffer.source,
+          isExternalOffer: true,
+          startDate: externalOffer.startDate || null,
+          notes: externalOffer.notes
+        };
+        setApps(prev => [item, ...prev]);
+        setShowExternalOfferModal(false);
+        setExternalOffer(blankExternalOffer());
+        setSyncStatus({
+          ok: true,
+          time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+          message: `Added external offer: ${item.company} — ${item.role} (${item.offerSource}).`,
+          emails: []
+        });
+      };
+
       const resetData = () => {
         if (confirm("Reset dashboard back to the synced Gmail applications & Trackr recommendations in index.html?")) {
-          setApps(INITIAL_APPLICATIONS);
+          setApps(smartMergeApps(INITIAL_APPLICATIONS, []));
           setHandledRecs([]);
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem(HANDLED_RECS_KEY);
@@ -1553,6 +1675,18 @@
                   className="hidden"
                 />
 
+                {/* + Add Offer (speculative / external) */}
+                {!isHeaderCompact && !viewArchiveMode && (
+                  <button
+                    onClick={() => setShowExternalOfferModal(true)}
+                    title="Log an offer from outside the tracker (speculative application, referral, direct approach...)"
+                    className="flex items-center gap-1 font-bold whitespace-nowrap rounded-xl transition-all shrink-0 text-xs px-3.5 py-2 bg-lime-500/15 text-lime-300 border border-lime-400/40 hover:bg-lime-500/25"
+                  >
+                    <Icon name="Gift" className="w-4 h-4" />
+                    + Add Offer
+                  </button>
+                )}
+
                 {/* + Add Role Button — compact when scrolled down */}
                 <button
                   onClick={() => setShowAddModal(true)}
@@ -1672,7 +1806,7 @@
                 <div className="text-2xl font-bold mt-1.5 text-amber-400 font-mono-num tracking-tight">{stats.action}</div>
                 <div className="text-[11px] text-amber-200/70 mt-1 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24] animate-pulse"></span>
-                  <span>6 synced to GCal</span>
+                  <span>{urgentItems.filter(i => i.calendarSynced).length} synced to GCal</span>
                 </div>
               </button>
 
@@ -2255,6 +2389,15 @@
                             </div>
                           </div>
                           <p className="text-[11px] text-slate-400 truncate">{stage.subtitle}</p>
+                          {stage.isFinalGoal && !viewArchiveMode && (
+                            <button
+                              type="button"
+                              onClick={() => setShowExternalOfferModal(true)}
+                              className="w-full text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-lime-500/10 text-lime-300 border border-dashed border-lime-400/40 hover:bg-lime-500/20 flex items-center justify-center gap-1 transition"
+                            >
+                              <Icon name="Plus" className="w-3.5 h-3.5" /> Add External / Speculative Offer
+                            </button>
+                          )}
                           {stage.isFinalGoal && acceptableOffers.length > 0 && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
                             <button
                               type="button"
@@ -2273,7 +2416,8 @@
                               { id: "All", label: `All (${stats.closedTotal})` },
                               { id: "CV / Application Screen", label: `After CV (${stats.closedAfterCV})` },
                               { id: "Stage 1 - Online Assessment", label: `After S1 (${stats.closedAfterOA})` },
-                              { id: "Stage 2 - Video Interview", label: `After S2 (${stats.closedAfterVI})` }
+                              { id: "Stage 2 - Video Interview", label: `After S2 (${stats.closedAfterVI})` },
+                              { id: "Stage 3 - Assessment Centre", label: `After S3 (${stats.closedAfterAC})` }
                             ].map(chip => (
                               <button
                                 key={chip.id}
@@ -2306,7 +2450,7 @@
                             return (
                               <div
                                 key={app.id}
-                                draggable
+                                draggable={!viewArchiveMode}
                                 onDragStart={e => handleDragStart(e, app.id)}
                                 onDragEnd={() => { setDraggedAppId(null); setDragOverStage(null); }}
                                 onClick={() => setSelectedApp(app)}
@@ -2372,6 +2516,11 @@
                                       <Icon name="Trophy" className="w-3 h-3 text-lime-400" />
                                       Confirmed Offer / Active Role
                                     </span>
+                                    {app.isExternalOffer && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-fuchsia-500/15 text-fuchsia-300 border border-fuchsia-400/35" title={app.offerSource}>
+                                        External
+                                      </span>
+                                    )}
                                   </div>
                                 )}
 
@@ -2485,14 +2634,9 @@
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2 glass-surface rounded-2xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                    <h2 className="text-sm font-bold text-white">Application & Assessment Schedule (Sept–Dec 2026)</h2>
-                    <div className="flex gap-1.5">
-                      {[
-                        { id: "2026-09", label: "Sep 2026" },
-                        { id: "2026-10", label: "Oct 2026" },
-                        { id: "2026-11", label: "Nov 2026" },
-                        { id: "2026-12", label: "Dec 2026" }
-                      ].map(m => (
+                    <h2 className="text-sm font-bold text-white">Application & Assessment Schedule</h2>
+                    <div className="flex flex-wrap gap-1.5">
+                      {CAL_MONTHS.map(m => (
                         <button
                           key={m.id}
                           onClick={() => setCalMonth(m.id)}
@@ -2513,7 +2657,7 @@
                   <div className="grid grid-cols-7 gap-1.5">
                     {calendarDays.map((cell, idx) => {
                       if (!cell) return <div key={idx} className="h-20 rounded-xl opacity-30 theme-input" />;
-                      const isToday = cell.dateStr === "2026-11-18";
+                      const isToday = cell.dateStr === localTodayStr();
                       const isSelected = cell.dateStr === selectedDay;
                       return (
                         <div
@@ -2785,12 +2929,19 @@
                     </a>
                   ) : <span />}
                   <div className="flex gap-2">
+                    {!viewArchiveMode && (
+                      <button onClick={() => handleDeleteApp(selectedApp.id)} className="px-3.5 py-2 rounded-xl text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition">
+                        Delete
+                      </button>
+                    )}
                     <button onClick={() => setSelectedApp(null)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white">
                       Cancel
                     </button>
-                    <button onClick={() => handleSaveEdit(selectedApp)} className="px-4 py-2 rounded-xl text-xs font-bold theme-accent-btn shadow-lg">
-                      Save Changes
-                    </button>
+                    {!viewArchiveMode && (
+                      <button onClick={() => handleSaveEdit(selectedApp)} className="px-4 py-2 rounded-xl text-xs font-bold theme-accent-btn shadow-lg">
+                        Save Changes
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -2834,6 +2985,68 @@
                 <div className="flex justify-end gap-2 pt-1">
                   <button type="button" onClick={() => setShowAcceptOfferModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400">Cancel</button>
                   <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-lime-500 hover:bg-lime-400 text-slate-950">Confirm Offer & Archive 2027 Cycle</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* External / Speculative Offer Modal */}
+          {showExternalOfferModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowExternalOfferModal(false)}>
+              <form onSubmit={handleAddExternalOffer} className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2"><Icon name="Gift" className="w-4 h-4 text-lime-400" /> Add External Offer</h3>
+                  <button type="button" onClick={() => setShowExternalOfferModal(false)} className="text-slate-400 hover:text-white"><Icon name="X" className="w-5 h-5" /></button>
+                </div>
+                <p className="text-[11px] text-slate-400">For offers that didn't come through a tracked application, e.g. speculative emails, referrals or employers who approached you directly.</p>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Company *</label>
+                    <input required type="text" value={externalOffer.company} onChange={e => setExternalOffer({ ...externalOffer, company: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Sector</label>
+                    <input type="text" value={externalOffer.sector} onChange={e => setExternalOffer({ ...externalOffer, sector: e.target.value })} placeholder="e.g. Investment Management" className="w-full theme-input rounded-xl px-3 py-2" />
+                  </div>
+                </div>
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Role Title *</label>
+                  <input required type="text" value={externalOffer.role} onChange={e => setExternalOffer({ ...externalOffer, role: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">How did it come about?</label>
+                    <select value={externalOffer.source} onChange={e => setExternalOffer({ ...externalOffer, source: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2">
+                      {OFFER_SOURCES.map(src => <option key={src} value={src}>{src}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Type</label>
+                    <select value={externalOffer.category} onChange={e => setExternalOffer({ ...externalOffer, category: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2">
+                      <option value="internship">2027 Internship / Grad</option>
+                      <option value="parttime">Part-Time & Flex</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Offer Date</label>
+                    <input type="date" value={externalOffer.offerDate} onChange={e => setExternalOffer({ ...externalOffer, offerDate: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Start Date (optional)</label>
+                    <input type="date" value={externalOffer.startDate} onChange={e => setExternalOffer({ ...externalOffer, startDate: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num" />
+                  </div>
+                </div>
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Contact Email / Link (optional)</label>
+                  <input type="text" value={externalOffer.contact} onChange={e => setExternalOffer({ ...externalOffer, contact: e.target.value })} placeholder="name@firm.com or https://..." className="w-full theme-input rounded-xl px-3 py-2" />
+                </div>
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Notes</label>
+                  <textarea rows={2} value={externalOffer.notes} onChange={e => setExternalOffer({ ...externalOffer, notes: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                </div>
+                <div className="flex justify-end gap-2 pt-1">
+                  <button type="button" onClick={() => setShowExternalOfferModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400">Cancel</button>
+                  <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-lime-500 hover:bg-lime-400 text-slate-950">Add Offer</button>
                 </div>
               </form>
             </div>
