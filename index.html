@@ -125,6 +125,109 @@
       background-image: linear-gradient(135deg, #FF4DA6 0%, #C724B1 50%, #8A1FD1 100%);
     }
 
+    /* Theme 5: Barbie Dreamhouse (Glossy Hot Pink, Bubblegum Pink & Sparkle White) */
+    body[data-theme="barbie-dreamhouse"] {
+      color-scheme: light;
+      --bg-canvas: #FFE4F2;
+      --bg-header: rgba(255, 240, 248, 0.93);
+      --bg-surface: rgba(255, 255, 255, 0.92);
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FFF0F7;
+      --bg-input: #FFEAF4;
+      --border-color: #F9A8D4;
+      --border-hover: #FF1493;
+      --text-primary: #500724;
+      --text-secondary: #831843;
+      --text-muted: #BE185D;
+      --accent-color: #FF1493;
+      --accent-hover: #E0218A;
+      --accent-fg: #FFFFFF;
+      --accent-border: rgba(255, 20, 147, 0.45);
+      --spotlight-1: rgba(255, 20, 147, 0.24);
+      --spotlight-2: rgba(255, 133, 192, 0.32);
+      --card-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.95), 0 8px 24px -8px rgba(255, 20, 147, 0.18);
+      --card-shadow-hover: inset 0 1px 0 0 rgba(255, 255, 255, 1), 0 14px 30px -8px rgba(255, 20, 147, 0.3);
+    }
+    body[data-theme="barbie-dreamhouse"] {
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.9) 0px, rgba(255, 255, 255, 0) 2.5px),
+        radial-gradient(circle at 86% 14%, rgba(255, 255, 255, 0.95) 0px, rgba(255, 255, 255, 0) 3px),
+        radial-gradient(circle at 48% 36%, rgba(255, 255, 255, 0.85) 0px, rgba(255, 255, 255, 0) 2px),
+        radial-gradient(circle at 74% 72%, rgba(255, 255, 255, 0.9) 0px, rgba(255, 255, 255, 0) 2.5px),
+        radial-gradient(circle at 22% 82%, rgba(255, 255, 255, 0.85) 0px, rgba(255, 255, 255, 0) 2.5px),
+        radial-gradient(ellipse 80% 50% at 18% -10%, var(--spotlight-1), transparent 60%),
+        radial-gradient(ellipse 75% 50% at 85% -8%, var(--spotlight-2), transparent 60%),
+        linear-gradient(160deg, #FFF5FA 0%, #FFE0F0 48%, #FFD1E8 100%) !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .theme-accent-btn {
+      background-image: linear-gradient(135deg, #FF1493 0%, #FF4DA6 55%, #FF85C0 100%) !important;
+      color: #FFFFFF !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 6px 18px -4px rgba(255, 20, 147, 0.45) !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .theme-accent-btn:hover {
+      background-image: linear-gradient(135deg, #E0218A 0%, #FF2A9D 55%, #FF6BB5 100%) !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .glass-surface,
+    body[data-theme="barbie-dreamhouse"] .glass-card {
+      background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 240, 248, 0.92) 100%);
+    }
+    body[data-theme="barbie-dreamhouse"] .text-white:not(.monogram-avatar):not(.theme-accent-btn):not(.applied-action-btn):not(.barbie-keep-white) {
+      color: #500724 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-slate-100,
+    body[data-theme="barbie-dreamhouse"] .text-slate-200 {
+      color: #831843 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-slate-300 {
+      color: #9D174D !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-slate-400,
+    body[data-theme="barbie-dreamhouse"] .text-slate-500 {
+      color: #BE185D !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .border-white\/\[0\.08\],
+    body[data-theme="barbie-dreamhouse"] .border-white\/\[0\.07\],
+    body[data-theme="barbie-dreamhouse"] .border-white\/\[0\.06\],
+    body[data-theme="barbie-dreamhouse"] .border-white\/\[0\.05\] {
+      border-color: #FBCFE8 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-amber-300,
+    body[data-theme="barbie-dreamhouse"] .text-amber-200\/90,
+    body[data-theme="barbie-dreamhouse"] .text-amber-400 {
+      color: #B45309 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-cyan-300,
+    body[data-theme="barbie-dreamhouse"] .text-cyan-400 {
+      color: #0369A1 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-emerald-300,
+    body[data-theme="barbie-dreamhouse"] .text-emerald-400 {
+      color: #047857 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-fuchsia-300,
+    body[data-theme="barbie-dreamhouse"] .text-fuchsia-400 {
+      color: #DB2777 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-lime-300,
+    body[data-theme="barbie-dreamhouse"] .text-lime-200,
+    body[data-theme="barbie-dreamhouse"] .text-lime-400 {
+      color: #3F6212 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-indigo-300,
+    body[data-theme="barbie-dreamhouse"] .text-indigo-400 {
+      color: #4338CA !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-purple-300 {
+      color: #7E22CE !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-sky-300 {
+      color: #0369A1 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-rose-300,
+    body[data-theme="barbie-dreamhouse"] .text-rose-400 {
+      color: #BE123C !important;
+    }
+
     body {
       background-color: var(--bg-canvas, #0A0A0A);
       background-image:
@@ -324,6 +427,16 @@
         border: "#3A1D5C",
         text: "#FDF4FF",
         accent: "#F72585"
+      },
+      {
+        id: "barbie-dreamhouse",
+        label: "5) Barbie Dreamhouse",
+        shortLabel: "Barbie Dreamhouse",
+        bg: "#FFE4F2",
+        card: "#FFFFFF",
+        border: "#F9A8D4",
+        text: "#500724",
+        accent: "#FF1493"
       }
     ];
 
@@ -1004,6 +1117,136 @@
       return "CV / Application Screen";
     }
 
+    // 100% Offline Web Audio API Synth Loop of "Barbie Girl" (E Major / C# Minor ~130 BPM)
+    const BARBIE_TRIGGER_PHRASE = "dream wife wallahi";
+    const BARBIE_FREQ = {
+      E2: 82.41, Fs2: 92.50, Gs2: 103.83, A2: 110.00, B2: 123.47, Cs3: 138.59,
+      B4: 493.88, Cs5: 554.37, Ds5: 622.25, E5: 659.25, Fs5: 739.99, Gs5: 830.61,
+      A5: 880.00, B5: 987.77, Cs6: 1108.73
+    };
+    // 32-step (eighth-note) upbeat Eurodance chorus hook + bubbly octave bass
+    const BARBIE_PATTERN = [
+      // "I'm a Barbie girl..." (C#m -> A)
+      { lead: BARBIE_FREQ.Gs5, bass: BARBIE_FREQ.Cs3, dur: 0.9 },
+      { lead: BARBIE_FREQ.E5,  bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.Gs5, bass: BARBIE_FREQ.Cs3, dur: 0.9 },
+      { lead: BARBIE_FREQ.Cs6, bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.A5,  bass: BARBIE_FREQ.A2,  dur: 1.8 },
+      { lead: null,            bass: null,            dur: 0 },
+      { lead: null,            bass: BARBIE_FREQ.A2,  dur: 0 },
+      { lead: null,            bass: null,            dur: 0 },
+      // "...in the Barbie world" (D# / B -> E)
+      { lead: BARBIE_FREQ.Fs5, bass: BARBIE_FREQ.B2,  dur: 0.9 },
+      { lead: BARBIE_FREQ.Ds5, bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.Fs5, bass: BARBIE_FREQ.B2,  dur: 0.9 },
+      { lead: BARBIE_FREQ.B5,  bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.Gs5, bass: BARBIE_FREQ.E2,  dur: 1.8 },
+      { lead: null,            bass: null,            dur: 0 },
+      { lead: BARBIE_FREQ.Fs5, bass: BARBIE_FREQ.E2,  dur: 0.9 },
+      { lead: BARBIE_FREQ.E5,  bass: null,            dur: 0.9 },
+      // "Life in plastic..." (C#m -> A)
+      { lead: BARBIE_FREQ.Cs5, bass: BARBIE_FREQ.Cs3, dur: 0.9 },
+      { lead: BARBIE_FREQ.Fs5, bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.Cs5, bass: BARBIE_FREQ.Cs3, dur: 0.9 },
+      { lead: BARBIE_FREQ.Fs5, bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.E5,  bass: BARBIE_FREQ.A2,  dur: 1.8 },
+      { lead: null,            bass: null,            dur: 0 },
+      { lead: BARBIE_FREQ.Ds5, bass: BARBIE_FREQ.A2,  dur: 0.9 },
+      { lead: BARBIE_FREQ.E5,  bass: null,            dur: 0.9 },
+      // "...it's fantastic!" (B -> E)
+      { lead: BARBIE_FREQ.Fs5, bass: BARBIE_FREQ.B2,  dur: 0.9 },
+      { lead: BARBIE_FREQ.Ds5, bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.Fs5, bass: BARBIE_FREQ.B2,  dur: 0.9 },
+      { lead: BARBIE_FREQ.Gs5, bass: null,            dur: 0.9 },
+      { lead: BARBIE_FREQ.E5,  bass: BARBIE_FREQ.E2,  dur: 2.2 },
+      { lead: null,            bass: null,            dur: 0 },
+      { lead: null,            bass: BARBIE_FREQ.B2,  dur: 0 },
+      { lead: null,            bass: null,            dur: 0 }
+    ];
+
+    function createBarbieSynth() {
+      let ctx = null;
+      let masterGain = null;
+      let timerId = null;
+      let stepIdx = 0;
+      let isPlaying = false;
+      let isMuted = false;
+
+      const ensureCtx = () => {
+        if (!ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return null;
+          ctx = new AudioCtx();
+          masterGain = ctx.createGain();
+          masterGain.gain.value = isMuted ? 0 : 0.85;
+          masterGain.connect(ctx.destination);
+        }
+        if (ctx.state === "suspended") {
+          ctx.resume().catch(() => {});
+        }
+        return ctx;
+      };
+
+      const playTone = (freq, startTime, duration, type, peakGain) => {
+        if (!ctx || !masterGain || !freq) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.0001, startTime);
+        gain.gain.exponentialRampToValueAtTime(peakGain, startTime + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.02);
+      };
+
+      const tick = () => {
+        if (!isPlaying || !ctx) return;
+        const stepSec = 0.23; // ~130 BPM eighth notes
+        const step = BARBIE_PATTERN[stepIdx % BARBIE_PATTERN.length];
+        const t = ctx.currentTime + 0.02;
+        if (step.lead) {
+          playTone(step.lead, t, stepSec * (step.dur || 0.9), "triangle", 0.11);
+          playTone(step.lead * 2, t, stepSec * 0.45, "sine", 0.028);
+        }
+        if (step.bass) {
+          playTone(step.bass, t, stepSec * 1.15, "sawtooth", 0.045);
+        }
+        stepIdx = (stepIdx + 1) % BARBIE_PATTERN.length;
+      };
+
+      return {
+        start() {
+          const c = ensureCtx();
+          if (!c) return false;
+          if (isPlaying) return true;
+          isPlaying = true;
+          stepIdx = 0;
+          tick();
+          timerId = setInterval(tick, 230);
+          return true;
+        },
+        stop() {
+          isPlaying = false;
+          if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+          }
+        },
+        setMuted(muted) {
+          isMuted = Boolean(muted);
+          if (masterGain && ctx) {
+            masterGain.gain.setTargetAtTime(isMuted ? 0 : 0.85, ctx.currentTime, 0.02);
+          }
+        },
+        isPlaying() {
+          return isPlaying;
+        }
+      };
+    }
+
     function App() {
       const [rawApps, setApps] = useState(loadMergedApps);
       const [cycleArchive, setCycleArchive] = useState(loadCycleArchive);
@@ -1059,6 +1302,79 @@
           return "neon-orchid";
         }
       });
+      const [barbieAudioPlaying, setBarbieAudioPlaying] = useState(false);
+      const [barbieAudioMuted, setBarbieAudioMuted] = useState(false);
+      const prevThemeBeforeBarbieRef = React.useRef("carbon-gold");
+      const barbieSynthRef = React.useRef(null);
+      const barbiePhraseActiveRef = React.useRef(false);
+
+      const getBarbieSynth = () => {
+        if (!barbieSynthRef.current) {
+          barbieSynthRef.current = createBarbieSynth();
+        }
+        return barbieSynthRef.current;
+      };
+
+      const startBarbieSoundtrack = () => {
+        const synth = getBarbieSynth();
+        synth.setMuted(false);
+        const started = synth.start();
+        setBarbieAudioMuted(false);
+        setBarbieAudioPlaying(started);
+      };
+
+      const stopBarbieSoundtrack = () => {
+        if (barbieSynthRef.current) {
+          barbieSynthRef.current.stop();
+        }
+        setBarbieAudioPlaying(false);
+      };
+
+      const toggleBarbiePlayPause = () => {
+        const synth = getBarbieSynth();
+        if (barbieAudioPlaying) {
+          synth.stop();
+          setBarbieAudioPlaying(false);
+        } else {
+          synth.setMuted(barbieAudioMuted);
+          const started = synth.start();
+          setBarbieAudioPlaying(started);
+        }
+      };
+
+      const toggleBarbieMute = () => {
+        const nextMuted = !barbieAudioMuted;
+        setBarbieAudioMuted(nextMuted);
+        getBarbieSynth().setMuted(nextMuted);
+      };
+
+      const activateBarbieMode = () => {
+        if (theme !== "barbie-dreamhouse") {
+          prevThemeBeforeBarbieRef.current = theme;
+        }
+        setTheme("barbie-dreamhouse");
+        startBarbieSoundtrack();
+      };
+
+      const handleSearchInputChange = (val) => {
+        setSearch(val);
+        const normalized = val.trim().toLowerCase();
+        if (normalized === BARBIE_TRIGGER_PHRASE) {
+          if (!barbiePhraseActiveRef.current) {
+            barbiePhraseActiveRef.current = true;
+            activateBarbieMode();
+          }
+        } else {
+          barbiePhraseActiveRef.current = false;
+        }
+      };
+
+      const handleSearchKeyDown = (e) => {
+        if (e.key === "Enter" && e.currentTarget.value.trim().toLowerCase() === BARBIE_TRIGGER_PHRASE) {
+          e.preventDefault();
+          activateBarbieMode();
+        }
+      };
       const [now, setNow] = useState(Date.now());
       const [activeTab, setActiveTab] = useState("kanban");
       const [roleCategory, setRoleCategory] = useState("internship");
@@ -1146,9 +1462,24 @@
 
       useEffect(() => {
         document.body.setAttribute("data-theme", theme);
-        document.documentElement.classList.toggle("dark", theme !== "daylight");
+        document.documentElement.classList.toggle("dark", theme !== "daylight" && theme !== "barbie-dreamhouse");
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        const preset = THEME_PRESETS.find(t => t.id === theme);
+        if (metaTheme && preset) {
+          metaTheme.setAttribute("content", preset.bg);
+        }
+        if (theme !== "barbie-dreamhouse" && barbieSynthRef.current && barbieSynthRef.current.isPlaying()) {
+          barbieSynthRef.current.stop();
+          setBarbieAudioPlaying(false);
+        }
         try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
       }, [theme]);
+
+      useEffect(() => {
+        return () => {
+          if (barbieSynthRef.current) barbieSynthRef.current.stop();
+        };
+      }, []);
 
       useEffect(() => {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(rawApps)); } catch {}
@@ -2685,10 +3016,21 @@
                   <input
                     type="text"
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
+                    onChange={e => handleSearchInputChange(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
                     placeholder="Search firm, role, stage..."
                     className="w-full theme-input rounded-xl pl-3 pr-8 py-1.5 text-xs placeholder-slate-500 transition"
                   />
+                  {search && (
+                    <button
+                      type="button"
+                      aria-label="Clear search"
+                      onClick={() => handleSearchInputChange("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded transition"
+                    >
+                      <Icon name="X" className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
                 <select
@@ -3387,6 +3729,53 @@
               </button>
             </div>
           </footer>
+
+          {/* Floating Barbie Mode Soundtrack Control Pill */}
+          {(theme === "barbie-dreamhouse" || barbieAudioPlaying) && (
+            <div
+              role="region"
+              aria-label="Barbie Mode Audio Controls"
+              className="fixed bottom-4 right-4 z-40 flex items-center gap-2 px-3.5 py-2 rounded-full shadow-2xl border border-pink-300/80"
+              style={{
+                background: "linear-gradient(135deg, #FF1493 0%, #FF4DA6 55%, #FF85C0 100%)",
+                boxShadow: "0 10px 28px -4px rgba(255, 20, 147, 0.55), inset 0 1px 0 rgba(255,255,255,0.45)"
+              }}
+            >
+              <span className="barbie-keep-white text-white text-xs font-extrabold tracking-tight flex items-center gap-1.5">
+                <Icon name="Music" className={`w-3.5 h-3.5 ${barbieAudioPlaying && !barbieAudioMuted ? "animate-bounce" : ""}`} />
+                <span>Barbie Mode</span>
+              </span>
+              <button
+                type="button"
+                onClick={toggleBarbiePlayPause}
+                title={barbieAudioPlaying ? "Pause Barbie soundtrack" : "Play Barbie soundtrack"}
+                className="barbie-keep-white text-white bg-white/20 hover:bg-white/30 px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition"
+              >
+                <Icon name={barbieAudioPlaying ? "Pause" : "Play"} className="w-3 h-3" />
+                {barbieAudioPlaying ? "Pause" : "Play"}
+              </button>
+              <button
+                type="button"
+                onClick={toggleBarbieMute}
+                title={barbieAudioMuted ? "Unmute Barbie soundtrack" : "Mute Barbie soundtrack"}
+                className="barbie-keep-white text-white bg-white/20 hover:bg-white/30 px-2 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition"
+              >
+                <Icon name={barbieAudioMuted ? "VolumeX" : "Volume2"} className="w-3 h-3" />
+                {barbieAudioMuted ? "Muted" : "Mute"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  stopBarbieSoundtrack();
+                  setTheme(prevThemeBeforeBarbieRef.current || "carbon-gold");
+                }}
+                title="Stop music and exit Barbie Mode"
+                className="barbie-keep-white text-white bg-black/20 hover:bg-black/35 p-1 rounded-full transition"
+              >
+                <Icon name="X" className="w-3 h-3" />
+              </button>
+            </div>
+          )}
 
           {/* Edit / Detail Modal */}
           {selectedApp && (
