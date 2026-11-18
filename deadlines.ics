@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//Ramis Ahmad//2027 Application Tracker//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:2027 Application Tracker Deadlines
+X-WR-CALNAME:Rags to Riches — 2027 Deadlines
 X-WR-TIMEZONE:Europe/London
 X-WR-CALDESC:Upcoming Online Assessments, HireVue/Video Interviews, Assessm
  ent Centres, and 2027 Summer Internship Closing Dates
@@ -26,37 +26,8 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:app-deadline-1@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
-DTSTART;TZID=Europe/London:20261118T123100
-DTEND;TZID=Europe/London:20261118T133100
-SUMMARY:DEADLINE: Morgan Stanley (Off-Cycle) — Stage 1: Online Assessment
- s Due (48h window from Nov 16\, 13:31)
-DESCRIPTION:Company: Morgan Stanley (Off-Cycle)\nRole: 2027 Investment Mana
- gement Off-Cycle Internship ? Global Sales\, Consultant Relations (London)
- \nSector: Investment Management\nStage: Closed / Unsuccessful\nStatus: Sta
- ge 1: Online Assessments Due (48h window from Nov 16\, 13:31)\nPortal Link
- : https://morganstanley.tal.net/vx/candidate/login\nNotes: Numerical Reaso
- ning\, Inductive Reasoning\, Situational Judgement Test. Check portal imme
- diately!
-STATUS:CONFIRMED
-URL:https://morganstanley.tal.net/vx/candidate/login
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:24-Hour Reminder: DEADLINE: Morgan Stanley (Off-Cycle) — Stag
- e 1: Online Assessments Due (48h window from Nov 16\, 13:31)
-TRIGGER:-PT24H
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:2-Hour Urgent Reminder: DEADLINE: Morgan Stanley (Off-Cycle) 
- — Stage 1: Online Assessments Due (48h window from Nov 16\, 13:31)
-TRIGGER:-PT2H
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
 UID:app-deadline-3@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261123T164000
 DTEND;TZID=Europe/London:20261123T174000
 SUMMARY:DEADLINE: M&G Investments — Stage 1: Online Assessment Due (5-day
@@ -64,18 +35,12 @@ SUMMARY:DEADLINE: M&G Investments — Stage 1: Online Assessment Due (5-day
 DESCRIPTION:Company: M&G Investments\nRole: Asset Management: Client Group 
  & Product Internship (London) (R20839)\nSector: Investment Management\nSta
  ge: Action Required\nStatus: Stage 1: Online Assessment Due (5-day window 
- from Nov 18\, 17:40)\nPortal Link: https://apitake.cappassessments.com/Ass
- essments/PackagedAssessment/ApiTakeRedirect?a=9afedeb0-1bda-4e4a-a5e6-933b
- 73fab3df&u=9a7d9bfd-e7e9-4e22-b48d-cbf27c3dbb6c&aik=92e093e6-cc4c-48a6-b54
- d-fc71f5b085d2\nNotes: Reapplied via roomi2004@gmail.com (Nov 18\, 17:38) 
- & invited to Cappfinity Online Assessment (Nov 18\, 17:40). 5-day window d
- ue Mon Nov 23\, 17:40. Sections: Motivational\, Behavioural & Cognitive Ta
- sks (untimed\, allow ~45 mins\; calculator ready). Workday portal: https:/
- /mgpru.wd3.myworkdayjobs.com/mandgprudential
+ from Nov 18\, 17:40)\nPortal Link: https://mgpru.wd3.myworkdayjobs.com/man
+ dgprudential\nNotes: Originally auto-screened out due to accidental 'Yes' 
+ on multiple applications question. Contested Nov 12\; M&G confirmed Nov 18
+  (12:51 PM) you can reapply using a new email address!
 STATUS:CONFIRMED
-URL:https://apitake.cappassessments.com/Assessments/PackagedAssessment/ApiT
- akeRedirect?a=9afedeb0-1bda-4e4a-a5e6-933b73fab3df&u=9a7d9bfd-e7e9-4e22-b4
- 8d-cbf27c3dbb6c&aik=92e093e6-cc4c-48a6-b54d-fc71f5b085d2
+URL:https://mgpru.wd3.myworkdayjobs.com/mandgprudential
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:24-Hour Reminder: DEADLINE: M&G Investments — Stage 1: Online
@@ -90,38 +55,8 @@ TRIGGER:-PT2H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:app-deadline-4@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
-DTSTART;TZID=Europe/London:20261122T184952
-DTEND;TZID=Europe/London:20261122T194952
-SUMMARY:DEADLINE: Fidelity International — Stage 1: Aon Online Assessment
- s (Verbal\, Numerical\, Inductive)
-DESCRIPTION:Company: Fidelity International\nRole: 2027 Summer Internship P
- rogramme\nSector: Investment Management\nStage: Closed / Unsuccessful\nSta
- tus: Stage 1: Aon Online Assessments (Verbal\, Numerical\, Inductive)\nPor
- tal Link: https://fidelityinternational.tal.net/vx/lang-en-GB/mobile-0/bra
- nd-5/user-761369/candidate/application/598644\nNotes: 3 timed tests (6 min
- s each: Verbal\, Numerical\, Inductive Reasoning). Must complete by Nov 22
- \, 7:49 PM GMT.
-STATUS:CONFIRMED
-URL:https://fidelityinternational.tal.net/vx/lang-en-GB/mobile-0/brand-5/us
- er-761369/candidate/application/598644
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:24-Hour Reminder: DEADLINE: Fidelity International — Stage 1:
-  Aon Online Assessments (Verbal\, Numerical\, Inductive)
-TRIGGER:-PT24H
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:2-Hour Urgent Reminder: DEADLINE: Fidelity International — St
- age 1: Aon Online Assessments (Verbal\, Numerical\, Inductive)
-TRIGGER:-PT2H
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
 UID:app-deadline-5@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261123T102652
 DTEND;TZID=Europe/London:20261123T112652
 SUMMARY:DEADLINE: Sky — Stage 1: Digital Assessments 1 & 2 (50% Extra Tim
@@ -149,7 +84,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:app-deadline-7@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261130T124356
 DTEND;TZID=Europe/London:20261130T134356
 SUMMARY:DEADLINE: Citigroup — Stage 1: Plum Profile Assessment Due
@@ -177,17 +112,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-partners-group-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261130T160000
 DTEND;TZID=Europe/London:20261130T170000
 SUMMARY:CLOSING DATE: Partners Group — 2027 Private Markets Summer Analys
  t ? Client Solutions & Investment Management (London)
-DESCRIPTION:Company: Partners Group\nRole: 2027 Private Markets Summer Anal
- yst ? Client Solutions & Investment Management (London)\nSector: Investmen
- t Management\nSource: The Trackr ? UK Finance (Investment Management)\nOpe
- ned Date: 2026-11-16\nClosing Date: 2026-11-30\nApply Link: https://www.pa
- rtnersgroup.com/en/careers/\nNotes: Opened Nov 16 on The Trackr UK Finance
-  tracker under Investment Management & Specialist Coverage.
+DESCRIPTION:Recommended Role (The Trackr ? UK Finance (Investment Managemen
+ t))\nCompany: Partners Group\nRole: 2027 Private Markets Summer Analyst ? 
+ Client Solutions & Investment Management (London)\nSector: Investment Mana
+ gement\nOpened: 2026-11-16\nClosing Date: 2026-11-30\nApply Link: https://
+ www.partnersgroup.com/en/careers/\nNotes: Opened Nov 16 on The Trackr UK F
+ inance tracker under Investment Management & Specialist Coverage.
 STATUS:CONFIRMED
 URL:https://www.partnersgroup.com/en/careers/
 BEGIN:VALARM
@@ -207,17 +142,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-oliver-wyman-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261127T160000
 DTEND;TZID=Europe/London:20261127T170000
 SUMMARY:CLOSING DATE: Oliver Wyman — 2027 Summer Consultant Internship ? 
  Financial Services & Strategy (London)
-DESCRIPTION:Company: Oliver Wyman\nRole: 2027 Summer Consultant Internship 
- ? Financial Services & Strategy (London)\nSector: Strategy & Consulting\nS
- ource: The Trackr ? UK Consulting\nOpened Date: 2026-11-16\nClosing Date: 
- 2026-11-27\nApply Link: https://www.oliverwyman.com/careers.html\nNotes: O
- pened Nov 16 on The Trackr UK Consulting tracker. Strong fit for quantitat
- ive/physics background in Financial Services practice.
+DESCRIPTION:Recommended Role (The Trackr ? UK Consulting)\nCompany: Oliver 
+ Wyman\nRole: 2027 Summer Consultant Internship ? Financial Services & Stra
+ tegy (London)\nSector: Strategy & Consulting\nOpened: 2026-11-16\nClosing 
+ Date: 2026-11-27\nApply Link: https://www.oliverwyman.com/careers.html\nNo
+ tes: Opened Nov 16 on The Trackr UK Consulting tracker. Strong fit for qua
+ ntitative/physics background in Financial Services practice.
 STATUS:CONFIRMED
 URL:https://www.oliverwyman.com/careers.html
 BEGIN:VALARM
@@ -235,17 +170,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-pimco-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261204T160000
 DTEND;TZID=Europe/London:20261204T170000
 SUMMARY:CLOSING DATE: PIMCO — 2027 Summer Intern ? Account Management & I
  nstitutional Client Coverage (London)
-DESCRIPTION:Company: PIMCO\nRole: 2027 Summer Intern ? Account Management &
-  Institutional Client Coverage (London)\nSector: Investment Management\nSo
- urce: The Trackr ? UK Finance (Investment Management)\nOpened Date: 2026-1
- 1-15\nClosing Date: 2026-12-04\nApply Link: https://www.pimco.com/gb/en/ca
- reers\nNotes: Opened Nov 15 on The Trackr UK Finance tracker under Investm
- ent Management.
+DESCRIPTION:Recommended Role (The Trackr ? UK Finance (Investment Managemen
+ t))\nCompany: PIMCO\nRole: 2027 Summer Intern ? Account Management & Insti
+ tutional Client Coverage (London)\nSector: Investment Management\nOpened: 
+ 2026-11-15\nClosing Date: 2026-12-04\nApply Link: https://www.pimco.com/gb
+ /en/careers\nNotes: Opened Nov 15 on The Trackr UK Finance tracker under I
+ nvestment Management.
 STATUS:CONFIRMED
 URL:https://www.pimco.com/gb/en/careers
 BEGIN:VALARM
@@ -263,18 +198,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T232630Z
+DTSTAMP:20261118T233127Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
  ternship ? Markets\, Data & Financial Analytics (London)
-DESCRIPTION:Company: London Stock Exchange Group (LSEG)\nRole: 2027 Summer 
- Internship ? Markets\, Data & Financial Analytics (London)\nSector: Corpor
- ate & Investment Banking\nSource: Gradcracker Weekly Alert (Nov 16)\nOpene
- d Date: 2026-11-16\nClosing Date: 2026-11-29\nApply Link: https://www.lseg
- .com/en/careers/graduates-interns\nNotes: Extracted from Gradcracker Weekl
- y Briefing email (Nov 16\, 2026). Open to Physics\, Maths & Finance penult
- imate-year students.
+DESCRIPTION:Recommended Role (Gradcracker Weekly Alert (Nov 16))\nCompany: 
+ London Stock Exchange Group (LSEG)\nRole: 2027 Summer Internship ? Markets
+ \, Data & Financial Analytics (London)\nSector: Corporate & Investment Ban
+ king\nOpened: 2026-11-16\nClosing Date: 2026-11-29\nApply Link: https://ww
+ w.lseg.com/en/careers/graduates-interns\nNotes: Extracted from Gradcracker
+  Weekly Briefing email (Nov 16\, 2026). Open to Physics\, Maths & Finance 
+ penultimate-year students.
 STATUS:CONFIRMED
 URL:https://www.lseg.com/en/careers/graduates-interns
 BEGIN:VALARM
