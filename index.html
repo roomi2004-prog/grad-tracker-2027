@@ -824,6 +824,56 @@
       }
     }
 
+    function normalizeStage(rawStage) {
+      const valid = new Set(STAGES.map(st => st.id));
+      if (valid.has(rawStage)) return rawStage;
+      const t = String(rawStage || "").toLowerCase();
+      if (t.includes("offer") || t.includes("success")) return "Offer / Successful";
+      if (t.includes("closed") || t.includes("reject") || t.includes("unsuccess")) return "Closed / Unsuccessful";
+      if (t.includes("hold") || t.includes("waitlist")) return "On Hold / Waitlist";
+      if (t.includes("assessment centre") || t.includes("superday") || t.includes("stage 3") || t.includes(" ac")) return "Stage 3 - Assessment Centre";
+      if (t.includes("video") || t.includes("hirevue") || t.includes("stage 2")) return "Stage 2 - Video Interview";
+      if (t.includes("online") || t.includes("stage 1") || t.includes(" oa")) return "Stage 1 - Online Assessment";
+      if (t.includes("action") || t.includes("due") || t.includes("deadline")) return "Action Required";
+      return "Application Submitted";
+    }
+
+    function normalizeApp(item) {
+      if (!item || typeof item !== "object") return null;
+      return {
+        ...item,
+        id: item.id !== undefined ? item.id : Date.now() + Math.random(),
+        category: item.category || "internship",
+        company: String(item.company || item.firm || "Unknown Firm"),
+        role: String(item.role || "2027 Summer Internship"),
+        sector: String(item.sector || "Corporate & Investment Banking"),
+        appliedDate: String(item.appliedDate || localTodayStr()),
+        stage: normalizeStage(item.stage),
+        subStatus: String(item.subStatus || item.status || ""),
+        deadline: item.deadline || null,
+        portalLink: String(item.portalLink || item.link || ""),
+        calendarSynced: Boolean(item.calendarSynced),
+        notes: String(item.notes || "")
+      };
+    }
+
+    function normalizeRec(rec) {
+      if (!rec || typeof rec !== "object") return null;
+      return {
+        ...rec,
+        id: rec.id || `rec-${makeRecSlug(rec.company || rec.firm, rec.role)}`,
+        source: rec.source || "Email",
+        sourceDetail: rec.sourceDetail || rec.source || "Email Alert",
+        company: String(rec.company || rec.firm || "Unknown Firm"),
+        role: String(rec.role || "2027 Summer Internship"),
+        sector: String(rec.sector || "Corporate & Investment Banking"),
+        openedDate: String(rec.openedDate || localTodayStr()),
+        closingDate: String(rec.closingDate || "Rolling Deadline"),
+        applyLink: String(rec.applyLink || rec.link || ""),
+        notes: String(rec.notes || "")
+      };
+    }
+
     // Smart merge: preserves user's manual edits (notes, stage, custom fields) for existing IDs
     // unless INITIAL_APPLICATIONS has a newer subStatus or deadline from Gmail, and always appends brand-new IDs.
     function smartMergeApps(initialApps, savedApps) {
@@ -916,7 +966,7 @@
           return [];
         }
         const saved = JSON.parse(raw);
-        return Array.isArray(saved) ? saved : [];
+        return Array.isArray(saved) ? saved.map(normalizeApp).filter(Boolean) : [];
       } catch {
         return [];
       }
@@ -995,6 +1045,7 @@
       const [lastCloudSyncAt, setLastCloudSyncAt] = useState("");
       const [isTestingToken, setIsTestingToken] = useState(false);
       const cloudQueueRef = React.useRef(Promise.resolve());
+      const remoteExtrasRef = React.useRef({});
       const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive });
       latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
@@ -1123,11 +1174,13 @@
         const nowIso = new Date().toISOString();
 
         const masterPayload = {
+          ...remoteExtrasRef.current,
           version: 6,
           updatedAt: nowIso,
           applications: nextApps,
           recommendations: nextRecs,
           handledRecIds: nextHandled,
+          dismissedIds: nextHandled,
           cycleArchive: nextArchive || null,
           offerAccepted: nextOfferAccepted,
           recommendationsPaused: nextPaused
@@ -1170,19 +1223,42 @@
           const { state: remote, source } = await fetchRemoteMasterState(ghToken, ghConfig);
           if (!remote || !Array.isArray(remote.applications)) return null;
 
+          // Keep extra keys written by external sync jobs (e.g. processedEmailIds from Cloud Gmail Sync)
+          const { version, updatedAt, applications, recommendations, handledRecIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
+          remoteExtrasRef.current = extraKeys;
+
+          const normalizedRemoteApps = remote.applications.map(normalizeApp).filter(Boolean);
+          const combinedRemoteRecs = [
+            ...(Array.isArray(remote.recommendations) ? remote.recommendations : []),
+            ...(Array.isArray(remote.recommended) ? remote.recommended : [])
+          ].map(normalizeRec).filter(Boolean);
+
           const localUpdatedAt = localStorage.getItem(LOCAL_UPDATED_AT_KEY) || "";
           const remoteUpdatedAt = remote.updatedAt || "";
           const localAppsNow = loadMergedApps();
           const localArchiveNow = loadCycleArchive();
           const hasLocalData = localAppsNow.length > 0 || Boolean(localArchiveNow);
-          const remoteIsNewer = forceRemote || !hasLocalData || (remoteUpdatedAt && (!localUpdatedAt || remoteUpdatedAt > localUpdatedAt));
+          const localIdSet = new Set(localAppsNow.map(a => String(a.id)));
+          const remoteHasUnseenApps = normalizedRemoteApps.some(a => !localIdSet.has(String(a.id)));
+          const remoteIsNewer = forceRemote || !hasLocalData || remoteHasUnseenApps || (remoteUpdatedAt && (!localUpdatedAt || remoteUpdatedAt > localUpdatedAt));
 
-          // Always union handledRecIds so applied/dismissed roles never reappear
-          const mergedHandled = Array.from(new Set([...loadHandledRecs(), ...(remote.handledRecIds || [])]));
+          // Always union handledRecIds + dismissedIds so applied/dismissed roles never reappear
+          const mergedHandled = Array.from(new Set([
+            ...loadHandledRecs(),
+            ...(remote.handledRecIds || []),
+            ...(remote.dismissedIds || [])
+          ]));
           setHandledRecs(mergedHandled);
 
-          if (Array.isArray(remote.recommendations)) {
-            setRawRecs(remote.recommendations);
+          if (combinedRemoteRecs.length > 0) {
+            const seenRec = new Set();
+            const dedupedRecs = combinedRemoteRecs.filter(r => {
+              const key = makeRecSlug(r.company, r.role);
+              if (seenRec.has(key)) return false;
+              seenRec.add(key);
+              return true;
+            });
+            setRawRecs(dedupedRecs);
           }
 
           if (remoteIsNewer) {
@@ -1195,7 +1271,7 @@
                 localStorage.setItem(TRACKR_PAUSED_FLAG_KEY, "true");
               } catch {}
               setCycleArchive(remote.cycleArchive);
-              setApps(remote.applications);
+              setApps(normalizedRemoteApps);
             } else {
               if (forceRemote && !remote.cycleArchive) {
                 try {
@@ -1207,8 +1283,8 @@
                 setCycleArchive(null);
               }
               const nextApps = forceRemote || !hasLocalData
-                ? remote.applications
-                : smartMergeApps(remote.applications, localAppsNow);
+                ? normalizedRemoteApps
+                : smartMergeApps(normalizedRemoteApps, localAppsNow);
               setApps(nextApps);
             }
             if (remoteUpdatedAt) {
@@ -1490,9 +1566,10 @@
 
       const filteredApps = useMemo(() => {
         const list = categoryApps.filter(app => {
-          const matchesSearch = app.company.toLowerCase().includes(search.toLowerCase()) ||
-            app.role.toLowerCase().includes(search.toLowerCase()) ||
-            app.subStatus.toLowerCase().includes(search.toLowerCase());
+          const q = search.toLowerCase();
+          const matchesSearch = String(app.company || "").toLowerCase().includes(q) ||
+            String(app.role || "").toLowerCase().includes(q) ||
+            String(app.subStatus || "").toLowerCase().includes(q);
           const matchesSector = sectorFilter === "All" || app.sector === sectorFilter;
           const matchesStage = stageFilter === "All" || app.stage === stageFilter;
           const matchesRejection = rejectionFilter === "All" ||
