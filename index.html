@@ -200,18 +200,82 @@
     body[data-theme="barbie-dreamhouse"] .text-cyan-400 {
       color: #0369A1 !important;
     }
+    @keyframes barbie-rainbow-shift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    /* Rainbow status colours in Barbie Dreamhouse (replaces green/emerald/lime) */
+    body[data-theme="barbie-dreamhouse"] .bg-emerald-400,
+    body[data-theme="barbie-dreamhouse"] .bg-emerald-500,
+    body[data-theme="barbie-dreamhouse"] .bg-lime-400,
+    body[data-theme="barbie-dreamhouse"] .bg-lime-500,
+    body[data-theme="barbie-dreamhouse"] .from-emerald-400,
+    body[data-theme="barbie-dreamhouse"] .from-lime-400,
+    body[data-theme="barbie-dreamhouse"] .applied-action-btn {
+      background-color: transparent !important;
+      background-image: linear-gradient(90deg, #FF1493 0%, #FF7A00 20%, #FFD600 40%, #00D2FF 62%, #A855F7 82%, #FF1493 100%) !important;
+      background-size: 220% 220% !important;
+      animation: barbie-rainbow-shift 4.5s linear infinite;
+      border-color: rgba(255, 255, 255, 0.55) !important;
+      box-shadow: 0 0 10px rgba(255, 20, 147, 0.35), 0 0 14px rgba(168, 85, 247, 0.25) !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .applied-action-btn,
+    body[data-theme="barbie-dreamhouse"] button.bg-lime-500,
+    body[data-theme="barbie-dreamhouse"] button.bg-emerald-500 {
+      color: #FFFFFF !important;
+      text-shadow: 0 1px 2px rgba(80, 7, 36, 0.45);
+    }
+    body[data-theme="barbie-dreamhouse"] .bg-emerald-500\/10,
+    body[data-theme="barbie-dreamhouse"] .bg-emerald-500\/15,
+    body[data-theme="barbie-dreamhouse"] .bg-emerald-950\/25,
+    body[data-theme="barbie-dreamhouse"] .bg-lime-500\/10,
+    body[data-theme="barbie-dreamhouse"] .bg-lime-500\/15,
+    body[data-theme="barbie-dreamhouse"] .bg-lime-500\/20,
+    body[data-theme="barbie-dreamhouse"] .bg-lime-500\/25 {
+      background-color: transparent !important;
+      background-image: linear-gradient(120deg, rgba(255, 20, 147, 0.18) 0%, rgba(255, 138, 0, 0.16) 24%, rgba(255, 214, 0, 0.18) 48%, rgba(0, 196, 255, 0.16) 72%, rgba(168, 85, 247, 0.18) 100%) !important;
+      background-size: 200% 200% !important;
+      animation: barbie-rainbow-shift 6s linear infinite;
+      color: #6B0F46 !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .border-emerald-500\/25,
+    body[data-theme="barbie-dreamhouse"] .border-emerald-500\/30,
+    body[data-theme="barbie-dreamhouse"] .border-emerald-500\/35,
+    body[data-theme="barbie-dreamhouse"] .border-emerald-400\/30,
+    body[data-theme="barbie-dreamhouse"] .border-emerald-400\/35,
+    body[data-theme="barbie-dreamhouse"] .border-emerald-400\/40,
+    body[data-theme="barbie-dreamhouse"] .border-emerald-500\/60,
+    body[data-theme="barbie-dreamhouse"] .border-lime-400\/40 {
+      border-color: rgba(236, 72, 153, 0.55) !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .offer-column-glow {
+      border-color: rgba(236, 72, 153, 0.6) !important;
+      background-image: linear-gradient(135deg, rgba(255, 20, 147, 0.12) 0%, rgba(255, 165, 0, 0.10) 25%, rgba(255, 224, 0, 0.10) 50%, rgba(0, 196, 255, 0.10) 75%, rgba(168, 85, 247, 0.12) 100%) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 10px 26px -8px rgba(236, 72, 153, 0.28) !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-emerald-200,
     body[data-theme="barbie-dreamhouse"] .text-emerald-300,
-    body[data-theme="barbie-dreamhouse"] .text-emerald-400 {
-      color: #047857 !important;
+    body[data-theme="barbie-dreamhouse"] .text-emerald-300\/90,
+    body[data-theme="barbie-dreamhouse"] .text-emerald-400,
+    body[data-theme="barbie-dreamhouse"] .text-lime-200,
+    body[data-theme="barbie-dreamhouse"] .text-lime-200\/80,
+    body[data-theme="barbie-dreamhouse"] .text-lime-300,
+    body[data-theme="barbie-dreamhouse"] .text-lime-300\/80,
+    body[data-theme="barbie-dreamhouse"] .text-lime-400 {
+      color: #9D174D !important;
+    }
+    body[data-theme="barbie-dreamhouse"] .text-2xl.text-emerald-400,
+    body[data-theme="barbie-dreamhouse"] .text-2xl.text-lime-400 {
+      background-image: linear-gradient(90deg, #FF1493 0%, #FF6B00 26%, #D4A000 50%, #0099FF 76%, #9B51E0 100%) !important;
+      background-size: 200% 200% !important;
+      animation: barbie-rainbow-shift 5s linear infinite;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      color: transparent !important;
     }
     body[data-theme="barbie-dreamhouse"] .text-fuchsia-300,
     body[data-theme="barbie-dreamhouse"] .text-fuchsia-400 {
       color: #DB2777 !important;
-    }
-    body[data-theme="barbie-dreamhouse"] .text-lime-300,
-    body[data-theme="barbie-dreamhouse"] .text-lime-200,
-    body[data-theme="barbie-dreamhouse"] .text-lime-400 {
-      color: #3F6212 !important;
     }
     body[data-theme="barbie-dreamhouse"] .text-indigo-300,
     body[data-theme="barbie-dreamhouse"] .text-indigo-400 {
