@@ -276,8 +276,8 @@ function formatIcsLocal(dt) {
 function generateIcsFromState(state) {
   const apps = Array.isArray(state.applications) ? state.applications : [];
   const recs = state.recommendationsPaused || state.offerAccepted ? [] : (Array.isArray(state.recommendations) ? state.recommendations : []);
-  const handledSet = new Set(state.handledRecIds || []);
-  const appSlugs = new Set(apps.map((a) => makeRecSlug(a.company, a.role)));
+  const handledSet = new Set([...(state.handledRecIds || []), ...(state.dismissedIds || [])]);
+  const appSlugs = new Set(apps.map((a) => makeRecSlug(a.company || a.firm, a.role)));
 
   const dtstamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
   const lines = [
@@ -411,10 +411,10 @@ async function main() {
   if (isPaused) {
     console.log("Recommendations paused (offer accepted or cycle archived). Skipping Trackr scrape.");
   } else {
-    const handledSet = new Set(state.handledRecIds);
+    const handledSet = new Set([...(state.handledRecIds || []), ...(state.dismissedIds || [])]);
     const existingSlugs = new Set([
-      ...state.applications.map((a) => makeRecSlug(a.company, a.role)),
-      ...state.recommendations.map((r) => makeRecSlug(r.company, r.role))
+      ...state.applications.map((a) => makeRecSlug(a.company || a.firm, a.role)),
+      ...state.recommendations.map((r) => makeRecSlug(r.company || r.firm, r.role))
     ]);
     const existingRecIds = new Set(state.recommendations.map((r) => r.id));
 

@@ -628,6 +628,8 @@
     const GITHUB_TOKEN_KEY = "ramis_grad_tracker_github_token_v1";
     const GITHUB_CONFIG_KEY = "ramis_grad_tracker_github_config_v1";
     const DEFAULT_GITHUB_CONFIG = { owner: "roomi2004-prog", repo: "grad-tracker-2027", branch: "main" };
+    const GMAIL_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzIhuyYnyocy5llyMub-jqiHb6Tr-dJHeHRoZDgMnEfSwXjwV8ggRKWauFZjwDMSqMcNw/exec";
+    const TRACKR_WORKFLOW_FILE = "daily-trackr.yml";
 
     function loadGithubToken() {
       try { return (localStorage.getItem(GITHUB_TOKEN_KEY) || "").trim(); } catch { return ""; }
@@ -1410,8 +1412,10 @@
       // Compact sticky header on scroll (collapses > 40px, expands <= 10px)
       const [isHeaderCompact, setIsHeaderCompact] = useState(false);
 
-      // Live Email Refresh state
+      // Live Full-Stack Sync state (Gmail Apps Script + GitHub Actions Trackr + state.json)
       const [isRefreshing, setIsRefreshing] = useState(false);
+      const [liveSyncStage, setLiveSyncStage] = useState(null);
+      const [liveSyncToast, setLiveSyncToast] = useState(null);
       const [syncStatus, setSyncStatus] = useState(null);
       const [highlightedStage, setHighlightedStage] = useState(null);
       const restoreInputRef = React.useRef(null);
@@ -1908,25 +1912,163 @@
       );
 
       const handleRefreshEmail = async () => {
+        if (isRefreshing) return;
         setIsRefreshing(true);
+        setLiveSyncToast(null);
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        const fmtNow = () => new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
+        const owner = ghConfig.owner || DEFAULT_GITHUB_CONFIG.owner;
+        const repo = ghConfig.repo || DEFAULT_GITHUB_CONFIG.repo;
+        const branch = ghConfig.branch || DEFAULT_GITHUB_CONFIG.branch;
+        const dispatchStartedMs = Date.now() - 4000;
+
         try {
-          const pulled = await pullFromMasterState({ forceRemote: false, silent: false });
-          const timeLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
-          if (pulled && pulled.remote) {
+          // STEP 1: Simultaneously ping Gmail Apps Script Web App & dispatch GitHub Actions Trackr scraper
+          setLiveSyncStage({ phase: "step1", text: "1/3 Scanning Gmail..." });
+
+          const gmailPingPromise = fetch(GMAIL_WEBAPP_URL, {
+            method: "GET",
+            mode: "no-cors",
+            cache: "no-store"
+          }).catch(() => {});
+
+          let trackrDispatched = false;
+          let tokenPermissionIssue = null;
+
+          if (!ghToken) {
+            tokenPermissionIssue = "GitHub token not configured. Open Cloud Sync Token (bottom footer) and save a token with Contents & Actions (Read and write) permissions to enable live Trackr scraping.";
+          } else {
+            try {
+              const dispatchUrl = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${TRACKR_WORKFLOW_FILE}/dispatches`;
+              const dispatchRes = await fetch(dispatchUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${ghToken}`,
+                  Accept: "application/vnd.github+json",
+                  "Content-Type": "application/json",
+                  "X-GitHub-Api-Version": "2022-11-28"
+                },
+                body: JSON.stringify({ ref: branch })
+              });
+              if (dispatchRes.ok || dispatchRes.status === 204) {
+                trackrDispatched = true;
+              } else if (dispatchRes.status === 401 || dispatchRes.status === 403) {
+                tokenPermissionIssue = "Your GitHub token lacks Actions: Read and write permission. Enable Actions (Read and write) on your fine-grained PAT in GitHub Settings, then update Cloud Sync Token in the footer.";
+              } else {
+                const errTxt = await dispatchRes.text().catch(() => "");
+                tokenPermissionIssue = `Could not dispatch Trackr workflow (HTTP ${dispatchRes.status}${errTxt ? `: ${errTxt.slice(0, 100)}` : ""}). Check Actions: Read and write permission on your GitHub token.`;
+              }
+            } catch (err) {
+              tokenPermissionIssue = `Network error triggering Trackr workflow: ${err && err.message ? err.message : "offline"}.`;
+            }
+          }
+
+          if (tokenPermissionIssue) {
+            setLiveSyncToast({ type: "warning", message: tokenPermissionIssue });
+          }
+
+          await gmailPingPromise;
+
+          // STEP 2: After 4 seconds, pull latest state.json from GitHub Contents API so Gmail updates render live
+          await sleep(4000);
+          setLiveSyncStage({
+            phase: "step2",
+            text: trackrDispatched ? "2/3 Gmail synced · Scraping Trackr..." : "2/3 Pulling Gmail updates..."
+          });
+
+          const step2Pull = await pullFromMasterState({ forceRemote: true, silent: false });
+
+          // STEP 3: If Trackr workflow was dispatched, poll runs every 5s (up to 90s) until completed, then live re-fetch state.json
+          if (trackrDispatched && ghToken) {
+            setLiveSyncStage({ phase: "step3", text: "3/3 Updating Trackr roles..." });
+            const pollStart = Date.now();
+            const maxPollMs = 90000;
+            let completedRun = null;
+
+            while (Date.now() - pollStart < maxPollMs) {
+              await sleep(5000);
+              const elapsedSec = Math.min(90, Math.round((Date.now() - pollStart) / 1000));
+              try {
+                const runsUrl = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${TRACKR_WORKFLOW_FILE}/runs?per_page=1&t=${Date.now()}`;
+                const runsRes = await fetch(runsUrl, {
+                  headers: {
+                    Authorization: `Bearer ${ghToken}`,
+                    Accept: "application/vnd.github+json",
+                    "X-GitHub-Api-Version": "2022-11-28"
+                  },
+                  cache: "no-store"
+                });
+                if (runsRes.status === 401 || runsRes.status === 403) {
+                  setLiveSyncToast({
+                    type: "warning",
+                    message: "GitHub token lacks Actions: Read and write permission to poll workflow runs. Enable Actions permission on your PAT."
+                  });
+                  break;
+                }
+                if (runsRes.ok) {
+                  const runsJson = await runsRes.json();
+                  const latestRun = runsJson && Array.isArray(runsJson.workflow_runs) ? runsJson.workflow_runs[0] : null;
+                  if (latestRun) {
+                    const createdMs = new Date(latestRun.created_at).getTime();
+                    const isCurrentRun = Number.isNaN(createdMs) || createdMs >= dispatchStartedMs;
+                    if (isCurrentRun && latestRun.status === "completed") {
+                      completedRun = latestRun;
+                      break;
+                    }
+                    setLiveSyncStage({
+                      phase: "step3",
+                      text: `3/3 Updating Trackr roles... (${elapsedSec}s)`
+                    });
+                  }
+                }
+              } catch {}
+            }
+
+            const finalPull = await pullFromMasterState({ forceRemote: true, silent: false });
+            const doneTime = fmtNow();
+            const appCount = finalPull && finalPull.remote ? finalPull.remote.applications.length : rawApps.length;
+            const recCount = finalPull && finalPull.remote ? (finalPull.remote.recommendations || []).length : rawRecs.length;
+
+            setLiveSyncStage({
+              phase: "done",
+              text: "Live Sync Complete",
+              time: doneTime
+            });
             setSyncStatus({
               ok: true,
-              time: timeLabel,
-              message: `Synced latest state.json (${pulled.remote.applications.length} applications, ${(pulled.remote.recommendations || []).length} recommendations) from ${pulled.source === "github-api" ? "GitHub Cloud API" : "GitHub Pages"}.`,
+              time: doneTime,
+              message: completedRun
+                ? `Live Sync Complete — Gmail scanned & Trackr workflow finished (${completedRun.conclusion || "success"}). Dashboard refreshed (${appCount} applications, ${recCount} recommendations).`
+                : `Gmail synced & latest state.json loaded (${appCount} applications, ${recCount} recommendations). Trackr workflow is still finishing in GitHub Actions.`,
               emails: []
             });
           } else {
+            const doneTime = fmtNow();
+            const appCount = step2Pull && step2Pull.remote ? step2Pull.remote.applications.length : rawApps.length;
+            const recCount = step2Pull && step2Pull.remote ? (step2Pull.remote.recommendations || []).length : rawRecs.length;
+            setLiveSyncStage({
+              phase: "done",
+              text: "Gmail Synced",
+              time: doneTime
+            });
             setSyncStatus({
-              ok: false,
-              time: timeLabel,
-              message: "Offline or unreachable — showing your locally cached applications.",
+              ok: Boolean(step2Pull),
+              time: doneTime,
+              message: step2Pull
+                ? `Gmail pinged & latest state.json loaded (${appCount} applications, ${recCount} recommendations).`
+                : "Offline or unreachable — showing your locally cached applications.",
               emails: []
             });
           }
+        } catch (err) {
+          const errTime = fmtNow();
+          setLiveSyncStage(null);
+          setSyncStatus({
+            ok: false,
+            time: errTime,
+            message: `Sync error: ${err && err.message ? err.message : "Could not complete live sync."}`,
+            emails: []
+          });
         } finally {
           setIsRefreshing(false);
         }
@@ -2434,16 +2576,41 @@
                   )
                 )}
 
-                {/* Refresh — hidden when header is collapsed */}
+                {/* Live Full-Stack Sync Now Button + Real-Time Step Progress Pill */}
                 {!isHeaderCompact && (
-                  <button
-                    onClick={handleRefreshEmail}
-                    disabled={isRefreshing}
-                    className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0"
-                  >
-                    <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                    {isRefreshing ? "Syncing…" : "Sync Cloud"}
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={handleRefreshEmail}
+                      disabled={isRefreshing}
+                      title="Trigger live Gmail scan + GitHub Actions Trackr scrape and refresh state.json in real time"
+                      className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 disabled:cursor-wait text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0"
+                    >
+                      <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                      {isRefreshing ? "Syncing..." : "Sync Now"}
+                    </button>
+
+                    {liveSyncStage && (
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border whitespace-nowrap transition-all ${
+                          liveSyncStage.phase === "done"
+                            ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/40"
+                            : "bg-amber-500/15 text-amber-200 border-amber-400/40"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                            liveSyncStage.phase === "done"
+                              ? "bg-emerald-400 shadow-[0_0_8px_#34d399]"
+                              : "bg-amber-400 animate-ping"
+                          }`}
+                        />
+                        <span>{liveSyncStage.text}</span>
+                        {liveSyncStage.time && (
+                          <span className="font-mono-num opacity-80">• {liveSyncStage.time}</span>
+                        )}
+                      </span>
+                    )}
+                  </div>
                 )}
 
                 <input
@@ -2542,6 +2709,36 @@
                 )}
               </section>
             )}
+            {/* Inline Toast for Missing GitHub Token or Missing Actions Permission */}
+            {liveSyncToast && (
+              <div className="glass-surface rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-amber-500/40 bg-amber-950/30 text-amber-200">
+                <div className="flex items-start sm:items-center gap-2.5 text-xs font-semibold">
+                  <Icon name="AlertTriangle" className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
+                  <span>{liveSyncToast.message}</span>
+                </div>
+                <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTokenDraft(ghToken);
+                      setConfigDraft(ghConfig);
+                      setShowCloudSyncModal(true);
+                    }}
+                    className="text-xs font-bold px-3 py-1.5 rounded-xl theme-accent-btn shadow-sm"
+                  >
+                    Configure Token
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLiveSyncToast(null)}
+                    className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded-lg hover:bg-white/5 transition"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Live Gmail Refresh Status Banner */}
             {syncStatus && (
               <div className={`glass-surface rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
@@ -4174,7 +4371,7 @@
                   <div className="font-bold text-white">How to create your token (30 seconds):</div>
                   <div>1. Go to <strong>GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token</strong>.</div>
                   <div>2. Under <strong>Repository access</strong>, select <strong>Only select repositories → grad-tracker-2027</strong>.</div>
-                  <div>3. Under <strong>Repository permissions → Contents</strong>, set <strong>Read and write</strong>, then paste the token below.</div>
+                  <div>3. Under <strong>Repository permissions</strong>, set <strong>Contents: Read and write</strong> and <strong>Actions: Read and write</strong>, then paste the token below.</div>
                 </div>
 
                 <div className="text-xs">
