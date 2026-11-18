@@ -26,7 +26,7 @@
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T22:42:43.689Z",
+  "updatedAt": "2026-11-18T23:10:07.795Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -55,13 +55,13 @@
       "role": "2027 Investment Management Off-Cycle Internship ? Global Sales, Consultant Relations (London)",
       "sector": "Investment Management",
       "appliedDate": "2026-11-16",
-      "stage": "Action Required",
+      "stage": "Closed / Unsuccessful",
       "subStatus": "Stage 1: Online Assessments Due (48h window from Nov 16, 13:31)",
       "deadline": "2026-11-18T13:31:00",
       "portalLink": "https://morganstanley.tal.net/vx/candidate/login",
       "calendarSynced": true,
       "notes": "Numerical Reasoning, Inductive Reasoning, Situational Judgement Test. Check portal immediately!",
-      "rejectedAfterStage": null,
+      "rejectedAfterStage": "Stage 1 - Online Assessment",
       "_gmailSubStatus": "Stage 1: Online Assessments Due (48h window from Nov 16, 13:31)",
       "_gmailDeadline": "2026-11-18T13:31:00"
     },
