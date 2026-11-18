@@ -292,6 +292,35 @@
       color: #BE123C !important;
     }
 
+    /* "hell nahhh" Easter Egg Twerking Character Animations */
+    @keyframes twerk-pop {
+      0%, 100% { transform: translate(0px, 0px) rotate(-14deg) scaleY(1); }
+      25% { transform: translate(-8px, -11px) rotate(12deg) scaleY(0.92); }
+      50% { transform: translate(2px, 4px) rotate(-18deg) scaleY(1.06); }
+      75% { transform: translate(-9px, -12px) rotate(16deg) scaleY(0.9); }
+    }
+    @keyframes twerk-torso {
+      0%, 100% { transform: translateY(0px) rotate(-4deg); }
+      50% { transform: translateY(-6px) rotate(5deg); }
+    }
+    @keyframes twerk-head {
+      0%, 100% { transform: rotate(-6deg) translateY(0px); }
+      50% { transform: rotate(8deg) translateY(-4px); }
+    }
+    @keyframes twerk-shadow {
+      0%, 100% { transform: scaleX(1); opacity: 0.45; }
+      50% { transform: scaleX(1.22); opacity: 0.25; }
+    }
+    @keyframes twerk-shockwave {
+      0% { transform: scale(0.5); opacity: 0.85; }
+      100% { transform: scale(1.7); opacity: 0; }
+    }
+    .twerk-hips { transform-origin: 96px 128px; animation: twerk-pop 0.34s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite; }
+    .twerk-torso { transform-origin: 96px 110px; animation: twerk-torso 0.34s ease-in-out infinite; }
+    .twerk-head { transform-origin: 120px 66px; animation: twerk-head 0.34s ease-in-out infinite; }
+    .twerk-shadow { transform-origin: 96px 196px; animation: twerk-shadow 0.34s ease-in-out infinite; }
+    .twerk-wave { transform-origin: 60px 132px; animation: twerk-shockwave 0.68s ease-out infinite; }
+
     body {
       background-color: var(--bg-canvas, #0A0A0A);
       background-image:
@@ -1693,6 +1722,122 @@
       };
     }
 
+    // 100% Offline Bouncy 808 Beat Synth for "hell nahhh" Twerking Easter Egg
+    function createTwerkBeatSynth() {
+      let ctx = null;
+      let masterGain = null;
+      let timerId = null;
+      let stepIdx = 0;
+      let isPlaying = false;
+      let isMuted = false;
+
+      const ensureCtx = () => {
+        if (!ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return null;
+          ctx = new AudioCtx();
+          masterGain = ctx.createGain();
+          masterGain.gain.value = isMuted ? 0 : 0.85;
+          masterGain.connect(ctx.destination);
+        }
+        if (ctx.state === "suspended") ctx.resume().catch(() => {});
+        return ctx;
+      };
+
+      const kick = (t) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(145, t);
+        osc.frequency.exponentialRampToValueAtTime(42, t + 0.13);
+        g.gain.setValueAtTime(0.28, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.23);
+      };
+
+      const clap = (t) => {
+        const bufSize = Math.floor(ctx.sampleRate * 0.08);
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.25));
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const hp = ctx.createBiquadFilter();
+        hp.type = "bandpass";
+        hp.frequency.value = 1400;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.16, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+        src.connect(hp);
+        hp.connect(g);
+        g.connect(masterGain);
+        src.start(t);
+      };
+
+      const hat = (t) => {
+        const bufSize = Math.floor(ctx.sampleRate * 0.03);
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.2));
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const hp = ctx.createBiquadFilter();
+        hp.type = "highpass";
+        hp.frequency.value = 6500;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.06, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+        src.connect(hp);
+        hp.connect(g);
+        g.connect(masterGain);
+        src.start(t);
+      };
+
+      // 8-step bouncy club beat (~175ms per 8th note)
+      const KICK_STEPS = new Set([0, 3, 4, 6]);
+      const CLAP_STEPS = new Set([2, 6]);
+
+      const tick = () => {
+        if (!isPlaying || !ctx) return;
+        const s = stepIdx % 8;
+        const t = ctx.currentTime + 0.015;
+        if (KICK_STEPS.has(s)) kick(t);
+        if (CLAP_STEPS.has(s)) clap(t);
+        hat(t);
+        stepIdx = (stepIdx + 1) % 8;
+      };
+
+      return {
+        start() {
+          const c = ensureCtx();
+          if (!c) return false;
+          if (isPlaying) return true;
+          isPlaying = true;
+          stepIdx = 0;
+          tick();
+          timerId = setInterval(tick, 170);
+          return true;
+        },
+        stop() {
+          isPlaying = false;
+          if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+          }
+        },
+        setMuted(muted) {
+          isMuted = Boolean(muted);
+          if (masterGain && ctx) {
+            masterGain.gain.setTargetAtTime(isMuted ? 0 : 0.85, ctx.currentTime, 0.02);
+          }
+        },
+        isPlaying() { return isPlaying; }
+      };
+    }
+
     function App() {
       const [rawApps, setApps] = useState(loadMergedApps);
       const [cycleArchive, setCycleArchive] = useState(loadCycleArchive);
@@ -1754,10 +1899,40 @@
       const [vivaAudioPlaying, setVivaAudioPlaying] = useState(false);
       const [vivaAudioMuted, setVivaAudioMuted] = useState(false);
       const [showVivaPill, setShowVivaPill] = useState(false);
+      const [showTwerkEgg, setShowTwerkEgg] = useState(false);
+      const [twerkMuted, setTwerkMuted] = useState(false);
       const prevThemeBeforeBarbieRef = React.useRef("neon-orchid");
       const barbieSynthRef = React.useRef(null);
       const vivaSynthRef = React.useRef(null);
+      const twerkSynthRef = React.useRef(null);
       const barbiePhraseActiveRef = React.useRef(false);
+      const twerkPhraseActiveRef = React.useRef(false);
+
+      const getTwerkSynth = () => {
+        if (!twerkSynthRef.current) {
+          twerkSynthRef.current = createTwerkBeatSynth();
+        }
+        return twerkSynthRef.current;
+      };
+
+      const activateTwerkEasterEgg = () => {
+        setShowTwerkEgg(true);
+        const synth = getTwerkSynth();
+        synth.setMuted(false);
+        setTwerkMuted(false);
+        synth.start();
+      };
+
+      const closeTwerkEasterEgg = () => {
+        if (twerkSynthRef.current) twerkSynthRef.current.stop();
+        setShowTwerkEgg(false);
+      };
+
+      const toggleTwerkMute = () => {
+        const nextMuted = !twerkMuted;
+        setTwerkMuted(nextMuted);
+        getTwerkSynth().setMuted(nextMuted);
+      };
 
       const getVivaSynth = () => {
         if (!vivaSynthRef.current) {
@@ -1866,12 +2041,26 @@
         } else {
           barbiePhraseActiveRef.current = false;
         }
+        if (/^hell\s+nah{2,}$/.test(normalized)) {
+          if (!twerkPhraseActiveRef.current) {
+            twerkPhraseActiveRef.current = true;
+            activateTwerkEasterEgg();
+          }
+        } else {
+          twerkPhraseActiveRef.current = false;
+        }
       };
 
       const handleSearchKeyDown = (e) => {
-        if (e.key === "Enter" && e.currentTarget.value.trim().toLowerCase() === BARBIE_TRIGGER_PHRASE) {
-          e.preventDefault();
-          activateBarbieMode();
+        if (e.key === "Enter") {
+          const normalized = e.currentTarget.value.trim().toLowerCase();
+          if (normalized === BARBIE_TRIGGER_PHRASE) {
+            e.preventDefault();
+            activateBarbieMode();
+          } else if (/^hell\s+nah{2,}$/.test(normalized)) {
+            e.preventDefault();
+            activateTwerkEasterEgg();
+          }
         }
       };
       const [now, setNow] = useState(Date.now());
@@ -2022,6 +2211,7 @@
         return () => {
           if (barbieSynthRef.current) barbieSynthRef.current.stop();
           if (vivaSynthRef.current) vivaSynthRef.current.stop();
+          if (twerkSynthRef.current) twerkSynthRef.current.stop();
         };
       }, []);
 
@@ -2753,6 +2943,7 @@
           setShowForceArchiveModal(false);
           setShowExternalOfferModal(false);
           setShowCloudSyncModal(false);
+          closeTwerkEasterEgg();
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
@@ -4518,6 +4709,100 @@
               </button>
             </div>
           </footer>
+
+          {/* "hell nahhh" Secret Twerking Character Easter Egg Overlay */}
+          {showTwerkEgg && (
+            <div
+              role="dialog"
+              aria-label="Hell Nahhh Twerking Character Easter Egg"
+              className="fixed bottom-5 right-5 z-50 glass-surface rounded-3xl p-4 shadow-2xl border-2 border-fuchsia-400/70 flex flex-col items-center gap-2 w-[230px]"
+              style={{
+                boxShadow: "0 18px 45px -8px rgba(247, 37, 133, 0.55), inset 0 1px 0 rgba(255,255,255,0.2)"
+              }}
+            >
+              <div className="w-full flex items-center justify-between">
+                <span className="text-xs font-extrabold tracking-wide px-2.5 py-0.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white shadow">
+                  HELL NAHHH 💀🔥
+                </span>
+                <button
+                  type="button"
+                  onClick={closeTwerkEasterEgg}
+                  aria-label="Close twerking character"
+                  className="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition"
+                >
+                  <Icon name="X" className="w-4 h-4" />
+                </button>
+              </div>
+
+              <svg viewBox="0 0 200 210" className="w-44 h-44 overflow-visible select-none" aria-hidden="true">
+                {/* Floor shadow */}
+                <ellipse cx="100" cy="196" rx="52" ry="9" fill="#000000" className="twerk-shadow" />
+                {/* Impact shockwave rings */}
+                <circle cx="58" cy="134" r="16" fill="none" stroke="#F72585" strokeWidth="3" className="twerk-wave" />
+                <circle cx="58" cy="134" r="24" fill="none" stroke="#FFD600" strokeWidth="2" className="twerk-wave" style={{ animationDelay: "0.22s" }} />
+
+                {/* Legs in squat stance */}
+                <path d="M92 142 L114 166 L102 192" fill="none" stroke="#1E1B4B" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M116 142 L140 165 L130 192" fill="none" stroke="#312E81" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
+                {/* Sneakers */}
+                <rect x="92" y="186" width="22" height="10" rx="5" fill="#F72585" />
+                <rect x="120" y="186" width="22" height="10" rx="5" fill="#FF6B00" />
+
+                {/* Bouncing Hips / Twerk Pop */}
+                <g className="twerk-hips">
+                  <ellipse cx="82" cy="132" rx="28" ry="22" fill="#F72585" stroke="#FDA4AF" strokeWidth="2.5" />
+                  <ellipse cx="96" cy="134" rx="22" ry="18" fill="#DB2777" />
+                  {/* Sparkle pops */}
+                  <text x="34" y="122" fontSize="16">💥</text>
+                  <text x="30" y="148" fontSize="14">✨</text>
+                </g>
+
+                {/* Torso leaning forward in hoodie + gold chain */}
+                <g className="twerk-torso">
+                  <path d="M84 126 Q104 94 124 88 L138 104 Q118 122 104 136 Z" fill="#7209B7" stroke="#E879F9" strokeWidth="2.5" />
+                  {/* Gold chain */}
+                  <path d="M118 96 Q128 112 135 102" fill="none" stroke="#FFD600" strokeWidth="3" strokeLinecap="round" />
+                  {/* Hands on knees */}
+                  <path d="M126 100 L132 136 L124 160" fill="none" stroke="#FDBA74" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M116 104 L112 136 L106 160" fill="none" stroke="#FB923C" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                </g>
+
+                {/* Head looking back with cool shades */}
+                <g className="twerk-head">
+                  <circle cx="132" cy="66" r="24" fill="#FDBA74" stroke="#FED7AA" strokeWidth="2" />
+                  {/* Hair / Cap */}
+                  <path d="M108 62 Q132 36 156 62 Z" fill="#18181B" />
+                  <path d="M105 60 L158 58 L164 64 L108 64 Z" fill="#F72585" />
+                  {/* Deal-with-it Sunglasses */}
+                  <rect x="112" y="62" width="16" height="9" rx="2" fill="#09090B" />
+                  <rect x="131" y="62" width="16" height="9" rx="2" fill="#09090B" />
+                  <line x1="128" y1="65" x2="131" y2="65" stroke="#09090B" strokeWidth="2.5" />
+                  <line x1="115" y1="65" x2="122" y2="65" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
+                  <line x1="134" y1="65" x2="141" y2="65" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
+                  {/* Cheeky grin */}
+                  <path d="M120 77 Q130 85 140 77" fill="none" stroke="#500724" strokeWidth="2.5" strokeLinecap="round" />
+                </g>
+              </svg>
+
+              <div className="w-full flex items-center justify-between gap-1.5 pt-1">
+                <button
+                  type="button"
+                  onClick={toggleTwerkMute}
+                  className="flex-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl theme-input text-slate-200 hover:text-white flex items-center justify-center gap-1 transition"
+                >
+                  <Icon name={twerkMuted ? "VolumeX" : "Volume2"} className="w-3.5 h-3.5" />
+                  {twerkMuted ? "Muted" : "808 Beat"}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeTwerkEasterEgg}
+                  className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 transition"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Floating Offer Celebration Pill ("Viva La Vida" Soundtrack + Replay Confetti) */}
           {showVivaPill && (
