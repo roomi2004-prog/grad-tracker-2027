@@ -32,7 +32,7 @@
     "roland berger::2027 consulting summer internship ? london office"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T23:16:36.659Z",
+  "updatedAt": "2026-11-18T23:22:15.509Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -1199,6 +1199,30 @@
     }
   ],
   "recommendations": [
+    {
+      "id": "rec-trackr-bank-of-england-2027-summer-internsh-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Bank of England",
+      "role": "2027 Summer Internship Programme",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-11-16",
+      "closingDate": "2026-12-04",
+      "applyLink": "https://eoff.fa.em1.ukg.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_3001/jobs?keyword=%222027+summer+internship%22&mode=location&utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027&iis=Trackr&sType=Trackr",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16)."
+    },
+    {
+      "id": "rec-trackr-st-james-s-place-2027-investment-inte-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "St James's Place",
+      "role": "2027 Investment Internship Programme",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-11-16",
+      "closingDate": "2027-01-08",
+      "applyLink": "https://clientsites.sanctuarygraduates.co.uk/sjp2026/roles/620916?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16)."
+    },
     {
       "id": "rec-trackr-berenberg-2027",
       "source": "Trackr",
