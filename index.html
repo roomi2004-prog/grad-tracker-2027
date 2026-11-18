@@ -130,6 +130,10 @@
       border-color: rgba(163, 230, 53, 0.35) !important;
       background-image: linear-gradient(180deg, rgba(132, 204, 22, 0.07) 0%, transparent 45%);
     }
+    .rec-section-glow {
+      border-color: rgba(56, 189, 248, 0.28) !important;
+      background-image: linear-gradient(135deg, rgba(56, 189, 248, 0.05) 0%, rgba(16, 185, 129, 0.04) 50%, transparent 100%);
+    }
     .theme-input {
       background-color: var(--bg-input) !important;
       border: 1px solid var(--border-color) !important;
@@ -152,7 +156,7 @@
     }
 
     /* Crisp Daylight Light-Mode Text & Badge Adaptations */
-    body[data-theme="daylight"] .text-white:not(.monogram-avatar):not(.theme-accent-btn) {
+    body[data-theme="daylight"] .text-white:not(.monogram-avatar):not(.theme-accent-btn):not(.applied-action-btn) {
       color: #0F172A !important;
     }
     body[data-theme="daylight"] .text-slate-100,
@@ -319,6 +323,134 @@
     function getRejectionBadge(rejectedAfterStage) {
       return REJECTION_STAGES.find(r => r.id === rejectedAfterStage) || REJECTION_STAGES[0];
     }
+
+    // __INITIAL_RECOMMENDATIONS_START__
+    const INITIAL_RECOMMENDATIONS = [
+      // Daily Trackr Scrape (the-trackr.com • UK Finance & Consulting • Opened in last 4 days: Nov 15–18, 2026)
+      {
+        id: "rec-trackr-berenberg-2027",
+        source: "Trackr",
+        sourceDetail: "The Trackr • UK Finance (Sales & Trading)",
+        company: "Berenberg",
+        role: "2027 Summer Internship – Equities, Sales & Trading / Specialist Coverage (London)",
+        sector: "Sales & Trading",
+        openedDate: "2026-11-17",
+        closingDate: "Rolling Deadline",
+        applyLink: "https://www.berenberg.de/en/careers/graduates-and-students/",
+        notes: "Opened in last 4 days on The Trackr UK Finance Summer Internships tracker. Rolling review; early application recommended."
+      },
+      {
+        id: "rec-trackr-roland-berger-2027",
+        source: "Trackr",
+        sourceDetail: "The Trackr • UK Consulting",
+        company: "Roland Berger",
+        role: "2027 Consulting Summer Internship – London Office",
+        sector: "Strategy & Consulting",
+        openedDate: "2026-11-17",
+        closingDate: "2026-12-01",
+        applyLink: "https://www.rolandberger.com/en/Join/",
+        notes: "Opened Nov 17 on The Trackr UK Consulting tracker. Strategy & management consulting internship for penultimate-year undergraduates."
+      },
+      {
+        id: "rec-trackr-partners-group-2027",
+        source: "Trackr",
+        sourceDetail: "The Trackr • UK Finance (Investment Management)",
+        company: "Partners Group",
+        role: "2027 Private Markets Summer Analyst – Client Solutions & Investment Management (London)",
+        sector: "Investment Management",
+        openedDate: "2026-11-16",
+        closingDate: "2026-11-30",
+        applyLink: "https://www.partnersgroup.com/en/careers/",
+        notes: "Opened Nov 16 on The Trackr UK Finance tracker under Investment Management & Specialist Coverage."
+      },
+      {
+        id: "rec-trackr-oliver-wyman-2027",
+        source: "Trackr",
+        sourceDetail: "The Trackr • UK Consulting",
+        company: "Oliver Wyman",
+        role: "2027 Summer Consultant Internship – Financial Services & Strategy (London)",
+        sector: "Strategy & Consulting",
+        openedDate: "2026-11-16",
+        closingDate: "2026-11-27",
+        applyLink: "https://www.oliverwyman.com/careers.html",
+        notes: "Opened Nov 16 on The Trackr UK Consulting tracker. Strong fit for quantitative/physics background in Financial Services practice."
+      },
+      {
+        id: "rec-trackr-macquarie-2027",
+        source: "Trackr",
+        sourceDetail: "The Trackr • UK Finance (Corporate Banking & Markets)",
+        company: "Macquarie Group",
+        role: "2027 Summer Internship – Commodities & Global Markets / Macquarie Capital (London)",
+        sector: "Corporate & Investment Banking",
+        openedDate: "2026-11-15",
+        closingDate: "Rolling Deadline",
+        applyLink: "https://www.macquarie.com/uk/en/careers/graduates-and-interns.html",
+        notes: "Opened Nov 15 on The Trackr UK Finance tracker (Corporate Banking, Specialist Coverage & Sales/Trading)."
+      },
+      {
+        id: "rec-trackr-pimco-2027",
+        source: "Trackr",
+        sourceDetail: "The Trackr • UK Finance (Investment Management)",
+        company: "PIMCO",
+        role: "2027 Summer Intern – Account Management & Institutional Client Coverage (London)",
+        sector: "Investment Management",
+        openedDate: "2026-11-15",
+        closingDate: "2026-12-04",
+        applyLink: "https://www.pimco.com/gb/en/careers",
+        notes: "Opened Nov 15 on The Trackr UK Finance tracker under Investment Management."
+      },
+
+      // Non-LinkedIn Tracker & Early-Career Newsletter Email Alerts (Gradcracker, Bright Network, BNY Careers Alert)
+      {
+        id: "rec-email-lseg-2027",
+        source: "Email",
+        sourceDetail: "Gradcracker Weekly Alert (Nov 16)",
+        company: "London Stock Exchange Group (LSEG)",
+        role: "2027 Summer Internship – Markets, Data & Financial Analytics (London)",
+        sector: "Corporate & Investment Banking",
+        openedDate: "2026-11-16",
+        closingDate: "2026-11-29",
+        applyLink: "https://www.lseg.com/en/careers/graduates-interns",
+        notes: "Extracted from Gradcracker Weekly Briefing email (Nov 16, 2026). Open to Physics, Maths & Finance penultimate-year students."
+      },
+      {
+        id: "rec-email-cgi-2027",
+        source: "Email",
+        sourceDetail: "Gradcracker Weekly Alert (Nov 16)",
+        company: "CGI",
+        role: "2027 Business Consulting & Finance Placement / Summer Internship (UK)",
+        sector: "Strategy & Consulting",
+        openedDate: "2026-11-16",
+        closingDate: "Rolling Deadline",
+        applyLink: "https://www.gradcracker.com/hub/89/cgi",
+        notes: "Extracted from Gradcracker Weekly Briefing email (Nov 16, 2026) targeting Physics, Maths, Analytics & Finance students."
+      },
+      {
+        id: "rec-email-bny-credit-2027",
+        source: "Email",
+        sourceDetail: "BNY Early Careers Alert",
+        company: "BNY",
+        role: "2027 BNY Summer Internship Program – Credit & Lending (London) (Req 83005)",
+        sector: "Corporate & Investment Banking",
+        openedDate: "2026-11-15",
+        closingDate: "Rolling Deadline",
+        applyLink: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers/job/83005",
+        notes: "Extracted from BNY Talent Acquisition email alert (distinct from your submitted Product Management Req 81922 application)."
+      },
+      {
+        id: "rec-email-bny-trade-2027",
+        source: "Email",
+        sourceDetail: "BNY Early Careers Alert",
+        company: "BNY",
+        role: "2027 BNY Summer Internship Program – Trade Execution (London) (Req 83002)",
+        sector: "Sales & Trading",
+        openedDate: "2026-11-15",
+        closingDate: "Rolling Deadline",
+        applyLink: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers/job/83002",
+        notes: "Extracted from BNY Talent Acquisition email alert for Markets & Trade Execution track in London."
+      }
+    ];
+    // __INITIAL_RECOMMENDATIONS_END__
 
     // __INITIAL_APPLICATIONS_START__
     const INITIAL_APPLICATIONS = [
@@ -498,11 +630,27 @@
     ];
 
     const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
+    const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
     const LEGACY_STORAGE_KEYS = [
       "ramis_grad_tracker_2027_v3_sept_nov",
       "ramis_grad_tracker_2027_v2",
       "ramis_grad_tracker_2027"
     ];
+
+    function makeRecSlug(company, role) {
+      return `${(company || "").toLowerCase().trim()}::${(role || "").toLowerCase().trim()}`;
+    }
+
+    function loadHandledRecs() {
+      try {
+        const raw = localStorage.getItem(HANDLED_RECS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
 
     // Smart merge: preserves user's manual edits (notes, stage, custom fields) for existing IDs
     // unless INITIAL_APPLICATIONS has a newer subStatus or deadline from Gmail, and always appends brand-new IDs.
@@ -627,6 +775,11 @@
 
     function App() {
       const [apps, setApps] = useState(loadMergedApps);
+      const [rawRecs, setRawRecs] = useState(INITIAL_RECOMMENDATIONS);
+      const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
+      const [recSourceFilter, setRecSourceFilter] = useState("All");
+      const [recsCollapsed, setRecsCollapsed] = useState(false);
+
       const [theme, setTheme] = useState(() => {
         try {
           const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
@@ -643,7 +796,7 @@
       const [stageFilter, setStageFilter] = useState("All");
       const [rejectionFilter, setRejectionFilter] = useState("All");
       const [sortBy, setSortBy] = useState("newest");
-      const [boardLayout, setBoardLayout] = useState("bento"); // "bento" (4x2 structured) or "swimlane" (horizontal)
+      const [boardLayout, setBoardLayout] = useState("bento");
       const [compactCards, setCompactCards] = useState(false);
       const [hideArchivedCols, setHideArchivedCols] = useState(false);
       const [radarCollapsed, setRadarCollapsed] = useState(false);
@@ -662,13 +815,96 @@
       const [syncStatus, setSyncStatus] = useState(null);
       const restoreInputRef = React.useRef(null);
 
+      useEffect(() => {
+        const timer = setInterval(() => setNow(Date.now()), 1000);
+        return () => clearInterval(timer);
+      }, []);
+
+      useEffect(() => {
+        document.body.setAttribute("data-theme", theme);
+        document.documentElement.classList.toggle("dark", theme !== "daylight");
+        try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
+      }, [theme]);
+
+      useEffect(() => {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(apps)); } catch {}
+      }, [apps]);
+
+      useEffect(() => {
+        try { localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(handledRecs)); } catch {}
+      }, [handledRecs]);
+
+      // Active recommendations: excludes any role already applied/dismissed in handledRecs or already present in apps
+      const activeRecommendations = useMemo(() => {
+        const handledSet = new Set(handledRecs);
+        const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
+        return rawRecs.filter(rec => {
+          const slug = makeRecSlug(rec.company, rec.role);
+          if (handledSet.has(rec.id) || handledSet.has(slug) || existingAppSlugs.has(slug)) {
+            return false;
+          }
+          if (recSourceFilter !== "All" && rec.source !== recSourceFilter) {
+            return false;
+          }
+          return true;
+        });
+      }, [rawRecs, handledRecs, apps, recSourceFilter]);
+
+      const totalUnhandledRecsCount = useMemo(() => {
+        const handledSet = new Set(handledRecs);
+        const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
+        return rawRecs.filter(rec => {
+          const slug = makeRecSlug(rec.company, rec.role);
+          return !handledSet.has(rec.id) && !handledSet.has(slug) && !existingAppSlugs.has(slug);
+        }).length;
+      }, [rawRecs, handledRecs, apps]);
+
+      // One-Click "Applied" on a Recommended Role:
+      // Moves role out of "Recommended to Apply", adds into main tracker under "Application Submitted" with today's date,
+      // and persists both in localStorage so future hourly/daily syncs never re-add it.
+      const handleMarkRecommendedApplied = (rec) => {
+        const today = new Date().toISOString().slice(0, 10);
+        const slug = makeRecSlug(rec.company, rec.role);
+        const newAppEntry = {
+          id: Date.now(),
+          category: "internship",
+          company: rec.company,
+          role: rec.role,
+          sector: rec.sector || "Corporate & Investment Banking",
+          appliedDate: today,
+          stage: "Application Submitted",
+          subStatus: `Applied via ${rec.source === "Trackr" ? "The Trackr" : (rec.sourceDetail || "Email Alert")} (${today.slice(5)})`,
+          deadline: null,
+          portalLink: rec.applyLink || "",
+          calendarSynced: false,
+          notes: `Applied on ${today} from Recommended to Apply (${rec.sourceDetail || rec.source}). ${rec.notes || ""}`.trim(),
+          _gmailSubStatus: `Applied via ${rec.source === "Trackr" ? "The Trackr" : (rec.sourceDetail || "Email Alert")} (${today.slice(5)})`,
+          _gmailDeadline: null
+        };
+
+        setApps(prev => [newAppEntry, ...prev]);
+        setHandledRecs(prev => Array.from(new Set([...prev, rec.id, slug])));
+        setSyncStatus({
+          ok: true,
+          time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+          message: `Added "${rec.company} — ${rec.role}" to Application Submitted (${today}) and removed from recommendations.`,
+          emails: []
+        });
+      };
+
+      const handleDismissRecommendation = (rec) => {
+        const slug = makeRecSlug(rec.company, rec.role);
+        setHandledRecs(prev => Array.from(new Set([...prev, rec.id, slug])));
+      };
+
       const handleBackupJson = () => {
         try {
           const dateSlug = new Date().toISOString().slice(0, 10);
           const payload = {
-            version: 4,
+            version: 5,
             exportedAt: new Date().toISOString(),
             theme,
+            handledRecommendations: handledRecs,
             applications: apps
           };
           const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -712,6 +948,9 @@
             if (parsed && parsed.theme && THEME_PRESETS.some(t => t.id === parsed.theme)) {
               setTheme(parsed.theme);
             }
+            if (parsed && Array.isArray(parsed.handledRecommendations)) {
+              setHandledRecs(prev => Array.from(new Set([...prev, ...parsed.handledRecommendations])));
+            }
             const merged = smartMergeApps(INITIAL_APPLICATIONS, restoredApps);
             setApps(merged);
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(merged)); } catch {}
@@ -743,21 +982,6 @@
         deadline: "", portalLink: "", notes: "", category: "internship"
       });
 
-      useEffect(() => {
-        const timer = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(timer);
-      }, []);
-
-      useEffect(() => {
-        document.body.setAttribute("data-theme", theme);
-        document.documentElement.classList.toggle("dark", theme !== "daylight");
-        try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
-      }, [theme]);
-
-      useEffect(() => {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(apps)); } catch {}
-      }, [apps]);
-
       const currentThemeObj = useMemo(
         () => THEME_PRESETS.find(t => t.id === theme) || THEME_PRESETS[1],
         [theme]
@@ -785,6 +1009,13 @@
                   setApps(prev => smartMergeApps(latestInitial, prev));
                 }
               }
+              const recMatch = htmlText.match(/\/\/ __INITIAL_RECOMMENDATIONS_START__[\s\S]*?const INITIAL_RECOMMENDATIONS = (\[[\s\S]*?\]);[\s\S]*?\/\/ __INITIAL_RECOMMENDATIONS_END__/);
+              if (recMatch && recMatch[1]) {
+                const latestRecs = new Function(`return ${recMatch[1]}`)();
+                if (Array.isArray(latestRecs)) {
+                  setRawRecs(latestRecs);
+                }
+              }
             }
           } catch {}
 
@@ -793,14 +1024,14 @@
             setSyncStatus({
               ok: true,
               time: timeLabel,
-              message: apiResult.message || `Synced with ramis.ahmad04@gmail.com (${apiResult.checkedCount || 0} recent emails checked).`,
+              message: apiResult.message || `Synced with ramis.ahmad04@gmail.com (${apiResult.checkedCount || 0} recent emails checked, LinkedIn excluded).`,
               emails: apiResult.recentRelevantEmails || []
             });
           } else {
             setSyncStatus({
               ok: true,
               time: timeLabel,
-              message: "Refreshed applications from latest Gmail sync in index.html.",
+              message: "Refreshed applications & recommendations from latest Trackr + Gmail sync.",
               emails: []
             });
           }
@@ -844,7 +1075,6 @@
             return da.localeCompare(db) || b.appliedDate.localeCompare(a.appliedDate);
           }
           if (sortBy === "sector") return a.sector.localeCompare(b.sector) || a.company.localeCompare(b.company);
-          // Default: newest appliedDate first
           return b.appliedDate.localeCompare(a.appliedDate) || a.company.localeCompare(b.company);
         });
       }, [categoryApps, search, sectorFilter, stageFilter, rejectionFilter, activeTab, sortBy]);
@@ -954,9 +1184,11 @@
       };
 
       const resetData = () => {
-        if (confirm("Reset dashboard back to the synced Gmail applications (Sept–Nov 2026) in index.html?")) {
+        if (confirm("Reset dashboard back to the synced Gmail applications & Trackr recommendations in index.html?")) {
           setApps(INITIAL_APPLICATIONS);
+          setHandledRecs([]);
           localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(HANDLED_RECS_KEY);
         }
       };
 
@@ -964,7 +1196,7 @@
       const calendarDays = useMemo(() => {
         const [year, month] = calMonth.split("-").map(Number);
         const firstDay = new Date(year, month - 1, 1).getDay();
-        const startOffset = (firstDay + 6) % 7; // Monday start
+        const startOffset = (firstDay + 6) % 7;
         const daysInMonth = new Date(year, month, 0).getDate();
         const cells = [];
         for (let i = 0; i < startOffset; i++) cells.push(null);
@@ -990,7 +1222,7 @@
                   <h1 className="text-base md:text-lg font-extrabold tracking-tight text-white">Application Tracker</h1>
                   <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
-                    Gmail (Sept–Nov) + GCal Synced
+                    Trackr (8AM) + Gmail (Hourly) + GCal Synced
                   </span>
                 </div>
               </div>
@@ -1099,7 +1331,7 @@
                   </div>
                   {syncStatus.emails && syncStatus.emails.length > 0 && (
                     <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                      <span className="text-[11px] text-slate-400">Latest relevant emails today:</span>
+                      <span className="text-[11px] text-slate-400">Latest relevant emails today (LinkedIn excluded):</span>
                       {syncStatus.emails.map(em => (
                         <span key={em.id} className="text-[11px] px-2.5 py-0.5 rounded-lg theme-input text-slate-200 font-medium">
                           {em.subject}
@@ -1291,6 +1523,140 @@
                 )}
               </section>
             )}
+
+            {/* RECOMMENDED TO APPLY SECTION (Daily 8:00 AM Trackr Scrape + Hourly Non-LinkedIn Email Alerts) */}
+            <section className="glass-surface rec-section-glow rounded-2xl p-4 md:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]"></span>
+                  <h2 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-white">
+                    Recommended to Apply ({activeRecommendations.length})
+                  </h2>
+                  <span className="text-[11px] text-slate-400">
+                    • 2027 UK Finance & Consulting Summer Internships (Trackr Last 4 Days + Non-LinkedIn Email Alerts)
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { id: "All", label: `All (${totalUnhandledRecsCount})` },
+                    { id: "Trackr", label: "Trackr (8AM Scrape)" },
+                    { id: "Email", label: "Email Alerts (No LinkedIn)" }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setRecSourceFilter(tab.id)}
+                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg transition ${
+                        recSourceFilter === tab.id
+                          ? "theme-accent-btn shadow-sm"
+                          : "theme-input text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => setRecsCollapsed(prev => !prev)}
+                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-lg theme-input transition ml-1"
+                  >
+                    <Icon name={recsCollapsed ? "ChevronDown" : "ChevronUp"} className="w-3.5 h-3.5" />
+                    {recsCollapsed ? "Show" : "Hide"}
+                  </button>
+                </div>
+              </div>
+
+              {!recsCollapsed && (
+                <div className="mt-4">
+                  {activeRecommendations.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
+                      {activeRecommendations.map(rec => {
+                        const isTrackr = rec.source === "Trackr";
+                        return (
+                          <div key={rec.id} className="glass-card rounded-xl p-3.5 flex flex-col justify-between space-y-3">
+                            <div className="space-y-2">
+                              {/* Top Row: Monogram + Firm + Source Badge (Trackr vs Email) */}
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <CompanyMonogram company={rec.company} />
+                                  <div className="min-w-0">
+                                    <h3 className="text-xs font-bold text-white truncate" title={rec.company}>
+                                      {rec.company}
+                                    </h3>
+                                    <span className="text-[10px] text-slate-400 truncate block">{rec.sector}</span>
+                                  </div>
+                                </div>
+                                <span
+                                  className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border shrink-0 ${
+                                    isTrackr
+                                      ? "bg-cyan-500/15 text-cyan-300 border-cyan-400/35"
+                                      : "bg-emerald-500/15 text-emerald-300 border-emerald-400/35"
+                                  }`}
+                                  title={rec.sourceDetail}
+                                >
+                                  <Icon name={isTrackr ? "Compass" : "Mail"} className="w-3 h-3" />
+                                  {rec.source}
+                                </span>
+                              </div>
+
+                              {/* Role Title */}
+                              <p className="text-xs font-semibold text-slate-200 line-clamp-2 leading-snug">
+                                {rec.role}
+                              </p>
+
+                              {/* Source Detail & Dates */}
+                              <div className="text-[10px] font-mono-num text-slate-400 space-y-0.5 pt-0.5">
+                                <div className="truncate text-slate-400">{rec.sourceDetail}</div>
+                                <div className="flex items-center justify-between">
+                                  <span>Opened: <strong className="text-slate-200">{rec.openedDate.slice(5)}</strong></span>
+                                  <span>Closes: <strong className="text-amber-300">{rec.closingDate === "Rolling Deadline" ? "Rolling" : rec.closingDate.slice(5)}</strong></span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Action Buttons: One-Click "Applied", "Apply ↗", and "Dismiss" */}
+                            <div className="pt-2.5 border-t border-white/[0.07] flex items-center justify-between gap-1.5">
+                              <button
+                                onClick={() => handleMarkRecommendedApplied(rec)}
+                                title="Move out of Recommended to Apply and add to Application Submitted with today's date"
+                                className="applied-action-btn flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-[11px] px-2.5 py-1.5 rounded-lg flex items-center justify-center gap-1 transition shadow-sm"
+                              >
+                                <Icon name="Check" className="w-3.5 h-3.5" />
+                                Applied
+                              </button>
+
+                              {rec.applyLink && (
+                                <a
+                                  href={rec.applyLink}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  title="Open application link in new tab"
+                                  className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg theme-input text-slate-200 hover:text-white flex items-center gap-1 transition"
+                                >
+                                  Role <Icon name="ExternalLink" className="w-3 h-3" />
+                                </a>
+                              )}
+
+                              <button
+                                onClick={() => handleDismissRecommendation(rec)}
+                                title="Dismiss this recommendation permanently"
+                                className="text-[11px] text-slate-400 hover:text-rose-300 px-2 py-1.5 rounded-lg theme-input transition"
+                              >
+                                Dismiss
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 text-xs text-slate-400 border border-dashed border-white/[0.08] rounded-xl">
+                      All current recommendations have been marked as Applied or Dismissed. Next automatic check: Hourly Gmail Sync & Daily 8:00 AM Trackr Scrape.
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
 
             {/* Navigation, Layout Controls & Filter Bar */}
             <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 glass-surface rounded-2xl p-3">
