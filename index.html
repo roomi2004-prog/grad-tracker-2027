@@ -318,7 +318,7 @@
       const d = new Date(2026, 8 + i, 1);
       return {
         id: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-        label: d.toLocaleDateString("en-GB", { month: "short", year: "2-digit" })
+        label: d.toLocaleDateString("en-GB", { month: "long", year: "numeric" })
       };
     });
 
@@ -709,7 +709,7 @@
         const raw = localStorage.getItem(CYCLE_ARCHIVE_KEY) || localStorage.getItem(CYCLE_ARCHIVE_HUMAN_KEY);
         if (!raw) return null;
         const parsed = JSON.parse(raw);
-        return parsed && parsed.offerAccepted ? parsed : null;
+        return parsed && (parsed.offerAccepted || parsed.archived) ? parsed : null;
       } catch {
         return null;
       }
@@ -800,7 +800,7 @@
     function loadMergedApps() {
       try {
         const archive = loadCycleArchive();
-        if (archive && archive.offerAccepted) {
+        if (archive && (archive.offerAccepted || archive.archived)) {
           const postArchiveRaw = localStorage.getItem(STORAGE_KEY);
           if (postArchiveRaw) {
             const parsedPost = JSON.parse(postArchiveRaw);
@@ -865,10 +865,17 @@
       const [cycleArchive, setCycleArchive] = useState(loadCycleArchive);
       const [viewArchiveMode, setViewArchiveMode] = useState(false);
       const [showAcceptOfferModal, setShowAcceptOfferModal] = useState(false);
+      const [showForceArchiveModal, setShowForceArchiveModal] = useState(false);
+      const [forceArchiveStep, setForceArchiveStep] = useState(1);
+      const [forceArchiveLabel, setForceArchiveLabel] = useState("2027 Internship Cycle");
+      const [forceArchiveReason, setForceArchiveReason] = useState("");
+      const [forceArchiveConfirmText, setForceArchiveConfirmText] = useState("");
       const [selectedOfferChoice, setSelectedOfferChoice] = useState("");
       const [customOfferCompany, setCustomOfferCompany] = useState("");
       const [customOfferRole, setCustomOfferRole] = useState("");
       const [customOfferSector, setCustomOfferSector] = useState("Corporate & Investment Banking");
+
+      const isCycleArchived = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.archived));
 
       const apps = useMemo(() => {
         if (viewArchiveMode && cycleArchive && Array.isArray(cycleArchive.archivedApplications)) {
@@ -877,7 +884,7 @@
         return rawApps;
       }, [viewArchiveMode, cycleArchive, rawApps]);
 
-      const recsPaused = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.recommendationsPaused));
+      const recsPaused = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.archived || cycleArchive.recommendationsPaused));
       const [rawRecs, setRawRecs] = useState(INITIAL_RECOMMENDATIONS);
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
       const [recSourceFilter, setRecSourceFilter] = useState("All");
@@ -1332,6 +1339,7 @@
           setSelectedApp(null);
           setShowAddModal(false);
           setShowAcceptOfferModal(false);
+          setShowForceArchiveModal(false);
           setShowExternalOfferModal(false);
         };
         window.addEventListener("keydown", onKey);
@@ -1439,6 +1447,70 @@
           ok: true,
           time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
           message: `Accepted ${chosen.company} — cycle archived (${payload.archivedApplications.length} applications) and backup JSON downloaded.`,
+          emails: []
+        });
+      };
+
+      const openForceArchiveModal = () => {
+        setForceArchiveStep(1);
+        setForceArchiveLabel("2027 Internship Cycle");
+        setForceArchiveReason("");
+        setForceArchiveConfirmText("");
+        setShowForceArchiveModal(true);
+      };
+
+      const handleConfirmForceArchive = (e) => {
+        e.preventDefault();
+        if (forceArchiveStep === 1) {
+          setForceArchiveStep(2);
+          return;
+        }
+        if (forceArchiveConfirmText.trim().toUpperCase() !== "ARCHIVE") return;
+        const today = localTodayStr();
+        const internshipApps = rawApps.filter(a => a.category === "internship");
+        const remainingApps = rawApps.filter(a => a.category !== "internship");
+        const label = forceArchiveLabel.trim() || "2027 Internship Cycle";
+        const payload = {
+          archived: true,
+          offerAccepted: false,
+          recommendationsPaused: true,
+          archiveLabel: label,
+          archiveReason: forceArchiveReason.trim() || "Manually archived cycle",
+          archivedDate: today,
+          archivedAt: new Date().toISOString(),
+          acceptedOffer: null,
+          cycleStats,
+          archivedApplications: internshipApps,
+          archivedHandledRecs: handledRecs
+        };
+        try {
+          const json = JSON.stringify(payload);
+          localStorage.setItem(CYCLE_ARCHIVE_KEY, json);
+          localStorage.setItem(CYCLE_ARCHIVE_HUMAN_KEY, json);
+          localStorage.setItem(TRACKR_PAUSED_FLAG_KEY, "true");
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(remainingApps));
+        } catch {}
+        try {
+          const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `grad-tracker-2027-cycle-archive-${today}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch {}
+        setCycleArchive(payload);
+        setApps(remainingApps);
+        setViewArchiveMode(false);
+        setSelectedApp(null);
+        setStageFilter("All");
+        setShowForceArchiveModal(false);
+        setSyncStatus({
+          ok: true,
+          time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+          message: `Force-archived "${label}" (${internshipApps.length} internship applications saved, backup JSON downloaded, part-time roles untouched).`,
           emails: []
         });
       };
@@ -1615,7 +1687,7 @@
                   </button>
                 </div>
 
-                {cycleArchive && cycleArchive.offerAccepted && (
+                {isCycleArchived ? (
                   <button
                     onClick={() => setViewArchiveMode(v => !v)}
                     className={`flex items-center gap-1.5 font-semibold whitespace-nowrap rounded-xl transition-all shrink-0 ${isHeaderCompact ? "text-[11px] px-2.5 py-1.5" : "text-xs px-3 py-2"} ${viewArchiveMode ? "bg-lime-500/25 text-lime-200 border border-lime-400/40" : "glass-surface text-white"}`}
@@ -1623,6 +1695,17 @@
                     <Icon name="Archive" className="w-3.5 h-3.5" />
                     {viewArchiveMode ? "Exit 2027 Archive" : "View 2027 Archive"}
                   </button>
+                ) : (
+                  !isHeaderCompact && (
+                    <button
+                      onClick={openForceArchiveModal}
+                      title="Force archive the current internship cycle (2-step confirmation)"
+                      className="flex items-center gap-1.5 glass-surface hover:border-amber-400/60 text-amber-200 hover:text-amber-100 font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0"
+                    >
+                      <Icon name="Archive" className="w-3.5 h-3.5" />
+                      Archive Cycle
+                    </button>
+                  )
                 )}
 
                 {/* Backup / Restore JSON & Refresh Email — hidden when header is collapsed */}
@@ -1724,6 +1807,43 @@
                   <p className="mt-3 text-[11px] text-lime-200/90">Read-only view of your archived 2027 cycle ({cycleArchive.archivedApplications.length} applications). Exit archive to return to your fresh active board.</p>
                 ) : (
                   <p className="mt-3 text-[11px] text-slate-400">Active board reset — no pending tasks. Trackr recommendations are paused.</p>
+                )}
+              </section>
+            )}
+            {cycleArchive && cycleArchive.archived && !cycleArchive.offerAccepted && (
+              <section className="glass-surface rounded-2xl p-4 md:p-5 border border-amber-400/40">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-400/35 flex items-center justify-center shrink-0">
+                      <Icon name="Archive" className="w-4 h-4 text-amber-300" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                        Archived Cycle
+                      </div>
+                      <h2 className="text-base md:text-lg font-extrabold text-white truncate">{cycleArchive.archiveLabel || "2027 Internship Cycle"}</h2>
+                      <p className="text-xs text-slate-300 truncate">{cycleArchive.archiveReason || "Manually archived cycle"} • Archived {cycleArchive.archivedDate || (cycleArchive.archivedAt || "").slice(0, 10)}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono-num">
+                    {[
+                      ["Total Apps", cycleArchive.cycleStats.totalApplications],
+                      ["OAs", cycleArchive.cycleStats.onlineAssessments],
+                      ["Video Int.", cycleArchive.cycleStats.videoInterviews],
+                      ["ACs", cycleArchive.cycleStats.assessmentCentres]
+                    ].map(([l, v]) => (
+                      <span key={l} className="px-2.5 py-1 rounded-lg theme-input text-slate-200">{l}: <strong className="text-white">{v}</strong></span>
+                    ))}
+                    <button onClick={() => setViewArchiveMode(v => !v)} className="px-3 py-1.5 rounded-xl theme-accent-btn font-bold">
+                      {viewArchiveMode ? "Exit 2027 Archive" : "View 2027 Archive"}
+                    </button>
+                    <button onClick={handleReopenCycle} className="px-3 py-1.5 rounded-xl theme-input text-slate-300 hover:text-white">Reopen Cycle</button>
+                  </div>
+                </div>
+                {viewArchiveMode ? (
+                  <p className="mt-3 text-[11px] text-amber-200/90">Read-only view of your archived cycle ({cycleArchive.archivedApplications.length} internship applications). Exit archive to return to your fresh active board.</p>
+                ) : (
+                  <p className="mt-3 text-[11px] text-slate-400">Active internship board cleared — your Part-Time & Flex roles remain active. Trackr recommendations are paused.</p>
                 )}
               </section>
             )}
@@ -2625,18 +2745,55 @@
                 <div className="lg:col-span-2 glass-surface rounded-2xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                     <h2 className="text-sm font-bold text-white">Application & Assessment Schedule</h2>
-                    <div className="flex flex-wrap gap-1.5">
-                      {CAL_MONTHS.map(m => (
-                        <button
-                          key={m.id}
-                          onClick={() => setCalMonth(m.id)}
-                          className={`px-3 py-1 rounded-xl text-xs font-semibold transition ${
-                            calMonth === m.id ? "theme-accent-btn shadow-md" : "theme-input text-slate-400 hover:text-white"
-                          }`}
-                        >
-                          {m.label}
-                        </button>
-                      ))}
+                    <div className="flex items-center gap-1.5">
+                      {(() => {
+                        const curIdx = CAL_MONTHS.findIndex(m => m.id === calMonth);
+                        return (
+                          <>
+                            <button
+                              type="button"
+                              aria-label="Previous month"
+                              disabled={curIdx <= 0}
+                              onClick={() => curIdx > 0 && setCalMonth(CAL_MONTHS[curIdx - 1].id)}
+                              className="p-1.5 rounded-xl theme-input text-slate-300 hover:text-white disabled:opacity-35 transition"
+                            >
+                              <Icon name="ChevronLeft" className="w-4 h-4" />
+                            </button>
+                            <select
+                              aria-label="Select Calendar Month"
+                              value={calMonth}
+                              onChange={e => setCalMonth(e.target.value)}
+                              className="theme-input rounded-xl px-3 py-1.5 text-xs font-semibold cursor-pointer"
+                            >
+                              {CAL_MONTHS.map(m => (
+                                <option key={m.id} value={m.id} className="bg-slate-900 text-slate-100">
+                                  {m.label}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              aria-label="Next month"
+                              disabled={curIdx === -1 || curIdx >= CAL_MONTHS.length - 1}
+                              onClick={() => curIdx >= 0 && curIdx < CAL_MONTHS.length - 1 && setCalMonth(CAL_MONTHS[curIdx + 1].id)}
+                              className="p-1.5 rounded-xl theme-input text-slate-300 hover:text-white disabled:opacity-35 transition"
+                            >
+                              <Icon name="ChevronRight" className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const t = localTodayStr();
+                                setCalMonth(t.slice(0, 7));
+                                setSelectedDay(t);
+                              }}
+                              className="px-2.5 py-1.5 rounded-xl theme-input text-xs font-semibold text-slate-300 hover:text-white transition"
+                            >
+                              Today
+                            </button>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -2976,6 +3133,136 @@
                   <button type="button" onClick={() => setShowAcceptOfferModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400">Cancel</button>
                   <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-lime-500 hover:bg-lime-400 text-slate-950">Confirm Offer & Archive 2027 Cycle</button>
                 </div>
+              </form>
+            </div>
+          )}
+
+          {/* Force Archive Cycle Modal (2-Step Confirmation) */}
+          {showForceArchiveModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowForceArchiveModal(false)}>
+              <form onSubmit={handleConfirmForceArchive} className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border mb-1.5 ${
+                      forceArchiveStep === 1
+                        ? "bg-amber-500/15 text-amber-300 border-amber-400/35"
+                        : "bg-rose-500/15 text-rose-300 border-rose-400/35"
+                    }`}>
+                      Step {forceArchiveStep} of 2 • {forceArchiveStep === 1 ? "Review Cycle Snapshot" : "Final Confirmation"}
+                    </span>
+                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                      <Icon name="Archive" className="w-4 h-4 text-amber-400" /> Force Archive Internship Cycle
+                    </h3>
+                  </div>
+                  <button type="button" onClick={() => setShowForceArchiveModal(false)} className="text-slate-400 hover:text-white">
+                    <Icon name="X" className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {forceArchiveStep === 1 ? (
+                  <>
+                    <div className="grid grid-cols-1 gap-3 text-xs">
+                      <div>
+                        <label className="block text-slate-400 mb-1">Archive Name</label>
+                        <input
+                          required
+                          type="text"
+                          value={forceArchiveLabel}
+                          onChange={e => setForceArchiveLabel(e.target.value)}
+                          placeholder="e.g. 2027 Internship Cycle"
+                          className="w-full theme-input rounded-xl px-3 py-2"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-400 mb-1">Reason / Note (Optional)</label>
+                        <input
+                          type="text"
+                          value={forceArchiveReason}
+                          onChange={e => setForceArchiveReason(e.target.value)}
+                          placeholder="e.g. Starting fresh 2028 cycle / Closing out 2027 apps"
+                          className="w-full theme-input rounded-xl px-3 py-2"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {[
+                        ["Total Applications", cycleStats.totalApplications],
+                        ["Online Assessments", cycleStats.onlineAssessments],
+                        ["Video Interviews", cycleStats.videoInterviews],
+                        ["Assessment Centres", cycleStats.assessmentCentres]
+                      ].map(([l, v]) => (
+                        <div key={l} className="glass-card rounded-xl p-3">
+                          <div className="text-[11px] text-slate-400">{l}</div>
+                          <div className="text-xl font-bold text-white font-mono-num">{v}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <p className="text-[11px] text-slate-400">
+                      This archives all <strong className="text-white">{rawApps.filter(a => a.category === "internship").length}</strong> internship applications into a read-only snapshot, downloads a JSON backup, and resets the active internship board. Your <strong className="text-white">Part-Time & Flex</strong> roles stay active and untouched.
+                    </p>
+
+                    <div className="flex justify-end gap-2 pt-1">
+                      <button type="button" onClick={() => setShowForceArchiveModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white">
+                        Cancel
+                      </button>
+                      <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                        Continue to Step 2 →
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="rounded-xl p-3.5 bg-rose-500/10 border border-rose-500/30 space-y-1.5 text-xs text-rose-200">
+                      <div className="font-bold flex items-center gap-1.5 text-rose-300">
+                        <Icon name="AlertTriangle" className="w-4 h-4" /> Are you sure you want to force-archive "{forceArchiveLabel || "2027 Internship Cycle"}"?
+                      </div>
+                      <ul className="list-disc pl-5 text-[11px] text-rose-200/90 space-y-1">
+                        <li>Saves a read-only snapshot of all {rawApps.filter(a => a.category === "internship").length} internship applications to localStorage.</li>
+                        <li>Downloads a permanent backup JSON file to your device.</li>
+                        <li>Clears the active internship board and pauses Trackr recommendations (Part-Time roles stay active).</li>
+                        <li>You can inspect the read-only archive or click <strong>Reopen Cycle</strong> anytime.</li>
+                      </ul>
+                    </div>
+
+                    <div className="text-xs">
+                      <label className="block text-slate-300 font-semibold mb-1.5">
+                        Type <span className="font-mono-num px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">ARCHIVE</span> to confirm
+                      </label>
+                      <input
+                        autoFocus
+                        type="text"
+                        value={forceArchiveConfirmText}
+                        onChange={e => setForceArchiveConfirmText(e.target.value)}
+                        placeholder="Type ARCHIVE"
+                        className="w-full theme-input rounded-xl px-3 py-2 font-mono-num uppercase"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <button
+                        type="button"
+                        onClick={() => { setForceArchiveStep(1); setForceArchiveConfirmText(""); }}
+                        className="px-3.5 py-2 rounded-xl text-xs text-slate-300 hover:text-white theme-input"
+                      >
+                        ← Back
+                      </button>
+                      <div className="flex gap-2">
+                        <button type="button" onClick={() => setShowForceArchiveModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white">
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={forceArchiveConfirmText.trim().toUpperCase() !== "ARCHIVE"}
+                          className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 disabled:opacity-40 disabled:cursor-not-allowed text-white transition"
+                        >
+                          Confirm Force Archive
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </form>
             </div>
           )}
