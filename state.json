@@ -36,7 +36,7 @@
     "st james's place::2027 investment internship programme"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T23:26:30Z",
+  "updatedAt": "2026-11-18T23:31:25.568Z",
   "applications": [
     {
       "id": 1795044264522,
@@ -52,7 +52,8 @@
       "calendarSynced": false,
       "notes": "Applied on 2026-11-18 from Recommended to Apply (The Trackr • UK Finance). Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16).",
       "_gmailSubStatus": "Applied via The Trackr (11-18)",
-      "_gmailDeadline": null
+      "_gmailDeadline": null,
+      "rejectedAfterStage": null
     },
     {
       "id": 1795044257639,
@@ -68,7 +69,8 @@
       "calendarSynced": false,
       "notes": "Applied on 2026-11-18 from Recommended to Apply (The Trackr • UK Finance). Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16).",
       "_gmailSubStatus": "Applied via The Trackr (11-18)",
-      "_gmailDeadline": null
+      "_gmailDeadline": null,
+      "rejectedAfterStage": null
     },
     {
       "id": "app-1a1efbecac2d1388",
@@ -113,16 +115,16 @@
       "company": "M&G Investments",
       "role": "Asset Management: Client Group & Product Internship (London) (R20839)",
       "sector": "Investment Management",
-      "appliedDate": "2026-11-18",
+      "appliedDate": "2026-11-06",
       "stage": "Action Required",
       "subStatus": "Stage 1: Online Assessment Due (5-day window from Nov 18, 17:40)",
       "deadline": "2026-11-23T17:40:00",
-      "portalLink": "https://apitake.cappassessments.com/Assessments/PackagedAssessment/ApiTakeRedirect?a=9afedeb0-1bda-4e4a-a5e6-933b73fab3df&u=9a7d9bfd-e7e9-4e22-b48d-cbf27c3dbb6c&aik=92e093e6-cc4c-48a6-b54d-fc71f5b085d2",
+      "portalLink": "https://mgpru.wd3.myworkdayjobs.com/mandgprudential",
       "calendarSynced": true,
-      "notes": "Reapplied via roomi2004@gmail.com (Nov 18, 17:38) & invited to Cappfinity Online Assessment (Nov 18, 17:40). 5-day window due Mon Nov 23, 17:40. Sections: Motivational, Behavioural & Cognitive Tasks (untimed, allow ~45 mins; calculator ready). Workday portal: https://mgpru.wd3.myworkdayjobs.com/mandgprudential",
+      "notes": "Originally auto-screened out due to accidental 'Yes' on multiple applications question. Contested Nov 12; M&G confirmed Nov 18 (12:51 PM) you can reapply using a new email address!",
       "rejectedAfterStage": null,
-      "_gmailSubStatus": "Approved to Reapply via New Email!",
-      "_gmailDeadline": "2026-11-21T17:00:00"
+      "_gmailSubStatus": "Stage 1: Online Assessment Due (5-day window from Nov 18, 17:40)",
+      "_gmailDeadline": "2026-11-23T17:40:00"
     },
     {
       "id": 4,
@@ -1206,13 +1208,14 @@
       "category": "internship",
       "company": "SW Group Hiring",
       "sector": "Corporate & Investment Banking",
-      "subStatus": "Online Assessment Due",
+      "subStatus": "Online Assessment Completed (18 Nov)",
       "deadline": null,
       "portalLink": "",
       "calendarSynced": false,
       "notes": "",
       "_gmailSubStatus": "Online Assessment Due",
-      "_gmailDeadline": null
+      "_gmailDeadline": null,
+      "rejectedAfterStage": null
     },
     {
       "id": "app-1a1ea06550873c5b",
@@ -1231,7 +1234,8 @@
       "calendarSynced": false,
       "notes": "",
       "_gmailSubStatus": "Unsuccessful",
-      "_gmailDeadline": null
+      "_gmailDeadline": null,
+      "rejectedAfterStage": null
     }
   ],
   "recommendations": [
