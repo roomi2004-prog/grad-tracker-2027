@@ -13,52 +13,205 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    :root {
-      color-scheme: dark;
+    /* Theme 1: Crisp Daylight */
+    body[data-theme="daylight"] {
+      color-scheme: light;
+      --bg-canvas: #F8FAFC;
+      --bg-header: rgba(248, 250, 252, 0.92);
+      --bg-surface: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F8FAFC;
+      --bg-input: #F1F5F9;
+      --border-color: #E2E8F0;
+      --border-hover: #CBD5E1;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --accent-color: #0F172A;
+      --accent-hover: #1E293B;
+      --accent-fg: #FFFFFF;
+      --accent-border: rgba(15, 23, 42, 0.2);
+      --spotlight-1: rgba(15, 23, 42, 0.035);
+      --spotlight-2: rgba(14, 165, 233, 0.045);
+      --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+      --card-shadow-hover: 0 10px 22px -6px rgba(15, 23, 42, 0.09);
     }
+
+    /* Theme 2: Carbon & Champagne Gold */
+    body[data-theme="carbon-gold"] {
+      color-scheme: dark;
+      --bg-canvas: #0A0A0A;
+      --bg-header: rgba(10, 10, 10, 0.9);
+      --bg-surface: #141414;
+      --bg-card: #18181B;
+      --bg-card-hover: #202024;
+      --bg-input: #0E0E10;
+      --border-color: #262626;
+      --border-hover: #D4AF37;
+      --text-primary: #FAFAFA;
+      --text-secondary: #D4D4D8;
+      --text-muted: #A1A1AA;
+      --accent-color: #D4AF37;
+      --accent-hover: #E5C158;
+      --accent-fg: #0A0A0A;
+      --accent-border: rgba(212, 175, 55, 0.4);
+      --spotlight-1: rgba(212, 175, 55, 0.11);
+      --spotlight-2: rgba(212, 175, 55, 0.05);
+      --card-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 8px 24px -8px rgba(0, 0, 0, 0.7);
+      --card-shadow-hover: inset 0 1px 0 0 rgba(212, 175, 55, 0.22), 0 12px 28px -8px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Theme 3: Deep Forest & Sage */
+    body[data-theme="forest-sage"] {
+      color-scheme: dark;
+      --bg-canvas: #0B1210;
+      --bg-header: rgba(11, 18, 16, 0.9);
+      --bg-surface: #121C19;
+      --bg-card: #15221E;
+      --bg-card-hover: #1A2A25;
+      --bg-input: #0B1210;
+      --border-color: #1F2E29;
+      --border-hover: #34D399;
+      --text-primary: #F3F6F4;
+      --text-secondary: #CBD5E1;
+      --text-muted: #86A397;
+      --accent-color: #34D399;
+      --accent-hover: #10B981;
+      --accent-fg: #06140F;
+      --accent-border: rgba(52, 211, 153, 0.35);
+      --spotlight-1: rgba(52, 211, 153, 0.13);
+      --spotlight-2: rgba(16, 185, 129, 0.07);
+      --card-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 8px 24px -8px rgba(0, 0, 0, 0.65);
+      --card-shadow-hover: inset 0 1px 0 0 rgba(52, 211, 153, 0.22), 0 12px 28px -8px rgba(0, 0, 0, 0.8);
+    }
+
     body {
-      background-color: #06080F;
+      background-color: var(--bg-canvas, #0A0A0A);
       background-image:
-        radial-gradient(ellipse 80% 50% at 18% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
-        radial-gradient(ellipse 70% 45% at 82% -12%, rgba(16, 185, 129, 0.13), transparent 60%),
-        radial-gradient(ellipse 50% 35% at 50% 0%, rgba(14, 165, 233, 0.07), transparent 55%);
+        radial-gradient(ellipse 80% 50% at 18% -10%, var(--spotlight-1, rgba(212, 175, 55, 0.11)), transparent 60%),
+        radial-gradient(ellipse 70% 45% at 82% -12%, var(--spotlight-2, rgba(212, 175, 55, 0.05)), transparent 60%);
       background-attachment: fixed;
-      color: #F1F5F9;
+      color: var(--text-primary, #FAFAFA);
       font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
     .font-mono-num {
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-variant-numeric: tabular-nums;
     }
+    .theme-header {
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+    }
     .glass-surface {
-      background-color: rgba(13, 18, 31, 0.8);
+      background-color: var(--bg-surface);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.55);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .glass-card {
-      background-color: rgba(16, 23, 40, 0.78);
+      background-color: var(--bg-card);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 0 4px 16px -4px rgba(0, 0, 0, 0.45);
-      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
     }
     .glass-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(255, 255, 255, 0.17);
-      background-color: rgba(21, 30, 52, 0.88);
-      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 28px -8px rgba(0, 0, 0, 0.65);
+      border-color: var(--border-hover);
+      background-color: var(--bg-card-hover);
+      box-shadow: var(--card-shadow-hover);
     }
+    .offer-column-glow {
+      border-color: rgba(163, 230, 53, 0.35) !important;
+      background-image: linear-gradient(180deg, rgba(132, 204, 22, 0.07) 0%, transparent 45%);
+    }
+    .theme-input {
+      background-color: var(--bg-input) !important;
+      border: 1px solid var(--border-color) !important;
+      color: var(--text-primary) !important;
+    }
+    .theme-input:focus {
+      border-color: var(--accent-color) !important;
+      outline: none;
+    }
+    .theme-accent-btn {
+      background-color: var(--accent-color) !important;
+      color: var(--accent-fg) !important;
+      border: 1px solid var(--accent-border) !important;
+    }
+    .theme-accent-btn:hover {
+      background-color: var(--accent-hover) !important;
+    }
+    .theme-accent-text {
+      color: var(--accent-color) !important;
+    }
+
+    /* Crisp Daylight Light-Mode Text & Badge Adaptations */
+    body[data-theme="daylight"] .text-white:not(.monogram-avatar):not(.theme-accent-btn) {
+      color: #0F172A !important;
+    }
+    body[data-theme="daylight"] .text-slate-100,
+    body[data-theme="daylight"] .text-slate-200 {
+      color: #1E293B !important;
+    }
+    body[data-theme="daylight"] .text-slate-300 {
+      color: #334155 !important;
+    }
+    body[data-theme="daylight"] .text-slate-400,
+    body[data-theme="daylight"] .text-slate-500 {
+      color: #64748B !important;
+    }
+    body[data-theme="daylight"] .border-white\/\[0\.08\],
+    body[data-theme="daylight"] .border-white\/\[0\.07\],
+    body[data-theme="daylight"] .border-white\/\[0\.06\],
+    body[data-theme="daylight"] .border-white\/\[0\.05\] {
+      border-color: #E2E8F0 !important;
+    }
+    body[data-theme="daylight"] .text-amber-300,
+    body[data-theme="daylight"] .text-amber-200\/90,
+    body[data-theme="daylight"] .text-amber-400 {
+      color: #B45309 !important;
+    }
+    body[data-theme="daylight"] .text-cyan-300,
+    body[data-theme="daylight"] .text-cyan-400 {
+      color: #0369A1 !important;
+    }
+    body[data-theme="daylight"] .text-emerald-300,
+    body[data-theme="daylight"] .text-emerald-400 {
+      color: #047857 !important;
+    }
+    body[data-theme="daylight"] .text-fuchsia-300,
+    body[data-theme="daylight"] .text-fuchsia-400 {
+      color: #A21CAF !important;
+    }
+    body[data-theme="daylight"] .text-lime-300,
+    body[data-theme="daylight"] .text-lime-200,
+    body[data-theme="daylight"] .text-lime-400 {
+      color: #3F6212 !important;
+    }
+    body[data-theme="daylight"] .text-indigo-300,
+    body[data-theme="daylight"] .text-indigo-400 {
+      color: #3730A3 !important;
+    }
+    body[data-theme="daylight"] .text-purple-300 {
+      color: #6B21A8 !important;
+    }
+    body[data-theme="daylight"] .text-sky-300 {
+      color: #0369A1 !important;
+    }
+
     ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: rgba(6, 8, 15, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.38); }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
   </style>
 </head>
-<body>
+<body data-theme="carbon-gold">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -80,6 +233,41 @@
       }, [name, className]);
       return <span ref={ref} className="inline-flex items-center justify-center shrink-0" />;
     };
+
+    const THEME_PRESETS = [
+      {
+        id: "daylight",
+        label: "1) Crisp Daylight",
+        shortLabel: "Crisp Daylight",
+        bg: "#F8FAFC",
+        card: "#FFFFFF",
+        border: "#E2E8F0",
+        text: "#0F172A",
+        accent: "#0F172A"
+      },
+      {
+        id: "carbon-gold",
+        label: "2) Carbon & Champagne Gold",
+        shortLabel: "Carbon & Gold",
+        bg: "#0A0A0A",
+        card: "#141414",
+        border: "#262626",
+        text: "#FAFAFA",
+        accent: "#D4AF37"
+      },
+      {
+        id: "forest-sage",
+        label: "3) Deep Forest & Sage",
+        shortLabel: "Forest & Sage",
+        bg: "#0B1210",
+        card: "#121C19",
+        border: "#1F2E29",
+        text: "#F3F6F4",
+        accent: "#34D399"
+      }
+    ];
+
+    const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v1";
 
     const MONOGRAM_PALETTES = [
       "from-indigo-500/90 to-violet-600/90 text-white border-indigo-400/30 shadow-indigo-500/20",
@@ -113,7 +301,7 @@
       const gradientClass = getMonogramStyle(company);
       return (
         <div
-          className={`w-7 h-7 rounded-lg bg-gradient-to-br ${gradientClass} border flex items-center justify-center text-[10px] font-extrabold tracking-tighter shrink-0 shadow-md select-none font-mono-num`}
+          className={`monogram-avatar w-7 h-7 rounded-lg bg-gradient-to-br ${gradientClass} border flex items-center justify-center text-[10px] font-extrabold tracking-tighter shrink-0 shadow-md select-none font-mono-num`}
           title={company}
         >
           {initials}
@@ -216,47 +404,192 @@
     ];
     // __INITIAL_APPLICATIONS_END__
 
+    // Chronological Pipeline Order with Offer / Successful at the very end
     const STAGES = [
-      { id: "Action Required", label: "Action Required", color: "amber", dotColor: "bg-amber-400 text-amber-400", barColor: "bg-amber-500", badge: "bg-amber-500/15 text-amber-300 border-amber-500/30" },
-      { id: "Stage 1 - Online Assessment", label: "Stage 1 - Online Assessment", color: "cyan", dotColor: "bg-cyan-400 text-cyan-400", barColor: "bg-cyan-500", badge: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30" },
-      { id: "Stage 2 - Video Interview", label: "Stage 2 - Video Interview", color: "emerald", dotColor: "bg-emerald-400 text-emerald-400", barColor: "bg-emerald-500", badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" },
-      { id: "Stage 3 - Assessment Centre", label: "Stage 3 - Assessment Centre", color: "fuchsia", dotColor: "bg-fuchsia-400 text-fuchsia-400", barColor: "bg-fuchsia-500", badge: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30" },
-      { id: "Offer / Successful", label: "Offer / Successful", color: "lime", dotColor: "bg-lime-400 text-lime-400", barColor: "bg-lime-400", badge: "bg-lime-500/15 text-lime-300 border-lime-400/35" },
-      { id: "Application Submitted", label: "Application Submitted", color: "indigo", dotColor: "bg-indigo-400 text-indigo-400", barColor: "bg-indigo-500", badge: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30" },
-      { id: "On Hold / Waitlist", label: "On Hold / Waitlist", color: "purple", dotColor: "bg-purple-400 text-purple-400", barColor: "bg-purple-500", badge: "bg-purple-500/15 text-purple-300 border-purple-500/30" },
-      { id: "Closed / Unsuccessful", label: "Closed / Unsuccessful", color: "slate", dotColor: "bg-rose-400 text-rose-400", barColor: "bg-slate-500", badge: "bg-slate-500/15 text-slate-300 border-slate-500/30" }
+      {
+        id: "Action Required",
+        step: "01",
+        label: "Action Required",
+        subtitle: "Immediate Tests & Portal Deadlines",
+        color: "amber",
+        topBar: "from-amber-400 to-orange-500",
+        dotColor: "bg-amber-400 text-amber-400",
+        barColor: "bg-amber-500",
+        badge: "bg-amber-500/15 text-amber-300 border-amber-500/30"
+      },
+      {
+        id: "Application Submitted",
+        step: "02",
+        label: "Application Submitted",
+        subtitle: "CV & Initial Recruiter Screening",
+        color: "indigo",
+        topBar: "from-indigo-400 to-blue-500",
+        dotColor: "bg-indigo-400 text-indigo-400",
+        barColor: "bg-indigo-500",
+        badge: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30"
+      },
+      {
+        id: "Stage 1 - Online Assessment",
+        step: "03",
+        label: "Stage 1 - Online Assessment",
+        subtitle: "Aptitude, SJT & Cognitive Tests Done",
+        color: "cyan",
+        topBar: "from-cyan-400 to-sky-500",
+        dotColor: "bg-cyan-400 text-cyan-400",
+        barColor: "bg-cyan-500",
+        badge: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30"
+      },
+      {
+        id: "Stage 2 - Video Interview",
+        step: "04",
+        label: "Stage 2 - Video Interview",
+        subtitle: "HireVue & Pre-Recorded Interviews Done",
+        color: "emerald",
+        topBar: "from-emerald-400 to-teal-500",
+        dotColor: "bg-emerald-400 text-emerald-400",
+        barColor: "bg-emerald-500",
+        badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+      },
+      {
+        id: "Stage 3 - Assessment Centre",
+        step: "05",
+        label: "Stage 3 - Assessment Centre",
+        subtitle: "Superday, Virtual & Final Round AC",
+        color: "fuchsia",
+        topBar: "from-fuchsia-400 to-pink-500",
+        dotColor: "bg-fuchsia-400 text-fuchsia-400",
+        barColor: "bg-fuchsia-500",
+        badge: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30"
+      },
+      {
+        id: "On Hold / Waitlist",
+        step: "06",
+        label: "On Hold / Waitlist",
+        subtitle: "Kept on Hold for Cycle Review",
+        color: "purple",
+        topBar: "from-purple-400 to-violet-500",
+        dotColor: "bg-purple-400 text-purple-400",
+        barColor: "bg-purple-500",
+        badge: "bg-purple-500/15 text-purple-300 border-purple-500/30"
+      },
+      {
+        id: "Closed / Unsuccessful",
+        step: "07",
+        label: "Closed / Unsuccessful",
+        subtitle: "Archived Outcomes by Stage Reached",
+        color: "slate",
+        topBar: "from-slate-500 to-rose-500/70",
+        dotColor: "bg-rose-400 text-rose-400",
+        barColor: "bg-slate-500",
+        badge: "bg-slate-500/15 text-slate-300 border-slate-500/30"
+      },
+      {
+        id: "Offer / Successful",
+        step: "08",
+        label: "Offer / Successful",
+        subtitle: "Confirmed Contracts & Final Offers",
+        color: "lime",
+        topBar: "from-lime-400 via-emerald-400 to-amber-400",
+        dotColor: "bg-lime-400 text-lime-400",
+        barColor: "bg-lime-400",
+        badge: "bg-lime-500/20 text-lime-300 border-lime-400/40",
+        isFinalGoal: true
+      }
     ];
 
     const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
+    const LEGACY_STORAGE_KEYS = [
+      "ramis_grad_tracker_2027_v3_sept_nov",
+      "ramis_grad_tracker_2027_v2",
+      "ramis_grad_tracker_2027"
+    ];
+
+    // Smart merge: preserves user's manual edits (notes, stage, custom fields) for existing IDs
+    // unless INITIAL_APPLICATIONS has a newer subStatus or deadline from Gmail, and always appends brand-new IDs.
+    function smartMergeApps(initialApps, savedApps) {
+      if (!Array.isArray(savedApps) || savedApps.length === 0) {
+        return initialApps.map(item => ({
+          ...item,
+          _gmailSubStatus: item.subStatus,
+          _gmailDeadline: item.deadline
+        }));
+      }
+
+      const validStageIds = new Set(STAGES.map(st => st.id));
+      const merged = [];
+      const seenIds = new Set();
+
+      for (const savedItem of savedApps) {
+        if (!savedItem || savedItem.id === undefined) continue;
+        seenIds.add(savedItem.id);
+
+        const initItem = initialApps.find(i => i.id === savedItem.id);
+        if (!initItem) {
+          const stage = validStageIds.has(savedItem.stage) ? savedItem.stage : "Application Submitted";
+          merged.push({ ...savedItem, stage });
+          continue;
+        }
+
+        const baselineSubStatus = savedItem._gmailSubStatus !== undefined ? savedItem._gmailSubStatus : initItem.subStatus;
+        const baselineDeadline = savedItem._gmailDeadline !== undefined ? savedItem._gmailDeadline : initItem.deadline;
+
+        const hasNewerGmailSubStatus = initItem.subStatus !== baselineSubStatus;
+        const hasNewerGmailDeadline = initItem.deadline !== baselineDeadline;
+        const hasNewerGmailUpdate = hasNewerGmailSubStatus || hasNewerGmailDeadline;
+
+        const preservedStage = validStageIds.has(savedItem.stage) ? savedItem.stage : initItem.stage;
+        const preservedNotes = (savedItem.notes !== undefined && savedItem.notes !== "")
+          ? savedItem.notes
+          : initItem.notes;
+
+        merged.push({
+          ...initItem,
+          ...savedItem,
+          stage: hasNewerGmailUpdate ? initItem.stage : preservedStage,
+          rejectedAfterStage: hasNewerGmailUpdate
+            ? (initItem.rejectedAfterStage || savedItem.rejectedAfterStage || null)
+            : (savedItem.rejectedAfterStage || initItem.rejectedAfterStage || null),
+          subStatus: hasNewerGmailSubStatus ? initItem.subStatus : (savedItem.subStatus ?? initItem.subStatus),
+          deadline: hasNewerGmailDeadline ? initItem.deadline : (savedItem.deadline !== undefined ? savedItem.deadline : initItem.deadline),
+          notes: preservedNotes,
+          calendarSynced: hasNewerGmailDeadline ? initItem.calendarSynced : (savedItem.calendarSynced ?? initItem.calendarSynced),
+          _gmailSubStatus: initItem.subStatus,
+          _gmailDeadline: initItem.deadline
+        });
+      }
+
+      for (const initItem of initialApps) {
+        if (!seenIds.has(initItem.id)) {
+          merged.push({
+            ...initItem,
+            _gmailSubStatus: initItem.subStatus,
+            _gmailDeadline: initItem.deadline
+          });
+        }
+      }
+
+      return merged;
+    }
 
     function loadMergedApps() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return INITIAL_APPLICATIONS;
-        const saved = JSON.parse(raw);
-        if (!Array.isArray(saved)) return INITIAL_APPLICATIONS;
-        const initialById = new Map(INITIAL_APPLICATIONS.map(item => [item.id, item]));
-        const savedById = new Map(saved.map(item => [item.id, item]));
-        const merged = INITIAL_APPLICATIONS.map(initItem => {
-          const s = savedById.get(initItem.id);
-          if (!s) return initItem;
-          const validStage = STAGES.some(st => st.id === s.stage) ? s.stage : initItem.stage;
-          return {
-            ...initItem,
-            ...s,
-            stage: validStage,
-            rejectedAfterStage: s.rejectedAfterStage || initItem.rejectedAfterStage || null
-          };
-        });
-        for (const s of saved) {
-          if (!initialById.has(s.id)) {
-            const validStage = STAGES.some(st => st.id === s.stage) ? s.stage : "Application Submitted";
-            merged.unshift({ ...s, stage: validStage });
+        let raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          for (const legacyKey of LEGACY_STORAGE_KEYS) {
+            const legacyRaw = localStorage.getItem(legacyKey);
+            if (legacyRaw) {
+              raw = legacyRaw;
+              break;
+            }
           }
         }
-        return merged;
+        if (!raw) {
+          return smartMergeApps(INITIAL_APPLICATIONS, []);
+        }
+        const saved = JSON.parse(raw);
+        return smartMergeApps(INITIAL_APPLICATIONS, saved);
       } catch {
-        return INITIAL_APPLICATIONS;
+        return smartMergeApps(INITIAL_APPLICATIONS, []);
       }
     }
 
@@ -294,6 +627,14 @@
 
     function App() {
       const [apps, setApps] = useState(loadMergedApps);
+      const [theme, setTheme] = useState(() => {
+        try {
+          const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+          return THEME_PRESETS.some(t => t.id === savedTheme) ? savedTheme : "carbon-gold";
+        } catch {
+          return "carbon-gold";
+        }
+      });
       const [now, setNow] = useState(Date.now());
       const [activeTab, setActiveTab] = useState("kanban");
       const [roleCategory, setRoleCategory] = useState("internship");
@@ -301,6 +642,12 @@
       const [sectorFilter, setSectorFilter] = useState("All");
       const [stageFilter, setStageFilter] = useState("All");
       const [rejectionFilter, setRejectionFilter] = useState("All");
+      const [sortBy, setSortBy] = useState("newest");
+      const [boardLayout, setBoardLayout] = useState("bento"); // "bento" (4x2 structured) or "swimlane" (horizontal)
+      const [compactCards, setCompactCards] = useState(false);
+      const [hideArchivedCols, setHideArchivedCols] = useState(false);
+      const [radarCollapsed, setRadarCollapsed] = useState(false);
+
       const [selectedApp, setSelectedApp] = useState(null);
       const [showAddModal, setShowAddModal] = useState(false);
       const [calMonth, setCalMonth] = useState("2026-11");
@@ -313,6 +660,80 @@
       // Live Email Refresh state
       const [isRefreshing, setIsRefreshing] = useState(false);
       const [syncStatus, setSyncStatus] = useState(null);
+      const restoreInputRef = React.useRef(null);
+
+      const handleBackupJson = () => {
+        try {
+          const dateSlug = new Date().toISOString().slice(0, 10);
+          const payload = {
+            version: 4,
+            exportedAt: new Date().toISOString(),
+            theme,
+            applications: apps
+          };
+          const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `grad-tracker-2027-backup-${dateSlug}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          setSyncStatus({
+            ok: true,
+            time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+            message: `Exported ${apps.length} applications to grad-tracker-2027-backup-${dateSlug}.json.`,
+            emails: []
+          });
+        } catch {
+          setSyncStatus({
+            ok: false,
+            time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+            message: "Failed to export JSON backup.",
+            emails: []
+          });
+        }
+      };
+
+      const handleRestoreJson = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const parsed = JSON.parse(ev.target.result);
+            const restoredApps = Array.isArray(parsed)
+              ? parsed
+              : (parsed && Array.isArray(parsed.applications) ? parsed.applications : null);
+            if (!restoredApps || restoredApps.length === 0) {
+              throw new Error("Invalid backup format");
+            }
+            if (parsed && parsed.theme && THEME_PRESETS.some(t => t.id === parsed.theme)) {
+              setTheme(parsed.theme);
+            }
+            const merged = smartMergeApps(INITIAL_APPLICATIONS, restoredApps);
+            setApps(merged);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(merged)); } catch {}
+            setSyncStatus({
+              ok: true,
+              time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+              message: `Restored & smart-merged ${merged.length} applications from ${file.name}.`,
+              emails: []
+            });
+          } catch {
+            setSyncStatus({
+              ok: false,
+              time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+              message: `Could not restore from ${file.name}: invalid JSON backup file.`,
+              emails: []
+            });
+          } finally {
+            e.target.value = "";
+          }
+        };
+        reader.readAsText(file);
+      };
 
       const [newApp, setNewApp] = useState({
         company: "", role: "", sector: "Investment Management",
@@ -328,8 +749,19 @@
       }, []);
 
       useEffect(() => {
+        document.body.setAttribute("data-theme", theme);
+        document.documentElement.classList.toggle("dark", theme !== "daylight");
+        try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
+      }, [theme]);
+
+      useEffect(() => {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(apps)); } catch {}
       }, [apps]);
+
+      const currentThemeObj = useMemo(
+        () => THEME_PRESETS.find(t => t.id === theme) || THEME_PRESETS[1],
+        [theme]
+      );
 
       const handleRefreshEmail = async () => {
         setIsRefreshing(true);
@@ -350,11 +782,7 @@
               if (match && match[1]) {
                 const latestInitial = new Function(`return ${match[1]}`)();
                 if (Array.isArray(latestInitial) && latestInitial.length > 0) {
-                  setApps(prev => {
-                    const latestById = new Map(latestInitial.map(i => [i.id, i]));
-                    const customApps = prev.filter(p => !latestById.has(p.id));
-                    return [...customApps, ...latestInitial];
-                  });
+                  setApps(prev => smartMergeApps(latestInitial, prev));
                 }
               }
             }
@@ -397,7 +825,7 @@
       const sectors = useMemo(() => ["All", ...new Set(categoryApps.map(a => a.sector))], [categoryApps]);
 
       const filteredApps = useMemo(() => {
-        return categoryApps.filter(app => {
+        const list = categoryApps.filter(app => {
           const matchesSearch = app.company.toLowerCase().includes(search.toLowerCase()) ||
             app.role.toLowerCase().includes(search.toLowerCase()) ||
             app.subStatus.toLowerCase().includes(search.toLowerCase());
@@ -407,7 +835,24 @@
             (app.stage === "Closed / Unsuccessful" && (app.rejectedAfterStage || "CV / Application Screen") === rejectionFilter);
           return matchesSearch && matchesSector && matchesStage && (activeTab !== "table" || rejectionFilter === "All" || matchesRejection);
         });
-      }, [categoryApps, search, sectorFilter, stageFilter, rejectionFilter, activeTab]);
+
+        return [...list].sort((a, b) => {
+          if (sortBy === "company") return a.company.localeCompare(b.company);
+          if (sortBy === "deadline") {
+            const da = a.deadline || "9999-12-31";
+            const db = b.deadline || "9999-12-31";
+            return da.localeCompare(db) || b.appliedDate.localeCompare(a.appliedDate);
+          }
+          if (sortBy === "sector") return a.sector.localeCompare(b.sector) || a.company.localeCompare(b.company);
+          // Default: newest appliedDate first
+          return b.appliedDate.localeCompare(a.appliedDate) || a.company.localeCompare(b.company);
+        });
+      }, [categoryApps, search, sectorFilter, stageFilter, rejectionFilter, activeTab, sortBy]);
+
+      const visibleStages = useMemo(() => {
+        if (!hideArchivedCols) return STAGES;
+        return STAGES.filter(s => s.id !== "Closed / Unsuccessful" && s.id !== "On Hold / Waitlist");
+      }, [hideArchivedCols]);
 
       const urgentItems = useMemo(() => {
         return apps
@@ -419,6 +864,7 @@
         const internships = apps.filter(a => a.category === "internship");
         const total = internships.length;
         const action = internships.filter(a => a.stage === "Action Required").length;
+        const submitted = internships.filter(a => a.stage === "Application Submitted").length;
         const stage1 = internships.filter(a => a.stage === "Stage 1 - Online Assessment").length;
         const stage2 = internships.filter(a => a.stage === "Stage 2 - Video Interview").length;
         const stage3 = internships.filter(a => a.stage === "Stage 3 - Assessment Centre").length;
@@ -433,7 +879,7 @@
         const everReachedStage1Plus = action + stage1 + stage2 + stage3 + offers + closedAfterOA + closedAfterVI + closedAfterAC;
         const progressionRate = total > 0 ? Math.round((everReachedStage1Plus / total) * 100) : 0;
         return {
-          total, action, stage1, stage2, stage3, offers, allOffers, active,
+          total, action, submitted, stage1, stage2, stage3, offers, allOffers, active,
           everReachedStage1Plus, progressionRate,
           closedTotal: closed.length, closedAfterCV, closedAfterOA, closedAfterVI, closedAfterAC
         };
@@ -508,7 +954,7 @@
       };
 
       const resetData = () => {
-        if (confirm("Reset dashboard back to the 57 synced Gmail applications (Sept–Nov 2026) in index.html?")) {
+        if (confirm("Reset dashboard back to the synced Gmail applications (Sept–Nov 2026) in index.html?")) {
           setApps(INITIAL_APPLICATIONS);
           localStorage.removeItem(STORAGE_KEY);
         }
@@ -532,18 +978,18 @@
       }, [calMonth, apps]);
 
       return (
-        <div className="min-h-screen text-slate-100 pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
+        <div className="min-h-screen pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
           {/* Top Command Header */}
-          <header className="sticky top-0 z-30 bg-[#06080F]/85 backdrop-blur-2xl border-b border-white/[0.08] px-4 md:px-8 py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
+          <header className="sticky top-0 z-30 theme-header backdrop-blur-2xl px-4 md:px-8 py-3.5 shadow-lg">
             <div className="max-w-[1640px] mx-auto flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 border border-white/15">
-                  <Icon name="Terminal" className="w-4 h-4 text-white" />
+                <div className="w-9 h-9 rounded-xl theme-accent-btn flex items-center justify-center shadow-lg">
+                  <Icon name="Terminal" className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2.5">
                     <h1 className="text-base md:text-lg font-extrabold tracking-tight text-white">2027 GRAD & INTERNSHIP COMMAND</h1>
-                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]">
+                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
                       Gmail (Sept–Nov) + GCal Synced
                     </span>
@@ -552,23 +998,45 @@
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Compact Theme Switcher Dropdown */}
+                <div className="glass-surface rounded-xl px-2.5 py-1.5 flex items-center gap-2">
+                  <span
+                    className="w-3 h-3 rounded-full border shrink-0 shadow-sm"
+                    style={{ backgroundColor: currentThemeObj.accent, borderColor: currentThemeObj.border }}
+                    title={`Active Theme: ${currentThemeObj.label}`}
+                  />
+                  <Icon name="Palette" className="w-3.5 h-3.5 text-slate-400" />
+                  <select
+                    aria-label="Theme Switcher"
+                    value={theme}
+                    onChange={e => setTheme(e.target.value)}
+                    className="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer pr-1"
+                  >
+                    {THEME_PRESETS.map(preset => (
+                      <option key={preset.id} value={preset.id} className="bg-slate-900 text-slate-100">
+                        {preset.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="glass-surface rounded-xl p-1 flex flex-wrap text-xs">
                   <button
                     onClick={() => { setRoleCategory("internship"); setSectorFilter("All"); }}
-                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${roleCategory === "internship" ? "bg-indigo-600/90 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/30" : "text-slate-400 hover:text-white"}`}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${roleCategory === "internship" ? "theme-accent-btn shadow-md" : "text-slate-400 hover:text-white"}`}
                   >
                     2027 Internships & Grad ({apps.filter(a => a.category === "internship").length})
                   </button>
                   <button
                     onClick={() => { setRoleCategory("parttime"); setSectorFilter("All"); }}
-                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${roleCategory === "parttime" ? "bg-indigo-600/90 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/30" : "text-slate-400 hover:text-white"}`}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${roleCategory === "parttime" ? "theme-accent-btn shadow-md" : "text-slate-400 hover:text-white"}`}
                   >
                     Part-Time & Flex ({apps.filter(a => a.category === "parttime").length})
                   </button>
                   <button
                     onClick={() => { setRoleCategory("successful"); setSectorFilter("All"); }}
-                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${roleCategory === "successful" ? "bg-lime-500/25 text-lime-200 shadow-md shadow-lime-500/20 border border-lime-400/40" : "text-lime-300/80 hover:text-lime-200"}`}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${roleCategory === "successful" ? "bg-lime-500/25 text-lime-200 shadow-md border border-lime-400/40" : "text-lime-300/80 hover:text-lime-200"}`}
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_6px_#a3e635]"></span>
                     Successful / Offers ({apps.filter(a => a.stage === "Offer / Successful").length})
@@ -576,9 +1044,34 @@
                 </div>
 
                 <button
+                  onClick={handleBackupJson}
+                  title="Export all applications and edits as a JSON backup file"
+                  className="flex items-center gap-1.5 glass-surface hover:border-current text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all"
+                >
+                  <Icon name="Download" className="w-3.5 h-3.5" />
+                  Backup JSON
+                </button>
+
+                <button
+                  onClick={() => restoreInputRef.current && restoreInputRef.current.click()}
+                  title="Restore and smart-merge applications from a JSON backup file"
+                  className="flex items-center gap-1.5 glass-surface hover:border-current text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all"
+                >
+                  <Icon name="Upload" className="w-3.5 h-3.5" />
+                  Restore JSON
+                </button>
+                <input
+                  ref={restoreInputRef}
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={handleRestoreJson}
+                  className="hidden"
+                />
+
+                <button
                   onClick={handleRefreshEmail}
                   disabled={isRefreshing}
-                  className="flex items-center gap-1.5 bg-indigo-600/90 hover:bg-indigo-500 disabled:opacity-60 text-white font-semibold text-xs px-3.5 py-2 rounded-xl transition-all shadow-lg shadow-indigo-500/20 border border-indigo-400/30"
+                  className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 text-white font-semibold text-xs px-3.5 py-2 rounded-xl transition-all"
                 >
                   <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
                   {isRefreshing ? "Checking Gmail..." : "Refresh & Check Email"}
@@ -586,7 +1079,7 @@
 
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/20 border border-emerald-300/40"
+                  className="flex items-center gap-1.5 theme-accent-btn font-bold text-xs px-3.5 py-2 rounded-xl transition-all shadow-lg"
                 >
                   <Icon name="Plus" className="w-4 h-4" />
                   Add Role
@@ -595,7 +1088,7 @@
             </div>
           </header>
 
-          <main className="max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-6">
+          <main className="max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-5">
             {/* Live Gmail Refresh Status Banner */}
             {syncStatus && (
               <div className={`glass-surface rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
@@ -611,7 +1104,7 @@
                     <div className="flex flex-wrap items-center gap-2 pt-0.5">
                       <span className="text-[11px] text-slate-400">Latest relevant emails today:</span>
                       {syncStatus.emails.map(em => (
-                        <span key={em.id} className="text-[11px] px-2.5 py-0.5 rounded-lg bg-[#090D18]/90 border border-white/[0.08] text-slate-200 font-medium">
+                        <span key={em.id} className="text-[11px] px-2.5 py-0.5 rounded-lg theme-input text-slate-200 font-medium">
                           {em.subject}
                         </span>
                       ))}
@@ -627,23 +1120,23 @@
               </div>
             )}
 
-            {/* KPI Strip (Linear / Bloomberg Obsidian Glass Tiles) */}
+            {/* KPI Strip — Offer / Successful placed at the very end */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-              <div className="glass-surface rounded-2xl p-4 hover:border-white/[0.15] transition-all">
+              <div className="glass-surface rounded-2xl p-4 transition-all">
                 <div className="text-xs text-slate-400 font-medium flex items-center justify-between">
                   <span>Total 2027 Apps</span>
-                  <Icon name="Briefcase" className="w-4 h-4 text-indigo-400" />
+                  <Icon name="Briefcase" className="w-4 h-4 theme-accent-text" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 font-mono-num tracking-tight text-white">{stats.total}</div>
                 <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_#818cf8]"></span>
-                  <span><strong className="font-mono-num text-slate-200">{stats.active}</strong> active • Sept–Nov</span>
+                  <span><strong className="font-mono-num text-slate-200">{stats.active}</strong> active • {stats.submitted} awaiting CV</span>
                 </div>
               </div>
 
-              <div className="glass-surface rounded-2xl p-4 border-amber-500/25 hover:border-amber-400/40 transition-all">
+              <div className="glass-surface rounded-2xl p-4 border-amber-500/25 transition-all">
                 <div className="text-xs text-amber-300/90 font-semibold flex items-center justify-between">
-                  <span>Action Required</span>
+                  <span>01 · Action Req.</span>
                   <Icon name="AlertTriangle" className="w-4 h-4 text-amber-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-amber-400 font-mono-num tracking-tight">{stats.action}</div>
@@ -653,56 +1146,40 @@
                 </div>
               </div>
 
-              <div className="glass-surface rounded-2xl p-4 border-cyan-500/25 hover:border-cyan-400/40 transition-all">
+              <div className="glass-surface rounded-2xl p-4 border-cyan-500/25 transition-all">
                 <div className="text-xs text-cyan-300/90 font-semibold flex items-center justify-between">
-                  <span>Stage 1: Online Test</span>
+                  <span>03 · Stage 1 OA</span>
                   <Icon name="FileCheck2" className="w-4 h-4 text-cyan-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-cyan-400 font-mono-num tracking-tight">{stats.stage1}</div>
-                <div className="text-[11px] text-slate-400 mt-1">Active in Stage 1 OA/SJT</div>
+                <div className="text-[11px] text-slate-400 mt-1">Online Tests Done</div>
               </div>
 
-              <div className="glass-surface rounded-2xl p-4 border-emerald-500/25 hover:border-emerald-400/40 transition-all">
+              <div className="glass-surface rounded-2xl p-4 border-emerald-500/25 transition-all">
                 <div className="text-xs text-emerald-300/90 font-semibold flex items-center justify-between">
-                  <span>Stage 2: Video Int.</span>
+                  <span>04 · Stage 2 Video</span>
                   <Icon name="Video" className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-emerald-400 font-mono-num tracking-tight">{stats.stage2}</div>
-                <div className="text-[11px] text-slate-400 mt-1">HireVue / VI completed</div>
+                <div className="text-[11px] text-slate-400 mt-1">HireVue / VI Done</div>
               </div>
 
-              <div className="glass-surface rounded-2xl p-4 border-fuchsia-500/25 hover:border-fuchsia-400/40 transition-all">
+              <div className="glass-surface rounded-2xl p-4 border-fuchsia-500/25 transition-all">
                 <div className="text-xs text-fuchsia-300/90 font-semibold flex items-center justify-between">
-                  <span>Stage 3: Assess. Ctr</span>
+                  <span>05 · Stage 3 AC</span>
                   <Icon name="Award" className="w-4 h-4 text-fuchsia-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-fuchsia-400 font-mono-num tracking-tight">{stats.stage3}</div>
-                <div className="text-[11px] text-slate-400 mt-1">AC / Final round</div>
+                <div className="text-[11px] text-slate-400 mt-1">Superday / Final AC</div>
               </div>
 
-              <div
-                onClick={() => { setRoleCategory("successful"); setSectorFilter("All"); }}
-                className="glass-surface rounded-2xl p-4 border-lime-500/30 hover:border-lime-400/50 transition-all cursor-pointer"
-              >
-                <div className="text-xs text-lime-300 font-semibold flex items-center justify-between">
-                  <span>Offer / Successful</span>
-                  <Icon name="Trophy" className="w-4 h-4 text-lime-400" />
-                </div>
-                <div className="text-2xl font-bold mt-1.5 text-lime-400 font-mono-num tracking-tight">{stats.allOffers}</div>
-                <div className="text-[11px] text-lime-200/70 mt-1 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_6px_#a3e635]"></span>
-                  <span>{stats.offers} Intern • {stats.allOffers - stats.offers} Flex</span>
-                </div>
-              </div>
-
-              <div className="glass-surface rounded-2xl p-4 bg-gradient-to-br from-indigo-950/50 via-[#0D121F]/85 to-emerald-950/30 border-indigo-500/25">
+              <div className="glass-surface rounded-2xl p-4">
                 <div className="text-xs text-indigo-300 font-semibold flex items-center justify-between">
-                  <span>Closed Breakdown</span>
+                  <span>07 · Closed ({stats.closedTotal})</span>
                   <Icon name="PieChart" className="w-4 h-4 text-indigo-400" />
                 </div>
                 <div className="text-lg font-bold mt-1.5 text-white font-mono-num flex items-baseline gap-2">
-                  <span>{stats.closedTotal} Closed</span>
-                  <span className="text-[11px] text-emerald-400 font-semibold">({stats.progressionRate}% → OA+)</span>
+                  <span>{stats.progressionRate}% → OA+</span>
                 </div>
                 <div className="text-[10px] text-slate-300 mt-1 font-mono-num flex items-center gap-2">
                   <span className="text-slate-400">CV:{stats.closedAfterCV}</span>
@@ -711,88 +1188,115 @@
                   <span className="text-fuchsia-300">S3:{stats.closedAfterAC}</span>
                 </div>
               </div>
+
+              <div
+                onClick={() => { setRoleCategory("successful"); setSectorFilter("All"); }}
+                className="glass-surface offer-column-glow rounded-2xl p-4 transition-all cursor-pointer"
+              >
+                <div className="text-xs text-lime-300 font-bold flex items-center justify-between">
+                  <span>08 · Offer / Success</span>
+                  <Icon name="Trophy" className="w-4 h-4 text-lime-400" />
+                </div>
+                <div className="text-2xl font-extrabold mt-1.5 text-lime-400 font-mono-num tracking-tight">{stats.allOffers}</div>
+                <div className="text-[11px] text-lime-200/80 mt-1 flex items-center gap-1.5 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_8px_#a3e635]"></span>
+                  <span>{stats.offers} Intern • {stats.allOffers - stats.offers} Flex</span>
+                </div>
+              </div>
             </div>
 
-            {/* Urgent Deadlines Radar */}
+            {/* Collapsible Urgent Deadlines Radar */}
             {urgentItems.length > 0 && (
-              <section className="glass-surface rounded-2xl p-4 md:p-5 border-amber-500/25">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <section className="glass-surface rounded-2xl p-4 border-amber-500/25">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] animate-ping"></span>
-                    <h2 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-amber-300">Immediate Deadlines & Action Radar ({urgentItems.length})</h2>
+                    <h2 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-amber-300">
+                      Immediate Deadlines & Action Radar ({urgentItems.length})
+                    </h2>
+                    <span className="hidden md:inline text-[11px] text-slate-400 font-mono-num pl-2">
+                      • EUROPE/LONDON (GMT)
+                    </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono-num">EUROPE/LONDON (GMT) • LIVE TELEMETRY</span>
+                  <button
+                    onClick={() => setRadarCollapsed(prev => !prev)}
+                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-lg theme-input transition"
+                  >
+                    <Icon name={radarCollapsed ? "ChevronDown" : "ChevronUp"} className="w-3.5 h-3.5" />
+                    {radarCollapsed ? "Expand Radar" : "Collapse Radar"}
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
-                  {urgentItems.map(item => {
-                    const cd = formatCountdown(item.deadline, item.appliedDate, now);
-                    return (
-                      <div key={item.id} className="glass-card rounded-xl p-3.5 flex flex-col justify-between group">
-                        <div>
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <CompanyMonogram company={item.company} />
-                              <span className="font-bold text-xs text-white group-hover:text-amber-300 transition truncate">{item.company}</span>
-                            </div>
-                            {item.calendarSynced && (
-                              <span title="Synced to Google Calendar" className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 shrink-0">
-                                GCal
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-[11px] text-slate-400 line-clamp-1 mt-2">{item.role}</p>
-                          <p className="text-[11px] text-amber-200/90 mt-1.5 font-medium line-clamp-2">{item.subStatus}</p>
-                        </div>
-
-                        <div className="mt-3 pt-2.5 border-t border-white/[0.07] space-y-2">
-                          {/* Subtle urgency progress bar */}
-                          {cd && (
-                            <div className="w-full h-1 bg-slate-900/90 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full transition-all duration-500 ${
-                                  cd.expired ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : cd.urgent ? "bg-amber-400 shadow-[0_0_8px_#fbbf24]" : "bg-emerald-400"
-                                }`}
-                                style={{ width: `${cd.expired ? 100 : cd.pctElapsed}%` }}
-                              />
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between gap-1.5">
-                            {cd ? (
-                              <span className={`text-[10px] font-mono-num font-semibold px-2 py-0.5 rounded-md border ${
-                                cd.expired
-                                  ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
-                                  : cd.urgent
-                                  ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                                  : "bg-slate-900/90 text-slate-300 border-white/[0.08]"
-                              }`}>
-                                {cd.text}
-                              </span>
-                            ) : (
-                              <span className="text-[10px] text-slate-400 font-mono-num">Action pending</span>
-                            )}
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => setSelectedApp(item)} className="text-[11px] text-slate-300 hover:text-white px-2 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.06] transition">
-                                Edit
-                              </button>
-                              {item.portalLink && (
-                                <a href={item.portalLink} target="_blank" rel="noreferrer" className="text-[11px] bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded-md flex items-center gap-1 transition shadow-sm shadow-amber-500/30">
-                                  Open <Icon name="ExternalLink" className="w-3 h-3" />
-                                </a>
+                {!radarCollapsed && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mt-3.5">
+                    {urgentItems.map(item => {
+                      const cd = formatCountdown(item.deadline, item.appliedDate, now);
+                      return (
+                        <div key={item.id} className="glass-card rounded-xl p-3 flex flex-col justify-between group">
+                          <div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <CompanyMonogram company={item.company} />
+                                <span className="font-bold text-xs text-white group-hover:text-amber-300 transition truncate">{item.company}</span>
+                              </div>
+                              {item.calendarSynced && (
+                                <span title="Synced to Google Calendar" className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 shrink-0">
+                                  GCal
+                                </span>
                               )}
                             </div>
+                            <p className="text-[11px] text-slate-400 line-clamp-1 mt-1.5">{item.role}</p>
+                            <p className="text-[11px] text-amber-200/90 mt-1 font-medium line-clamp-2">{item.subStatus}</p>
+                          </div>
+
+                          <div className="mt-2.5 pt-2 border-t border-white/[0.07] space-y-2">
+                            {cd && (
+                              <div className="w-full h-1 bg-slate-500/20 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full transition-all duration-500 ${
+                                    cd.expired ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : cd.urgent ? "bg-amber-400 shadow-[0_0_8px_#fbbf24]" : "bg-emerald-400"
+                                  }`}
+                                  style={{ width: `${cd.expired ? 100 : cd.pctElapsed}%` }}
+                                />
+                              </div>
+                            )}
+
+                            <div className="flex items-center justify-between gap-1.5">
+                              {cd ? (
+                                <span className={`text-[10px] font-mono-num font-semibold px-2 py-0.5 rounded-md border ${
+                                  cd.expired
+                                    ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                                    : cd.urgent
+                                    ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                                    : "theme-input text-slate-300"
+                                }`}>
+                                  {cd.text}
+                                </span>
+                              ) : (
+                                <span className="text-[10px] text-slate-400 font-mono-num">Action pending</span>
+                              )}
+                              <div className="flex items-center gap-1">
+                                <button onClick={() => setSelectedApp(item)} className="text-[11px] text-slate-300 hover:text-white px-2 py-1 rounded-md theme-input transition">
+                                  Edit
+                                </button>
+                                {item.portalLink && (
+                                  <a href={item.portalLink} target="_blank" rel="noreferrer" className="text-[11px] theme-accent-btn font-bold px-2 py-1 rounded-md flex items-center gap-1 transition shadow-sm">
+                                    Open <Icon name="ExternalLink" className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </section>
             )}
 
-            {/* Navigation & Filter Bar */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 glass-surface rounded-2xl p-3">
+            {/* Navigation, Layout Controls & Filter Bar */}
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 glass-surface rounded-2xl p-3">
               <div className="flex flex-wrap items-center gap-1.5">
                 {[
                   { id: "kanban", label: "Pipeline Board", icon: "Columns" },
@@ -805,40 +1309,83 @@
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
                       activeTab === tab.id
-                        ? "bg-white/[0.1] text-white border border-white/[0.15] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)]"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+                        ? "theme-accent-btn shadow-sm"
+                        : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
                     <Icon name={tab.icon} className="w-3.5 h-3.5" />
                     {tab.label}
                   </button>
                 ))}
+
+                {activeTab === "kanban" && (
+                  <div className="hidden sm:flex items-center gap-1 pl-2 ml-1 border-l border-white/[0.08]">
+                    <button
+                      onClick={() => setBoardLayout(prev => prev === "bento" ? "swimlane" : "bento")}
+                      title="Switch between 4x2 Organized Bento Grid and Horizontal Swimlanes"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium theme-input text-slate-300 hover:text-white transition"
+                    >
+                      <Icon name={boardLayout === "bento" ? "LayoutGrid" : "Columns"} className="w-3.5 h-3.5" />
+                      {boardLayout === "bento" ? "4×2 Bento Grid" : "Swimlane Row"}
+                    </button>
+                    <button
+                      onClick={() => setCompactCards(prev => !prev)}
+                      title="Toggle compact card density"
+                      className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
+                        compactCards ? "theme-accent-btn" : "theme-input text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      {compactCards ? "Compact Cards" : "Detailed Cards"}
+                    </button>
+                    <button
+                      onClick={() => setHideArchivedCols(prev => !prev)}
+                      title="Hide On Hold and Closed columns to focus only on active pipeline & offers"
+                      className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
+                        hideArchivedCols ? "theme-accent-btn" : "theme-input text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      {hideArchivedCols ? "Showing Active + Offers Only" : "Hide Hold/Closed"}
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <div className="relative flex-1 sm:w-56">
+                <div className="relative flex-1 sm:w-52">
                   <input
                     type="text"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search firm, role, stage..."
-                    className="w-full bg-[#06080F]/90 border border-white/[0.09] rounded-xl pl-3 pr-8 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/70 transition"
+                    className="w-full theme-input rounded-xl pl-3 pr-8 py-1.5 text-xs placeholder-slate-500 transition"
                   />
                 </div>
 
                 <select
                   value={sectorFilter}
                   onChange={e => setSectorFilter(e.target.value)}
-                  className="bg-[#06080F]/90 border border-white/[0.09] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/70"
+                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
                 >
                   {sectors.map(s => <option key={s} value={s}>{s === "All" ? "All Sectors" : s}</option>)}
+                </select>
+
+                <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value)}
+                  aria-label="Sort Applications"
+                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
+                >
+                  <option value="newest">Sort: Newest Applied</option>
+                  <option value="deadline">Sort: Urgent Deadline</option>
+                  <option value="company">Sort: Company (A–Z)</option>
+                  <option value="sector">Sort: Sector</option>
                 </select>
 
                 <select
                   value={rejectionFilter}
                   onChange={e => setRejectionFilter(e.target.value)}
                   title="Filter Closed / Unsuccessful by which stage you were unsuccessful after"
-                  className="bg-[#06080F]/90 border border-white/[0.09] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/70"
+                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
                 >
                   <option value="All">Unsuccessful Stage: All</option>
                   {REJECTION_STAGES.map(r => (
@@ -850,160 +1397,231 @@
                   <select
                     value={stageFilter}
                     onChange={e => setStageFilter(e.target.value)}
-                    className="bg-[#06080F]/90 border border-white/[0.09] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/70"
+                    className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
                   >
                     <option value="All">All Stages</option>
                     {STAGES.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
                   </select>
                 )}
 
-                <button onClick={resetData} title="Reset to default Gmail sync" className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl hover:bg-white/[0.05] transition">
+                <button onClick={resetData} title="Reset to default Gmail sync" className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl transition">
                   Reset
                 </button>
               </div>
             </div>
 
-            {/* VIEW 1: KANBAN PIPELINE (8 STAGES WITH DRAG & DROP + OFFER / SUCCESSFUL + UNSUCCESSFUL-AFTER DIFFERENTIATION) */}
+            {/* VIEW 1: ORGANIZED KANBAN PIPELINE BOARD (OFFER / SUCCESSFUL AT THE VERY END) */}
             {activeTab === "kanban" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3.5 items-start">
-                {STAGES.map(stage => {
-                  const colApps = filteredApps.filter(a => {
-                    if (a.stage !== stage.id) return false;
-                    if (stage.id === "Closed / Unsuccessful" && rejectionFilter !== "All") {
-                      return (a.rejectedAfterStage || "CV / Application Screen") === rejectionFilter;
-                    }
-                    return true;
-                  });
-                  const isDragTarget = dragOverStage === stage.id;
-                  return (
-                    <div
-                      key={stage.id}
-                      onDragOver={e => handleDragOver(e, stage.id)}
-                      onDragLeave={() => setDragOverStage(prev => prev === stage.id ? null : prev)}
-                      onDrop={e => handleDrop(e, stage.id)}
-                      className={`glass-surface rounded-2xl p-3 flex flex-col max-h-[78vh] transition-all duration-150 ${
-                        isDragTarget
-                          ? "border-indigo-400/80 ring-2 ring-indigo-500/35 bg-[#121B33]/90 shadow-[0_0_30px_rgba(99,102,241,0.28)]"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-1.5 pb-2.5 mb-2.5 border-b border-white/[0.08]">
-                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border truncate ${stage.badge}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 shadow-[0_0_8px_currentColor] ${stage.dotColor}`}></span>
-                          <span className="truncate">{stage.label}</span>
-                        </span>
-                        <span className="text-xs font-mono-num text-slate-300 font-bold px-1.5 py-0.5 rounded-md bg-white/[0.05] shrink-0">
-                          {colApps.length}
-                        </span>
-                      </div>
+              <div className="space-y-4">
+                {/* Visual Pipeline Flow Progress Bar */}
+                <div className="glass-surface rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 text-slate-300 font-semibold">
+                    <Icon name="GitBranch" className="w-3.5 h-3.5 theme-accent-text" />
+                    <span>Pipeline Flow Order:</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                    {visibleStages.map((st, idx) => {
+                      const count = filteredApps.filter(a => a.stage === st.id).length;
+                      return (
+                        <React.Fragment key={st.id}>
+                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border font-medium ${st.badge}`}>
+                            <span className="font-mono-num text-[10px] opacity-75">{st.step}</span>
+                            <span>{st.label}</span>
+                            <strong className="font-mono-num ml-0.5">({count})</strong>
+                          </span>
+                          {idx < visibleStages.length - 1 && (
+                            <span className="text-slate-600 font-mono-num">→</span>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                      {/* Sub-filter chips inside Closed / Unsuccessful column */}
-                      {stage.id === "Closed / Unsuccessful" && (
-                        <div className="flex flex-wrap gap-1 pb-2.5 mb-2 border-b border-white/[0.06]">
-                          <button
-                            onClick={() => setRejectionFilter("All")}
-                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
-                              rejectionFilter === "All"
-                                ? "bg-white/15 text-white border-white/30 font-bold"
-                                : "bg-white/[0.03] text-slate-400 border-white/[0.06] hover:text-slate-200"
-                            }`}
-                          >
-                            All ({stats.closedTotal})
-                          </button>
-                          <button
-                            onClick={() => setRejectionFilter("CV / Application Screen")}
-                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
-                              rejectionFilter === "CV / Application Screen"
-                                ? "bg-slate-500/30 text-white border-slate-400/50 font-bold"
-                                : "bg-white/[0.03] text-slate-400 border-white/[0.06] hover:text-slate-200"
-                            }`}
-                          >
-                            CV ({stats.closedAfterCV})
-                          </button>
-                          <button
-                            onClick={() => setRejectionFilter("Stage 1 - Online Assessment")}
-                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
-                              rejectionFilter === "Stage 1 - Online Assessment"
-                                ? "bg-cyan-500/25 text-cyan-200 border-cyan-400/50 font-bold"
-                                : "bg-white/[0.03] text-cyan-300/80 border-white/[0.06] hover:text-cyan-200"
-                            }`}
-                          >
-                            S1 ({stats.closedAfterOA})
-                          </button>
-                          <button
-                            onClick={() => setRejectionFilter("Stage 2 - Video Interview")}
-                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
-                              rejectionFilter === "Stage 2 - Video Interview"
-                                ? "bg-emerald-500/25 text-emerald-200 border-emerald-400/50 font-bold"
-                                : "bg-white/[0.03] text-emerald-300/80 border-white/[0.06] hover:text-emerald-200"
-                            }`}
-                          >
-                            S2 ({stats.closedAfterVI})
-                          </button>
-                        </div>
-                      )}
+                {/* Columns Grid: 4x2 Bento Grid (default, wide & readable) or Horizontal Swimlane */}
+                <div
+                  className={
+                    boardLayout === "bento"
+                      ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start"
+                      : "flex gap-4 overflow-x-auto pb-4 items-start"
+                  }
+                >
+                  {visibleStages.map(stage => {
+                    const colApps = filteredApps.filter(a => {
+                      if (a.stage !== stage.id) return false;
+                      if (stage.id === "Closed / Unsuccessful" && rejectionFilter !== "All") {
+                        return (a.rejectedAfterStage || "CV / Application Screen") === rejectionFilter;
+                      }
+                      return true;
+                    });
+                    const sharePct = filteredApps.length > 0
+                      ? Math.round((colApps.length / filteredApps.length) * 100)
+                      : 0;
+                    const isDragTarget = dragOverStage === stage.id;
+                    return (
+                      <div
+                        key={stage.id}
+                        onDragOver={e => handleDragOver(e, stage.id)}
+                        onDragLeave={() => setDragOverStage(prev => prev === stage.id ? null : prev)}
+                        onDrop={e => handleDrop(e, stage.id)}
+                        className={`glass-surface rounded-2xl flex flex-col max-h-[68vh] overflow-hidden transition-all duration-150 ${
+                          boardLayout === "swimlane" ? "min-w-[315px] w-[315px] shrink-0" : ""
+                        } ${stage.isFinalGoal ? "offer-column-glow" : ""} ${
+                          isDragTarget ? "ring-2 ring-amber-400/70 shadow-2xl scale-[1.01]" : ""
+                        }`}
+                      >
+                        {/* Top Stage Accent Strip */}
+                        <div className={`h-1.5 w-full bg-gradient-to-r ${stage.topBar}`} />
 
-                      <div className="space-y-2.5 overflow-y-auto pr-1">
-                        {colApps.map(app => {
-                          const rejBadge = app.stage === "Closed / Unsuccessful"
-                            ? getRejectionBadge(app.rejectedAfterStage)
-                            : null;
-                          return (
-                            <div
-                              key={app.id}
-                              draggable
-                              onDragStart={e => handleDragStart(e, app.id)}
-                              onDragEnd={() => { setDraggedAppId(null); setDragOverStage(null); }}
-                              onClick={() => setSelectedApp(app)}
-                              className={`glass-card rounded-xl p-3 cursor-grab active:cursor-grabbing space-y-2 ${
-                                draggedAppId === app.id ? "opacity-40 scale-95" : ""
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <CompanyMonogram company={app.company} />
-                                  <h3 className="text-xs font-bold text-white leading-snug truncate">{app.company}</h3>
-                                </div>
-                                <span className="text-[10px] font-mono-num text-slate-400 shrink-0">{app.appliedDate.slice(5)}</span>
-                              </div>
-
-                              <p className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed">{app.role}</p>
-
-                              {rejBadge && (
-                                <div className="pt-0.5">
-                                  <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md border ${rejBadge.badge}`}>
-                                    <span className={`w-1.5 h-1.5 rounded-full ${rejBadge.dot}`}></span>
-                                    {rejBadge.shortLabel}
-                                  </span>
-                                </div>
-                              )}
-
-                              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#06080F]/80 text-slate-400 border border-white/[0.06]">
-                                  {app.sector}
-                                </span>
-                                {app.calendarSynced && (
-                                  <span className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/10 text-sky-300 border border-sky-500/25">
-                                    GCal
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="text-[11px] text-slate-400 border-t border-white/[0.06] pt-1.5 line-clamp-2">
-                                {app.subStatus}
-                              </div>
+                        {/* Clean Structured Column Header */}
+                        <div className="p-3.5 pb-2.5 border-b border-white/[0.07] space-y-1.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-[10px] font-mono-num font-bold px-1.5 py-0.5 rounded theme-input text-slate-400 shrink-0">
+                                {stage.step}
+                              </span>
+                              <span className={`w-2 h-2 rounded-full shrink-0 shadow-[0_0_8px_currentColor] ${stage.dotColor}`} />
+                              <h3 className="text-xs font-extrabold text-white truncate" title={stage.label}>
+                                {stage.label}
+                              </h3>
                             </div>
-                          );
-                        })}
-                        {colApps.length === 0 && (
-                          <div className="text-center py-8 text-xs text-slate-500 border border-dashed border-white/[0.06] rounded-xl">
-                            Drop card here
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <span className="text-[10px] font-mono-num text-slate-400">
+                                {sharePct}%
+                              </span>
+                              <span className={`text-xs font-mono-num font-bold px-2 py-0.5 rounded-lg border ${stage.badge}`}>
+                                {colApps.length}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-[11px] text-slate-400 truncate">{stage.subtitle}</p>
+                        </div>
+
+                        {/* Sub-filter chips inside Closed / Unsuccessful column */}
+                        {stage.id === "Closed / Unsuccessful" && (
+                          <div className="px-3.5 py-2 bg-black/15 border-b border-white/[0.06] flex flex-wrap gap-1">
+                            {[
+                              { id: "All", label: `All (${stats.closedTotal})` },
+                              { id: "CV / Application Screen", label: `After CV (${stats.closedAfterCV})` },
+                              { id: "Stage 1 - Online Assessment", label: `After S1 (${stats.closedAfterOA})` },
+                              { id: "Stage 2 - Video Interview", label: `After S2 (${stats.closedAfterVI})` }
+                            ].map(chip => (
+                              <button
+                                key={chip.id}
+                                onClick={() => setRejectionFilter(chip.id)}
+                                className={`text-[10px] font-mono-num px-2 py-0.5 rounded-md border transition ${
+                                  rejectionFilter === chip.id
+                                    ? "theme-accent-btn font-bold"
+                                    : "theme-input text-slate-400 hover:text-white"
+                                }`}
+                              >
+                                {chip.label}
+                              </button>
+                            ))}
                           </div>
                         )}
+
+                        {/* Cards Container */}
+                        <div className="p-3 space-y-2.5 overflow-y-auto flex-1">
+                          {colApps.map(app => {
+                            const rejBadge = app.stage === "Closed / Unsuccessful"
+                              ? getRejectionBadge(app.rejectedAfterStage)
+                              : null;
+                            const cd = app.deadline ? formatCountdown(app.deadline, app.appliedDate, now) : null;
+                            return (
+                              <div
+                                key={app.id}
+                                draggable
+                                onDragStart={e => handleDragStart(e, app.id)}
+                                onDragEnd={() => { setDraggedAppId(null); setDragOverStage(null); }}
+                                onClick={() => setSelectedApp(app)}
+                                className={`glass-card rounded-xl p-3 cursor-grab active:cursor-grabbing space-y-2 ${
+                                  draggedAppId === app.id ? "opacity-40 scale-95" : ""
+                                }`}
+                              >
+                                {/* Card Header: Monogram + Firm + Applied Date + Direct Portal Action */}
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <CompanyMonogram company={app.company} />
+                                    <div className="min-w-0">
+                                      <h4 className="text-xs font-bold text-white leading-tight truncate">{app.company}</h4>
+                                      <span className="text-[10px] text-slate-400 truncate block mt-0.5">{app.sector}</span>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 shrink-0">
+                                    <span className="text-[10px] font-mono-num text-slate-400 px-1.5 py-0.5 rounded theme-input">
+                                      {app.appliedDate.slice(5)}
+                                    </span>
+                                    {app.portalLink && (
+                                      <a
+                                        href={app.portalLink}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={e => e.stopPropagation()}
+                                        title="Open Candidate Portal"
+                                        className="p-1 rounded-md theme-input text-slate-300 hover:text-white transition"
+                                      >
+                                        <Icon name="ExternalLink" className="w-3 h-3" />
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Role Title */}
+                                {!compactCards && (
+                                  <p className="text-[11px] text-slate-300 line-clamp-2 leading-snug">{app.role}</p>
+                                )}
+
+                                {/* Unsuccessful After Stage Badge OR Offer Badge */}
+                                {rejBadge && (
+                                  <div className="flex items-center justify-between gap-1">
+                                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md border ${rejBadge.badge}`}>
+                                      <span className={`w-1.5 h-1.5 rounded-full ${rejBadge.dot}`}></span>
+                                      {rejBadge.shortLabel}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {stage.isFinalGoal && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-lime-500/20 text-lime-300 border border-lime-400/40">
+                                      <Icon name="Trophy" className="w-3 h-3 text-lime-400" />
+                                      Confirmed Offer / Active Role
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Sub-status & Countdown Footer Box */}
+                                <div className="text-[11px] text-slate-300 theme-input rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
+                                  <span className="truncate">{app.subStatus}</span>
+                                  {cd && (
+                                    <span className={`text-[10px] font-mono-num font-bold shrink-0 ${
+                                      cd.expired ? "text-rose-400" : "text-amber-300"
+                                    }`}>
+                                      {cd.expired ? "DUE" : cd.text.split(" ")[0]}
+                                    </span>
+                                  )}
+                                  {app.calendarSynced && !cd && (
+                                    <span className="text-[9px] font-mono-num text-sky-300 shrink-0">GCal</span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          {colApps.length === 0 && (
+                            <div className="text-center py-10 px-4 text-xs text-slate-500 border border-dashed border-white/[0.08] rounded-xl space-y-1">
+                              <div className="font-semibold text-slate-400">
+                                {stage.isFinalGoal ? "Drag Offers & Contracts Here" : "No Roles in Stage"}
+                              </div>
+                              <div className="text-[11px]">Drop any card here to move to {stage.label}</div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -1013,7 +1631,7 @@
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-white/[0.08] text-[11px] uppercase tracking-wider text-slate-400 bg-[#06080F]/60">
+                      <tr className="border-b border-white/[0.08] text-[11px] uppercase tracking-wider text-slate-400">
                         <th className="py-3.5 px-4">Company</th>
                         <th className="py-3.5 px-4">Role</th>
                         <th className="py-3.5 px-4">Sector</th>
@@ -1026,7 +1644,7 @@
                     </thead>
                     <tbody className="divide-y divide-white/[0.06] text-xs">
                       {filteredApps.map(app => {
-                        const stageObj = STAGES.find(s => s.id === app.stage) || STAGES[4];
+                        const stageObj = STAGES.find(s => s.id === app.stage) || STAGES[1];
                         const rejObj = app.stage === "Closed / Unsuccessful" ? getRejectionBadge(app.rejectedAfterStage) : null;
                         return (
                           <tr key={app.id} className="hover:bg-white/[0.04] transition">
@@ -1043,9 +1661,9 @@
                               <select
                                 value={app.stage}
                                 onChange={e => updateAppStage(app.id, e.target.value)}
-                                className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border bg-[#06080F] focus:outline-none ${stageObj.badge}`}
+                                className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border theme-input focus:outline-none ${stageObj.badge}`}
                               >
-                                {STAGES.map(s => <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">{s.label}</option>)}
+                                {STAGES.map(s => <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">{s.step} · {s.label}</option>)}
                               </select>
                             </td>
                             <td className="py-3 px-4 whitespace-nowrap">
@@ -1055,16 +1673,16 @@
                                   {rejObj.shortLabel}
                                 </span>
                               ) : (
-                                <span className="text-slate-600 font-mono-num">—</span>
+                                <span className="text-slate-500 font-mono-num">—</span>
                               )}
                             </td>
                             <td className="py-3 px-4 text-slate-300 max-w-xs truncate">{app.subStatus}</td>
                             <td className="py-3 px-4 text-right whitespace-nowrap space-x-2.5">
-                              <button onClick={() => setSelectedApp(app)} className="text-indigo-400 hover:text-indigo-300 font-semibold">
+                              <button onClick={() => setSelectedApp(app)} className="theme-accent-text hover:underline font-semibold">
                                 Details
                               </button>
                               {app.portalLink && (
-                                <a href={app.portalLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:text-emerald-300 font-semibold">
+                                <a href={app.portalLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline font-semibold">
                                   Portal ↗
                                 </a>
                               )}
@@ -1095,7 +1713,7 @@
                           key={m.id}
                           onClick={() => setCalMonth(m.id)}
                           className={`px-3 py-1 rounded-xl text-xs font-semibold transition ${
-                            calMonth === m.id ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20" : "bg-[#06080F]/80 text-slate-400 hover:text-white border border-white/[0.07]"
+                            calMonth === m.id ? "theme-accent-btn shadow-md" : "theme-input text-slate-400 hover:text-white"
                           }`}
                         >
                           {m.label}
@@ -1110,7 +1728,7 @@
 
                   <div className="grid grid-cols-7 gap-1.5">
                     {calendarDays.map((cell, idx) => {
-                      if (!cell) return <div key={idx} className="h-20 rounded-xl bg-[#06080F]/30 border border-white/[0.03]" />;
+                      if (!cell) return <div key={idx} className="h-20 rounded-xl opacity-30 theme-input" />;
                       const isToday = cell.dateStr === "2026-11-18";
                       const isSelected = cell.dateStr === selectedDay;
                       return (
@@ -1119,10 +1737,10 @@
                           onClick={() => setSelectedDay(cell.dateStr)}
                           className={`h-20 rounded-xl p-1.5 border cursor-pointer transition flex flex-col justify-between ${
                             isSelected
-                              ? "bg-indigo-950/60 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.25)]"
+                              ? "ring-2 ring-amber-400/70 glass-card"
                               : isToday
-                              ? "bg-emerald-950/30 border-emerald-500/50"
-                              : "bg-[#0B101D]/80 border-white/[0.06] hover:border-white/[0.15]"
+                              ? "border-emerald-500/60 glass-card"
+                              : "glass-card"
                           }`}
                         >
                           <div className="flex items-center justify-between">
@@ -1197,7 +1815,7 @@
             {activeTab === "analytics" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="glass-surface rounded-2xl p-5 space-y-4">
-                  <h3 className="text-sm font-bold text-white">2027 Pipeline Breakdown (Stage 1 / Stage 2 / Stage 3)</h3>
+                  <h3 className="text-sm font-bold text-white">2027 Pipeline Breakdown (01 → 08 Offer / Successful)</h3>
                   <div className="space-y-3.5">
                     {STAGES.map(st => {
                       const count = apps.filter(a => a.category === "internship" && a.stage === st.id).length;
@@ -1207,11 +1825,12 @@
                           <div className="flex justify-between text-xs">
                             <span className="text-slate-300 font-medium flex items-center gap-2">
                               <span className={`w-2 h-2 rounded-full ${st.dotColor}`}></span>
+                              <span className="font-mono-num text-[11px] text-slate-400">{st.step}</span>
                               {st.label}
                             </span>
                             <span className="font-mono-num text-slate-300 font-semibold">{count} ({pct}%)</span>
                           </div>
-                          <div className="w-full h-2 bg-[#06080F] rounded-full overflow-hidden border border-white/[0.05]">
+                          <div className="w-full h-2 theme-input rounded-full overflow-hidden">
                             <div className={`h-full ${st.barColor || "bg-indigo-500"} rounded-full`} style={{ width: `${pct}%` }} />
                           </div>
                         </div>
@@ -1241,7 +1860,7 @@
                         .filter(a => a.category === "internship" && a.stage === "Closed / Unsuccessful" && (a.rejectedAfterStage || "CV / Application Screen") === row.id)
                         .map(a => a.company);
                       return (
-                        <div key={row.id} className="bg-[#080C17]/80 border border-white/[0.06] rounded-xl p-3 space-y-2">
+                        <div key={row.id} className="glass-card rounded-xl p-3 space-y-2">
                           <div className="flex justify-between text-xs">
                             <span className="text-slate-200 font-semibold flex items-center gap-2">
                               <span className={`w-2 h-2 rounded-full ${row.dot}`}></span>
@@ -1249,13 +1868,13 @@
                             </span>
                             <span className="font-mono-num text-white font-bold">{row.count} ({pct}%)</span>
                           </div>
-                          <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                          <div className="w-full h-1.5 theme-input rounded-full overflow-hidden">
                             <div className={`h-full ${row.bar} rounded-full`} style={{ width: `${pct}%` }} />
                           </div>
                           {matchingFirms.length > 0 && (
                             <div className="flex flex-wrap gap-1 pt-0.5">
                               {matchingFirms.map(firm => (
-                                <span key={firm} className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.04] text-slate-300 border border-white/[0.06]">
+                                <span key={firm} className="text-[10px] px-2 py-0.5 rounded-md theme-input text-slate-300">
                                   {firm}
                                 </span>
                               ))}
@@ -1279,7 +1898,7 @@
                             <span className="text-slate-300 font-medium">{sec}</span>
                             <span className="font-mono-num text-slate-400">{count} ({pct}%)</span>
                           </div>
-                          <div className="w-full h-2 bg-[#06080F] rounded-full overflow-hidden border border-white/[0.05]">
+                          <div className="w-full h-2 theme-input rounded-full overflow-hidden">
                             <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
@@ -1294,12 +1913,12 @@
           {/* Edit / Detail Modal */}
           {selectedApp && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setSelectedApp(null)}>
-              <div className="glass-surface border border-white/[0.15] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
                     <CompanyMonogram company={selectedApp.company} />
                     <div>
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">{selectedApp.sector}</span>
+                      <span className="text-[11px] font-semibold uppercase tracking-wider theme-accent-text">{selectedApp.sector}</span>
                       <h3 className="text-lg font-bold text-white mt-0.5">{selectedApp.company}</h3>
                       <p className="text-xs text-slate-400 mt-0.5">{selectedApp.role}</p>
                     </div>
@@ -1324,9 +1943,9 @@
                             : selectedApp.rejectedAfterStage
                         });
                       }}
-                      className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-slate-200"
+                      className="w-full theme-input rounded-xl px-2.5 py-2"
                     >
-                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.step} · {s.label}</option>)}
                     </select>
                   </div>
                   <div>
@@ -1336,18 +1955,18 @@
                       value={selectedApp.deadline || ""}
                       placeholder="YYYY-MM-DDTHH:MM:SS"
                       onChange={e => setSelectedApp({ ...selectedApp, deadline: e.target.value || null })}
-                      className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-slate-200 font-mono-num"
+                      className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num"
                     />
                   </div>
                 </div>
 
                 {selectedApp.stage === "Closed / Unsuccessful" && (
                   <div className="text-xs">
-                    <label className="block text-rose-300 font-semibold mb-1">Unsuccessful After Which Stage?</label>
+                    <label className="block text-rose-400 font-semibold mb-1">Unsuccessful After Which Stage?</label>
                     <select
                       value={selectedApp.rejectedAfterStage || "CV / Application Screen"}
                       onChange={e => setSelectedApp({ ...selectedApp, rejectedAfterStage: e.target.value })}
-                      className="w-full bg-[#06080F] border border-rose-500/30 rounded-xl px-2.5 py-2 text-slate-200"
+                      className="w-full theme-input rounded-xl px-2.5 py-2"
                     >
                       {REJECTION_STAGES.map(r => (
                         <option key={r.id} value={r.id}>{r.label}</option>
@@ -1362,7 +1981,7 @@
                     type="text"
                     value={selectedApp.subStatus}
                     onChange={e => setSelectedApp({ ...selectedApp, subStatus: e.target.value })}
-                    className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-slate-200"
+                    className="w-full theme-input rounded-xl px-3 py-2"
                   />
                 </div>
 
@@ -1372,7 +1991,7 @@
                     rows={3}
                     value={selectedApp.notes}
                     onChange={e => setSelectedApp({ ...selectedApp, notes: e.target.value })}
-                    className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-slate-200"
+                    className="w-full theme-input rounded-xl px-3 py-2"
                   />
                 </div>
 
@@ -1386,7 +2005,7 @@
                     <button onClick={() => setSelectedApp(null)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white">
                       Cancel
                     </button>
-                    <button onClick={() => handleSaveEdit(selectedApp)} className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                    <button onClick={() => handleSaveEdit(selectedApp)} className="px-4 py-2 rounded-xl text-xs font-bold theme-accent-btn shadow-lg">
                       Save Changes
                     </button>
                   </div>
@@ -1398,7 +2017,7 @@
           {/* Add New Role Modal */}
           {showAddModal && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
-              <form onSubmit={handleAddApp} className="glass-surface border border-white/[0.15] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+              <form onSubmit={handleAddApp} className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-bold text-white">Add New Application</h3>
                   <button type="button" onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
@@ -1409,39 +2028,39 @@
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="block text-slate-400 mb-1">Company *</label>
-                    <input required type="text" value={newApp.company} onChange={e => setNewApp({ ...newApp, company: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                    <input required type="text" value={newApp.company} onChange={e => setNewApp({ ...newApp, company: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
                   </div>
                   <div>
                     <label className="block text-slate-400 mb-1">Sector</label>
-                    <input type="text" value={newApp.sector} onChange={e => setNewApp({ ...newApp, sector: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                    <input type="text" value={newApp.sector} onChange={e => setNewApp({ ...newApp, sector: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
                   </div>
                 </div>
 
                 <div className="text-xs">
                   <label className="block text-slate-400 mb-1">Role Title *</label>
-                  <input required type="text" value={newApp.role} onChange={e => setNewApp({ ...newApp, role: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                  <input required type="text" value={newApp.role} onChange={e => setNewApp({ ...newApp, role: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="block text-slate-400 mb-1">Stage</label>
-                    <select value={newApp.stage} onChange={e => setNewApp({ ...newApp, stage: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-white">
-                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                    <select value={newApp.stage} onChange={e => setNewApp({ ...newApp, stage: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2">
+                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.step} · {s.label}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-slate-400 mb-1">Deadline (Optional)</label>
-                    <input type="datetime-local" value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-white font-mono-num" />
+                    <input type="datetime-local" value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num" />
                   </div>
                 </div>
 
                 {newApp.stage === "Closed / Unsuccessful" && (
                   <div className="text-xs">
-                    <label className="block text-rose-300 font-semibold mb-1">Unsuccessful After Which Stage?</label>
+                    <label className="block text-rose-400 font-semibold mb-1">Unsuccessful After Which Stage?</label>
                     <select
                       value={newApp.rejectedAfterStage || "CV / Application Screen"}
                       onChange={e => setNewApp({ ...newApp, rejectedAfterStage: e.target.value })}
-                      className="w-full bg-[#06080F] border border-rose-500/30 rounded-xl px-2.5 py-2 text-white"
+                      className="w-full theme-input rounded-xl px-2.5 py-2"
                     >
                       {REJECTION_STAGES.map(r => (
                         <option key={r.id} value={r.id}>{r.label}</option>
@@ -1452,17 +2071,17 @@
 
                 <div className="text-xs">
                   <label className="block text-slate-400 mb-1">Portal / Assessment Link</label>
-                  <input type="url" value={newApp.portalLink} onChange={e => setNewApp({ ...newApp, portalLink: e.target.value })} placeholder="https://..." className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                  <input type="url" value={newApp.portalLink} onChange={e => setNewApp({ ...newApp, portalLink: e.target.value })} placeholder="https://..." className="w-full theme-input rounded-xl px-3 py-2" />
                 </div>
 
                 <div className="text-xs">
                   <label className="block text-slate-400 mb-1">Notes</label>
-                  <textarea rows={2} value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                  <textarea rows={2} value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2">
                   <button type="button" onClick={() => setShowAddModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400">Cancel</button>
-                  <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950">Add to Tracker</button>
+                  <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold theme-accent-btn">Add to Tracker</button>
                 </div>
               </form>
             </div>
