@@ -816,7 +816,36 @@
       // Live Email Refresh state
       const [isRefreshing, setIsRefreshing] = useState(false);
       const [syncStatus, setSyncStatus] = useState(null);
+      const [highlightedStage, setHighlightedStage] = useState(null);
       const restoreInputRef = React.useRef(null);
+      const pipelineSectionRef = React.useRef(null);
+
+      const handleKpiCardClick = (targetStage, targetCategory = "internship") => {
+        setActiveTab("kanban");
+        if (targetStage === "All") {
+          setRoleCategory("internship");
+          setStageFilter("All");
+          setRejectionFilter("All");
+          setHideArchivedCols(false);
+          setHighlightedStage("All");
+        } else {
+          setRoleCategory(targetCategory);
+          setStageFilter(targetStage);
+          if (targetStage !== "Closed / Unsuccessful") {
+            setRejectionFilter("All");
+          }
+          if (targetStage === "Closed / Unsuccessful" || targetStage === "On Hold / Waitlist") {
+            setHideArchivedCols(false);
+          }
+          setHighlightedStage(targetStage);
+        }
+
+        setTimeout(() => {
+          if (pipelineSectionRef.current) {
+            pipelineSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 40);
+      };
 
       useEffect(() => {
         const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -1097,9 +1126,12 @@
       }, [categoryApps, search, sectorFilter, stageFilter, rejectionFilter, activeTab, sortBy]);
 
       const visibleStages = useMemo(() => {
+        if (stageFilter !== "All") {
+          return STAGES.filter(s => s.id === stageFilter);
+        }
         if (!hideArchivedCols) return STAGES;
         return STAGES.filter(s => s.id !== "Closed / Unsuccessful" && s.id !== "On Hold / Waitlist");
-      }, [hideArchivedCols]);
+      }, [hideArchivedCols, stageFilter]);
 
       const urgentItems = useMemo(() => {
         return apps
@@ -1409,9 +1441,17 @@
               </div>
             )}
 
-            {/* KPI Strip — Offer / Successful placed at the very end */}
+            {/* Interactive KPI Strip — All 7 cards are clickable buttons that scroll to & filter the Pipeline Board */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-              <div className="glass-surface rounded-2xl p-4 transition-all">
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("All", "internship")}
+                className={`glass-surface rounded-2xl p-4 text-left cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "All" && highlightedStage === "All"
+                    ? "ring-2 ring-indigo-400/80 shadow-[0_0_25px_rgba(99,102,241,0.25)]"
+                    : "hover:border-indigo-400/50"
+                }`}
+              >
                 <div className="text-xs text-slate-400 font-medium flex items-center justify-between">
                   <span>Total 2027 Apps</span>
                   <Icon name="Briefcase" className="w-4 h-4 theme-accent-text" />
@@ -1419,11 +1459,19 @@
                 <div className="text-2xl font-bold mt-1.5 font-mono-num tracking-tight text-white">{stats.total}</div>
                 <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_#818cf8]"></span>
-                  <span><strong className="font-mono-num text-slate-200">{stats.active}</strong> active • {stats.submitted} awaiting CV</span>
+                  <span><strong className="font-mono-num text-slate-200">{stats.active}</strong> active • View all</span>
                 </div>
-              </div>
+              </button>
 
-              <div className="glass-surface rounded-2xl p-4 border-amber-500/25 transition-all">
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("Action Required", "internship")}
+                className={`glass-surface rounded-2xl p-4 text-left cursor-pointer border-amber-500/25 hover:-translate-y-1 hover:border-amber-400/60 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "Action Required"
+                    ? "ring-2 ring-amber-400/80 shadow-[0_0_25px_rgba(251,191,36,0.25)]"
+                    : ""
+                }`}
+              >
                 <div className="text-xs text-amber-300/90 font-semibold flex items-center justify-between">
                   <span>01 · Action Req.</span>
                   <Icon name="AlertTriangle" className="w-4 h-4 text-amber-400" />
@@ -1433,36 +1481,68 @@
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24] animate-pulse"></span>
                   <span>6 synced to GCal</span>
                 </div>
-              </div>
+              </button>
 
-              <div className="glass-surface rounded-2xl p-4 border-cyan-500/25 transition-all">
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("Stage 1 - Online Assessment", "internship")}
+                className={`glass-surface rounded-2xl p-4 text-left cursor-pointer border-cyan-500/25 hover:-translate-y-1 hover:border-cyan-400/60 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "Stage 1 - Online Assessment"
+                    ? "ring-2 ring-cyan-400/80 shadow-[0_0_25px_rgba(34,211,238,0.25)]"
+                    : ""
+                }`}
+              >
                 <div className="text-xs text-cyan-300/90 font-semibold flex items-center justify-between">
                   <span>03 · Stage 1 OA</span>
                   <Icon name="FileCheck2" className="w-4 h-4 text-cyan-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-cyan-400 font-mono-num tracking-tight">{stats.stage1}</div>
                 <div className="text-[11px] text-slate-400 mt-1">Online Tests Done</div>
-              </div>
+              </button>
 
-              <div className="glass-surface rounded-2xl p-4 border-emerald-500/25 transition-all">
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("Stage 2 - Video Interview", "internship")}
+                className={`glass-surface rounded-2xl p-4 text-left cursor-pointer border-emerald-500/25 hover:-translate-y-1 hover:border-emerald-400/60 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "Stage 2 - Video Interview"
+                    ? "ring-2 ring-emerald-400/80 shadow-[0_0_25px_rgba(52,211,153,0.25)]"
+                    : ""
+                }`}
+              >
                 <div className="text-xs text-emerald-300/90 font-semibold flex items-center justify-between">
                   <span>04 · Stage 2 Video</span>
                   <Icon name="Video" className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-emerald-400 font-mono-num tracking-tight">{stats.stage2}</div>
                 <div className="text-[11px] text-slate-400 mt-1">HireVue / VI Done</div>
-              </div>
+              </button>
 
-              <div className="glass-surface rounded-2xl p-4 border-fuchsia-500/25 transition-all">
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("Stage 3 - Assessment Centre", "internship")}
+                className={`glass-surface rounded-2xl p-4 text-left cursor-pointer border-fuchsia-500/25 hover:-translate-y-1 hover:border-fuchsia-400/60 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "Stage 3 - Assessment Centre"
+                    ? "ring-2 ring-fuchsia-400/80 shadow-[0_0_25px_rgba(232,121,249,0.25)]"
+                    : ""
+                }`}
+              >
                 <div className="text-xs text-fuchsia-300/90 font-semibold flex items-center justify-between">
                   <span>05 · Stage 3 AC</span>
                   <Icon name="Award" className="w-4 h-4 text-fuchsia-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-fuchsia-400 font-mono-num tracking-tight">{stats.stage3}</div>
                 <div className="text-[11px] text-slate-400 mt-1">Superday / Final AC</div>
-              </div>
+              </button>
 
-              <div className="glass-surface rounded-2xl p-4">
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("Closed / Unsuccessful", "internship")}
+                className={`glass-surface rounded-2xl p-4 text-left cursor-pointer hover:-translate-y-1 hover:border-rose-400/50 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "Closed / Unsuccessful"
+                    ? "ring-2 ring-rose-400/80 shadow-[0_0_25px_rgba(251,113,133,0.25)]"
+                    : ""
+                }`}
+              >
                 <div className="text-xs text-indigo-300 font-semibold flex items-center justify-between">
                   <span>07 · Closed ({stats.closedTotal})</span>
                   <Icon name="PieChart" className="w-4 h-4 text-indigo-400" />
@@ -1476,11 +1556,16 @@
                   <span className="text-emerald-300">S2:{stats.closedAfterVI}</span>
                   <span className="text-fuchsia-300">S3:{stats.closedAfterAC}</span>
                 </div>
-              </div>
+              </button>
 
-              <div
-                onClick={() => { setRoleCategory("successful"); setSectorFilter("All"); }}
-                className="glass-surface offer-column-glow rounded-2xl p-4 transition-all cursor-pointer"
+              <button
+                type="button"
+                onClick={() => handleKpiCardClick("Offer / Successful", "successful")}
+                className={`glass-surface offer-column-glow rounded-2xl p-4 text-left cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-200 ${
+                  stageFilter === "Offer / Successful"
+                    ? "ring-2 ring-lime-400/85 shadow-[0_0_25px_rgba(163,230,53,0.3)]"
+                    : ""
+                }`}
               >
                 <div className="text-xs text-lime-300 font-bold flex items-center justify-between">
                   <span>08 · Offer / Success</span>
@@ -1491,7 +1576,7 @@
                   <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_8px_#a3e635]"></span>
                   <span>{stats.offers} Intern • {stats.allOffers - stats.offers} Flex</span>
                 </div>
-              </div>
+              </button>
             </div>
 
             {/* Collapsible Urgent Deadlines Radar */}
@@ -1718,8 +1803,12 @@
               )}
             </section>
 
-            {/* Navigation, Layout Controls & Filter Bar */}
-            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 glass-surface rounded-2xl p-3">
+            {/* Navigation, Layout Controls & Filter Bar (Scroll Target for KPI Summary Cards) */}
+            <div
+              id="pipeline-board-section"
+              ref={pipelineSectionRef}
+              className="scroll-mt-16 flex flex-col xl:flex-row xl:items-center justify-between gap-3 glass-surface rounded-2xl p-3"
+            >
               <div className="flex flex-wrap items-center gap-1.5">
                 {[
                   { id: "kanban", label: "Pipeline Board", icon: "Columns" },
@@ -1785,6 +1874,25 @@
                 </div>
 
                 <select
+                  value={stageFilter}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setStageFilter(val);
+                    setHighlightedStage(val);
+                    if (val === "Offer / Successful") {
+                      setRoleCategory("successful");
+                    } else if (roleCategory === "successful") {
+                      setRoleCategory("internship");
+                    }
+                  }}
+                  aria-label="Filter by Pipeline Stage"
+                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
+                >
+                  <option value="All">All Stages</option>
+                  {STAGES.map(st => <option key={st.id} value={st.id}>{st.step} · {st.label}</option>)}
+                </select>
+
+                <select
                   value={sectorFilter}
                   onChange={e => setSectorFilter(e.target.value)}
                   className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
@@ -1816,17 +1924,6 @@
                   ))}
                 </select>
 
-                {activeTab === "table" && (
-                  <select
-                    value={stageFilter}
-                    onChange={e => setStageFilter(e.target.value)}
-                    className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
-                  >
-                    <option value="All">All Stages</option>
-                    {STAGES.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
-                  </select>
-                )}
-
                 <button onClick={resetData} title="Reset to default Gmail sync" className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl transition">
                   Reset
                 </button>
@@ -1836,23 +1933,50 @@
             {/* VIEW 1: ORGANIZED KANBAN PIPELINE BOARD (OFFER / SUCCESSFUL AT THE VERY END) */}
             {activeTab === "kanban" && (
               <div className="space-y-4">
-                {/* Visual Pipeline Flow Progress Bar */}
-                <div className="glass-surface rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                {/* Visual Pipeline Flow Progress Bar (Interactive Stage Filter Pills) */}
+                <div
+                  className={`glass-surface rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs transition-all ${
+                    highlightedStage === "All" ? "ring-2 ring-indigo-400/60" : ""
+                  }`}
+                >
                   <div className="flex items-center gap-2 text-slate-300 font-semibold">
                     <Icon name="GitBranch" className="w-3.5 h-3.5 theme-accent-text" />
                     <span>Pipeline Flow Order:</span>
+                    {stageFilter !== "All" && (
+                      <button
+                        type="button"
+                        onClick={() => handleKpiCardClick("All", "internship")}
+                        className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg theme-accent-btn shadow-sm ml-1"
+                      >
+                        ← Show All 8 Stages ({stats.total})
+                      </button>
+                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                    {visibleStages.map((st, idx) => {
-                      const count = filteredApps.filter(a => a.stage === st.id).length;
+                    {STAGES.map((st, idx) => {
+                      const pool = st.id === "Offer / Successful"
+                        ? apps.filter(a => a.stage === "Offer / Successful")
+                        : apps.filter(a => a.category === (roleCategory === "parttime" ? "parttime" : "internship") && a.stage === st.id);
+                      const count = pool.length;
+                      const isFocused = stageFilter === st.id;
                       return (
                         <React.Fragment key={st.id}>
-                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border font-medium ${st.badge}`}>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              isFocused
+                                ? handleKpiCardClick("All", "internship")
+                                : handleKpiCardClick(st.id, st.id === "Offer / Successful" ? "successful" : roleCategory)
+                            }
+                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border font-medium cursor-pointer transition-all ${st.badge} ${
+                              isFocused ? "ring-2 ring-white/70 scale-105 font-bold" : "hover:opacity-90"
+                            }`}
+                          >
                             <span className="font-mono-num text-[10px] opacity-75">{st.step}</span>
                             <span>{st.label}</span>
                             <strong className="font-mono-num ml-0.5">({count})</strong>
-                          </span>
-                          {idx < visibleStages.length - 1 && (
+                          </button>
+                          {idx < STAGES.length - 1 && (
                             <span className="text-slate-600 font-mono-num">→</span>
                           )}
                         </React.Fragment>
@@ -1861,10 +1985,12 @@
                   </div>
                 </div>
 
-                {/* Columns Grid: 4x2 Bento Grid (default, wide & readable) or Horizontal Swimlane */}
+                {/* Columns Grid: Full-Width Expanded Stage View when filtered, or 4x2 Bento Grid / Horizontal Swimlane */}
                 <div
                   className={
-                    boardLayout === "bento"
+                    stageFilter !== "All"
+                      ? "grid grid-cols-1 gap-4 items-start"
+                      : boardLayout === "bento"
                       ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start"
                       : "flex gap-4 overflow-x-auto pb-4 items-start"
                   }
@@ -1877,18 +2003,24 @@
                       }
                       return true;
                     });
-                    const sharePct = filteredApps.length > 0
-                      ? Math.round((colApps.length / filteredApps.length) * 100)
+                    const totalInCategory = categoryApps.length;
+                    const sharePct = totalInCategory > 0
+                      ? Math.round((colApps.length / totalInCategory) * 100)
                       : 0;
                     const isDragTarget = dragOverStage === stage.id;
+                    const isExpandedSingleStage = stageFilter === stage.id;
                     return (
                       <div
                         key={stage.id}
                         onDragOver={e => handleDragOver(e, stage.id)}
                         onDragLeave={() => setDragOverStage(prev => prev === stage.id ? null : prev)}
                         onDrop={e => handleDrop(e, stage.id)}
-                        className={`glass-surface rounded-2xl flex flex-col max-h-[68vh] overflow-hidden transition-all duration-150 ${
-                          boardLayout === "swimlane" ? "min-w-[315px] w-[315px] shrink-0" : ""
+                        className={`glass-surface rounded-2xl flex flex-col overflow-hidden transition-all duration-200 ${
+                          isExpandedSingleStage
+                            ? "max-h-none ring-2 ring-amber-400/70 shadow-[0_0_35px_rgba(212,175,55,0.2)]"
+                            : "max-h-[68vh]"
+                        } ${
+                          !isExpandedSingleStage && boardLayout === "swimlane" ? "min-w-[315px] w-[315px] shrink-0" : ""
                         } ${stage.isFinalGoal ? "offer-column-glow" : ""} ${
                           isDragTarget ? "ring-2 ring-amber-400/70 shadow-2xl scale-[1.01]" : ""
                         }`}
@@ -1907,8 +2039,22 @@
                               <h3 className="text-xs font-extrabold text-white truncate" title={stage.label}>
                                 {stage.label}
                               </h3>
+                              {isExpandedSingleStage && (
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-400/30">
+                                  Expanded Full List ({colApps.length})
+                                </span>
+                              )}
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
+                              {isExpandedSingleStage && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleKpiCardClick("All", "internship")}
+                                  className="text-[11px] font-semibold px-2.5 py-1 rounded-lg theme-input text-slate-200 hover:text-white transition mr-1"
+                                >
+                                  ← Show All 8 Stages
+                                </button>
+                              )}
                               <span className="text-[10px] font-mono-num text-slate-400">
                                 {sharePct}%
                               </span>
@@ -1944,8 +2090,14 @@
                           </div>
                         )}
 
-                        {/* Cards Container */}
-                        <div className="p-3 space-y-2.5 overflow-y-auto flex-1">
+                        {/* Cards Container (Multi-column expanded grid when single stage is selected) */}
+                        <div
+                          className={
+                            isExpandedSingleStage
+                              ? "p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5"
+                              : "p-3 space-y-2.5 overflow-y-auto flex-1"
+                          }
+                        >
                           {colApps.map(app => {
                             const rejBadge = app.stage === "Closed / Unsuccessful"
                               ? getRejectionBadge(app.rejectedAfterStage)
