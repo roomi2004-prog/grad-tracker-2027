@@ -1274,11 +1274,11 @@
         });
       };
 
-      const acceptableOffers = useMemo(() => rawApps.filter(a => a.stage === "Offer / Successful"), [rawApps]);
+      const acceptableOffers = useMemo(() => rawApps.filter(a => a.category === "internship" && a.stage === "Offer / Successful"), [rawApps]);
 
       const openAcceptOfferModal = (preApp = null) => {
         const first = preApp || acceptableOffers[0] || null;
-        setSelectedOfferChoice(first ? String(first.id) : "custom");
+        setSelectedOfferChoice(first ? String(first.id) : "");
         setCustomOfferCompany("");
         setCustomOfferRole("");
         setShowAcceptOfferModal(true);
@@ -1298,6 +1298,7 @@
         e.preventDefault();
         const today = new Date().toISOString().slice(0, 10);
         let chosen;
+        if (!selectedOfferChoice) return;
         if (selectedOfferChoice === "custom") {
           if (!customOfferCompany.trim() || !customOfferRole.trim()) return;
           chosen = {
@@ -1307,7 +1308,7 @@
             subStatus: "Offer accepted", deadline: null, portalLink: "", notes: ""
           };
         } else {
-          chosen = rawApps.find(a => String(a.id) === String(selectedOfferChoice));
+          chosen = acceptableOffers.find(a => String(a.id) === String(selectedOfferChoice));
           if (!chosen) return;
         }
         const payload = {
@@ -1316,7 +1317,7 @@
           archivedAt: new Date().toISOString(),
           acceptedOffer: { ...chosen, stage: "Offer / Successful", acceptedDate: today },
           cycleStats,
-          archivedApplications: rawApps,
+          archivedApplications: rawApps.filter(a => a.category === "internship"),
           archivedHandledRecs: handledRecs
         };
         try {
@@ -1325,7 +1326,7 @@
           localStorage.setItem(CYCLE_ARCHIVE_HUMAN_KEY, json);
           localStorage.setItem(OFFER_ACCEPTED_FLAG_KEY, "true");
           localStorage.setItem(TRACKR_PAUSED_FLAG_KEY, "true");
-          localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(rawApps.filter(a => a.category !== "internship")));
         } catch {}
         try {
           const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -1339,7 +1340,7 @@
           URL.revokeObjectURL(url);
         } catch {}
         setCycleArchive(payload);
-        setApps([]);
+        setApps(prev => prev.filter(a => a.category !== "internship"));
         setViewArchiveMode(false);
         setSelectedApp(null);
         setStageFilter("All");
@@ -1355,7 +1356,8 @@
       const handleReopenCycle = () => {
         if (!cycleArchive) return;
         if (!confirm("Reopen the 2027 cycle? Archived applications return to the active board and recommendations resume.")) return;
-        const restored = cycleArchive.archivedApplications || [];
+        const archivedIds = new Set((cycleArchive.archivedApplications || []).map(a => a.id));
+        const restored = [...(cycleArchive.archivedApplications || []), ...rawApps.filter(a => !archivedIds.has(a.id))];
         try {
           localStorage.removeItem(CYCLE_ARCHIVE_KEY);
           localStorage.removeItem(CYCLE_ARCHIVE_HUMAN_KEY);
@@ -2253,7 +2255,7 @@
                             </div>
                           </div>
                           <p className="text-[11px] text-slate-400 truncate">{stage.subtitle}</p>
-                          {stage.isFinalGoal && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
+                          {stage.isFinalGoal && acceptableOffers.length > 0 && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
                             <button
                               type="button"
                               onClick={() => openAcceptOfferModal()}
@@ -2355,7 +2357,7 @@
                                   </div>
                                 )}
 
-                                {stage.isFinalGoal && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
+                                {stage.isFinalGoal && app.category === "internship" && !viewArchiveMode && !(cycleArchive && cycleArchive.offerAccepted) && (
                                   <button
                                     type="button"
                                     onClick={e => { e.stopPropagation(); openAcceptOfferModal(app); }}
@@ -2806,7 +2808,6 @@
                   <label className="block text-slate-400 mb-1">Which firm / role did you accept?</label>
                   <select value={selectedOfferChoice} onChange={e => setSelectedOfferChoice(e.target.value)} className="w-full theme-input rounded-xl px-2.5 py-2">
                     {acceptableOffers.map(o => <option key={o.id} value={String(o.id)}>{o.company} — {o.role}</option>)}
-                    <option value="custom">Other / custom firm & role…</option>
                   </select>
                 </div>
                 {selectedOfferChoice === "custom" && (
