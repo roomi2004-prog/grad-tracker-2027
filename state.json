@@ -8,12 +8,66 @@
     "1a1efb9c13e9cc15",
     "1a1f092fddcec36e",
     "1a1f0b475a8b8756",
-    "1a1f0b429202eb02"
+    "1a1f0b429202eb02",
+    "1a1f0b4a1c03a108",
+    "1a1f0b452617229a",
+    "1a1eeb6d26fd1ca5",
+    "1a1ee68ddcb571fb",
+    "1a1ea06550873c5b",
+    "1a1e965354974995",
+    "1a1e6adc41cd31da",
+    "1a1e69f12ea833c2",
+    "1a1e69eb569e764a"
   ],
   "dismissedIds": [],
   "version": 6,
   "updatedAt": "2026-11-18T22:09:15.022Z",
   "applications": [
+    {
+      "id": "app-1a1e69eb569e764a",
+      "firm": "Confirm your identity for job 2027 Summe",
+      "role": "2027 Summer Internship",
+      "stage": "08 ? Offer / Success",
+      "status": "Offer Received",
+      "appliedDate": "2026-11-16",
+      "lastUpdated": "2026-11-16"
+    },
+    {
+      "id": "app-1a1e69f12ea833c2",
+      "firm": "Your recent job application for 2027 Sum",
+      "role": "2027 Summer Internship",
+      "stage": "08 ? Offer / Success",
+      "status": "Offer Received",
+      "appliedDate": "2026-11-16",
+      "lastUpdated": "2026-11-16"
+    },
+    {
+      "id": "app-1a1e965354974995",
+      "firm": "SW Group Hiring",
+      "role": "2027 Summer Internship",
+      "stage": "03 ? Stage 1 OA",
+      "status": "Online Assessment Due",
+      "appliedDate": "2026-11-17",
+      "lastUpdated": "2026-11-17"
+    },
+    {
+      "id": "app-1a1ea06550873c5b",
+      "firm": "Thank you for your application",
+      "role": "2027 Summer Internship",
+      "stage": "07 ? Closed",
+      "status": "Unsuccessful",
+      "appliedDate": "2026-11-17",
+      "lastUpdated": "2026-11-17"
+    },
+    {
+      "id": "app-1a1ee68ddcb571fb",
+      "firm": "Your application to Sky",
+      "role": "2027 Summer Internship",
+      "stage": "08 ? Offer / Success",
+      "status": "Offer Received",
+      "appliedDate": "2026-11-18",
+      "lastUpdated": "2026-11-18"
+    },
     {
       "id": "app-1a1f0b475a8b8756",
       "firm": "ramis ahmad",
