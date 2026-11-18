@@ -1473,7 +1473,7 @@
                 }`}
               >
                 <div className="text-xs text-amber-300/90 font-semibold flex items-center justify-between">
-                  <span>01 · Action Req.</span>
+                  <span>Action Required</span>
                   <Icon name="AlertTriangle" className="w-4 h-4 text-amber-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-amber-400 font-mono-num tracking-tight">{stats.action}</div>
@@ -1493,7 +1493,7 @@
                 }`}
               >
                 <div className="text-xs text-cyan-300/90 font-semibold flex items-center justify-between">
-                  <span>03 · Stage 1 OA</span>
+                  <span>Stage 1: Online Test</span>
                   <Icon name="FileCheck2" className="w-4 h-4 text-cyan-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-cyan-400 font-mono-num tracking-tight">{stats.stage1}</div>
@@ -1510,7 +1510,7 @@
                 }`}
               >
                 <div className="text-xs text-emerald-300/90 font-semibold flex items-center justify-between">
-                  <span>04 · Stage 2 Video</span>
+                  <span>Stage 2: Video Int.</span>
                   <Icon name="Video" className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-emerald-400 font-mono-num tracking-tight">{stats.stage2}</div>
@@ -1527,7 +1527,7 @@
                 }`}
               >
                 <div className="text-xs text-fuchsia-300/90 font-semibold flex items-center justify-between">
-                  <span>05 · Stage 3 AC</span>
+                  <span>Stage 3: Assess. Ctr</span>
                   <Icon name="Award" className="w-4 h-4 text-fuchsia-400" />
                 </div>
                 <div className="text-2xl font-bold mt-1.5 text-fuchsia-400 font-mono-num tracking-tight">{stats.stage3}</div>
@@ -1544,7 +1544,7 @@
                 }`}
               >
                 <div className="text-xs text-indigo-300 font-semibold flex items-center justify-between">
-                  <span>07 · Closed ({stats.closedTotal})</span>
+                  <span>Closed ({stats.closedTotal})</span>
                   <Icon name="PieChart" className="w-4 h-4 text-indigo-400" />
                 </div>
                 <div className="text-lg font-bold mt-1.5 text-white font-mono-num flex items-baseline gap-2">
@@ -1568,7 +1568,7 @@
                 }`}
               >
                 <div className="text-xs text-lime-300 font-bold flex items-center justify-between">
-                  <span>08 · Offer / Success</span>
+                  <span>Offer / Successful</span>
                   <Icon name="Trophy" className="w-4 h-4 text-lime-400" />
                 </div>
                 <div className="text-2xl font-extrabold mt-1.5 text-lime-400 font-mono-num tracking-tight">{stats.allOffers}</div>
@@ -1889,7 +1889,7 @@
                   className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
                 >
                   <option value="All">All Stages</option>
-                  {STAGES.map(st => <option key={st.id} value={st.id}>{st.step} · {st.label}</option>)}
+                  {STAGES.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
                 </select>
 
                 <select
@@ -1972,7 +1972,6 @@
                               isFocused ? "ring-2 ring-white/70 scale-105 font-bold" : "hover:opacity-90"
                             }`}
                           >
-                            <span className="font-mono-num text-[10px] opacity-75">{st.step}</span>
                             <span>{st.label}</span>
                             <strong className="font-mono-num ml-0.5">({count})</strong>
                           </button>
@@ -2032,9 +2031,6 @@
                         <div className="p-3.5 pb-2.5 border-b border-white/[0.07] space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-[10px] font-mono-num font-bold px-1.5 py-0.5 rounded theme-input text-slate-400 shrink-0">
-                                {stage.step}
-                              </span>
                               <span className={`w-2 h-2 rounded-full shrink-0 shadow-[0_0_8px_currentColor] ${stage.dotColor}`} />
                               <h3 className="text-xs font-extrabold text-white truncate" title={stage.label}>
                                 {stage.label}
@@ -2238,7 +2234,7 @@
                                 onChange={e => updateAppStage(app.id, e.target.value)}
                                 className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border theme-input focus:outline-none ${stageObj.badge}`}
                               >
-                                {STAGES.map(s => <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">{s.step} · {s.label}</option>)}
+                                {STAGES.map(s => <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">{s.label}</option>)}
                               </select>
                             </td>
                             <td className="py-3 px-4 whitespace-nowrap">
@@ -2390,7 +2386,7 @@
             {activeTab === "analytics" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="glass-surface rounded-2xl p-5 space-y-4">
-                  <h3 className="text-sm font-bold text-white">2027 Pipeline Breakdown (01 → 08 Offer / Successful)</h3>
+                  <h3 className="text-sm font-bold text-white">2027 Pipeline Breakdown</h3>
                   <div className="space-y-3.5">
                     {STAGES.map(st => {
                       const count = apps.filter(a => a.category === "internship" && a.stage === st.id).length;
@@ -2400,7 +2396,6 @@
                           <div className="flex justify-between text-xs">
                             <span className="text-slate-300 font-medium flex items-center gap-2">
                               <span className={`w-2 h-2 rounded-full ${st.dotColor}`}></span>
-                              <span className="font-mono-num text-[11px] text-slate-400">{st.step}</span>
                               {st.label}
                             </span>
                             <span className="font-mono-num text-slate-300 font-semibold">{count} ({pct}%)</span>
@@ -2520,7 +2515,7 @@
                       }}
                       className="w-full theme-input rounded-xl px-2.5 py-2"
                     >
-                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.step} · {s.label}</option>)}
+                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                     </select>
                   </div>
                   <div>
@@ -2620,7 +2615,7 @@
                   <div>
                     <label className="block text-slate-400 mb-1">Stage</label>
                     <select value={newApp.stage} onChange={e => setNewApp({ ...newApp, stage: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2">
-                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.step} · {s.label}</option>)}
+                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                     </select>
                   </div>
                   <div>
