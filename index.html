@@ -2450,27 +2450,15 @@
                   className="hidden"
                 />
 
-                {/* + Add Offer (speculative / external) */}
-                {!isHeaderCompact && !viewArchiveMode && (
-                  <button
-                    onClick={() => setShowExternalOfferModal(true)}
-                    title="Log an offer from outside the tracker (speculative application, referral, direct approach...)"
-                    className="flex items-center gap-1 font-bold whitespace-nowrap rounded-xl transition-all shrink-0 text-xs px-3.5 py-2 bg-lime-500/15 text-lime-300 border border-lime-400/40 hover:bg-lime-500/25"
-                  >
-                    <Icon name="Gift" className="w-4 h-4" />
-                    + Add Offer
-                  </button>
-                )}
-
-                {/* + Add Role Button — compact when scrolled down */}
+                {/* Add Role Button — compact when scrolled down */}
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className={`flex items-center gap-1 theme-accent-btn font-bold whitespace-nowrap rounded-xl transition-all shadow-lg shrink-0 ${
+                  className={`flex items-center gap-1.5 theme-accent-btn font-bold whitespace-nowrap rounded-xl transition-all shadow-lg shrink-0 ${
                     isHeaderCompact ? "text-[11px] px-2.5 py-1.5" : "text-xs px-3.5 py-2"
                   }`}
                 >
                   <Icon name="Plus" className={isHeaderCompact ? "w-3.5 h-3.5" : "w-4 h-4"} />
-                  + Add Role
+                  Add Role
                 </button>
               </div>
             </div>
