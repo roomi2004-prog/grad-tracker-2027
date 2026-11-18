@@ -59,9 +59,9 @@
   ],
   "dismissedIds": [
     "rec-email-bny-trade-2027",
-    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
+    "bny::2027 bny summer internship program – trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
-    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
+    "bny::2027 bny summer internship program – credit & lending (london) (req 83005)",
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
@@ -73,8 +73,9 @@
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
     "st james's place::2027 investment internship programme"
   ],
+  "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-18T23:37:48Z",
+  "updatedAt": "2026-11-18T23:44:35.048Z",
   "applications": [
     {
       "id": 1795044264522,
@@ -87,23 +88,6 @@
       "subStatus": "Applied via The Trackr (11-18)",
       "deadline": null,
       "portalLink": "https://clientsites.sanctuarygraduates.co.uk/sjp2026/roles/620916?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027",
-      "calendarSynced": false,
-      "notes": "Applied on 2026-11-18 from Recommended to Apply (The Trackr ? UK Finance). Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16).",
-      "_gmailSubStatus": "Applied via The Trackr (11-18)",
-      "_gmailDeadline": null,
-      "rejectedAfterStage": null
-    },
-    {
-      "id": 1795044257639,
-      "category": "internship",
-      "company": "Bank of England",
-      "role": "2027 Summer Internship Programme",
-      "sector": "Corporate & Investment Banking",
-      "appliedDate": "2026-11-18",
-      "stage": "Application Submitted",
-      "subStatus": "Applied via The Trackr (11-18)",
-      "deadline": null,
-      "portalLink": "https://eoff.fa.em1.ukg.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_3001/jobs?keyword=%222027+summer+internship%22&mode=location&utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027&iis=Trackr&sType=Trackr",
       "calendarSynced": false,
       "notes": "Applied on 2026-11-18 from Recommended to Apply (The Trackr ? UK Finance). Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16).",
       "_gmailSubStatus": "Applied via The Trackr (11-18)",
@@ -125,7 +109,7 @@
       "notes": "Numerical Reasoning, Inductive Reasoning, Situational Judgement Test. Check portal immediately!",
       "rejectedAfterStage": "Stage 1 - Online Assessment",
       "_gmailSubStatus": "Stage 1: Online Assessments Due (48h window from Nov 16, 13:31)",
-      "_gmailDeadline": "2026-11-18T13:31:00"
+      "_gmailDeadline": null
     },
     {
       "id": 3,
@@ -159,7 +143,7 @@
       "notes": "3 timed tests (6 mins each: Verbal, Numerical, Inductive Reasoning). Must complete by Nov 22, 7:49 PM GMT.",
       "rejectedAfterStage": "Stage 1 - Online Assessment",
       "_gmailSubStatus": "Stage 1: Aon Online Assessments (Verbal, Numerical, Inductive)",
-      "_gmailDeadline": "2026-11-22T19:49:52"
+      "_gmailDeadline": null
     },
     {
       "id": 5,
@@ -1214,26 +1198,6 @@
       "rejectedAfterStage": null,
       "_gmailSubStatus": "Assessments & Video Interview Under Review (Oct 14)",
       "_gmailDeadline": null
-    },
-    {
-      "id": "app-1a1e965354974995",
-      "firm": "SW Group Hiring",
-      "role": "2027 Summer Internship",
-      "stage": "Stage 1 - Online Assessment",
-      "status": "Online Assessment Due",
-      "appliedDate": "2026-11-17",
-      "lastUpdated": "2026-11-17",
-      "category": "internship",
-      "company": "SW Group Hiring",
-      "sector": "Corporate & Investment Banking",
-      "subStatus": "Online Assessment Completed (18 Nov)",
-      "deadline": null,
-      "portalLink": "",
-      "calendarSynced": false,
-      "notes": "",
-      "_gmailSubStatus": "Online Assessment Due",
-      "_gmailDeadline": null,
-      "rejectedAfterStage": null
     }
   ],
   "recommendations": [
@@ -1384,9 +1348,9 @@
   ],
   "handledRecIds": [
     "rec-email-bny-trade-2027",
-    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
+    "bny::2027 bny summer internship program – trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
-    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
+    "bny::2027 bny summer internship program – credit & lending (london) (req 83005)",
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
@@ -1398,10 +1362,6 @@
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
     "st james's place::2027 investment internship programme"
   ],
-  "cycleArchive": null,
-  "offerAccepted": false,
-  "recommendationsPaused": false,
-  "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "deletedAppIds": [
     "app-1a1ea06550873c5b",
     "app-1a1efbecac2d1388",
@@ -1418,6 +1378,10 @@
     "app_c52b1663",
     "app_c8d844d7",
     "app_e7ca42a4",
-    "app_f5a22011"
-  ]
+    "app_f5a22011",
+    "1795044257639"
+  ],
+  "cycleArchive": null,
+  "offerAccepted": false,
+  "recommendationsPaused": false
 }
