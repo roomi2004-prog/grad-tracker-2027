@@ -9,7 +9,7 @@
   ],
   "dismissedIds": [],
   "version": 6,
-  "updatedAt": "2026-11-18T22:04:13.498Z",
+  "updatedAt": "2026-11-18T22:09:05.872Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -63,12 +63,13 @@
       "role": "2027 Summer Internship Programme",
       "sector": "Investment Management",
       "appliedDate": "2026-11-15",
-      "stage": "Action Required",
+      "stage": "Closed / Unsuccessful",
       "subStatus": "Stage 1: Aon Online Assessments (Verbal, Numerical, Inductive)",
       "deadline": "2026-11-22T19:49:52",
       "portalLink": "https://fidelityinternational.tal.net/vx/lang-en-GB/mobile-0/brand-5/user-761369/candidate/application/598644",
       "calendarSynced": true,
-      "notes": "3 timed tests (6 mins each: Verbal, Numerical, Inductive Reasoning). Must complete by Nov 22, 7:49 PM GMT."
+      "notes": "3 timed tests (6 mins each: Verbal, Numerical, Inductive Reasoning). Must complete by Nov 22, 7:49 PM GMT.",
+      "rejectedAfterStage": "Stage 1 - Online Assessment"
     },
     {
       "id": 5,
