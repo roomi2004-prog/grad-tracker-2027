@@ -620,6 +620,7 @@
     const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
     const CACHED_RECS_KEY = "ramis_grad_tracker_2027_recs_cache_v1";
     const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
+    const DELETED_APPS_KEY = "ramis_grad_tracker_2027_deleted_apps_v1";
     const LOCAL_UPDATED_AT_KEY = "ramis_grad_tracker_2027_updated_at_v1";
     const CYCLE_ARCHIVE_KEY = "ramis_grad_tracker_2027_cycle_archive_v1";
     const CYCLE_ARCHIVE_HUMAN_KEY = "2027 Cycle Archive";
@@ -942,6 +943,102 @@
       }
     }
 
+    function loadDeletedAppIds() {
+      try {
+        const raw = localStorage.getItem(DELETED_APPS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.map(String) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function canonicalFirmKey(name) {
+      return String(name || "")
+        .toLowerCase()
+        .replace(/\(.*?\)/g, " ")
+        .replace(/\b(workday|workdayhr|notifications?|do not reply|noreply|no-reply|international|investment management|investments?|group|holdings?|limited|ltd|llp|plc|inc|uk|london|careers?|early\s*careers?|recruitment|talent|hiring)\b/g, " ")
+        .replace(/[^a-z0-9]/g, "")
+        .trim();
+    }
+
+    const JUNK_AUTO_SENDERS = new Set([
+      "re", "fwd", "fw", "students", "student", "earlycareers", "early careers",
+      "workday", "workdayhr", "workday notifications", "workday notification",
+      "do not reply", "do not reply workday notification", "noreply", "no-reply",
+      "dayforce", "gtios", "icims", "greenhouse", "lever", "taleo", "smartrecruiters",
+      "thanks for applying", "thank you for applying", "thank you for your application",
+      "ramis ahmad", "ramis", "careers", "recruitment", "talent acquisition", "hr",
+      "notifications", "notification", "admin", "info", "support", "updates", "update",
+      "bright network", "gradcracker", "linkedin", "targetjobs", "trackr", "the trackr",
+      "unknown firm", "mfs workday notification", "natwest workday"
+    ]);
+
+    function isSyntheticGmailCard(app) {
+      const sid = String(app && app.id !== undefined ? app.id : "");
+      return sid.startsWith("app_") || sid.startsWith("app-");
+    }
+
+    function isJunkEmailCard(app) {
+      if (!app) return true;
+      const comp = String(app.company || app.firm || "").trim();
+      const low = comp.toLowerCase();
+      if (low.length < 2) return true;
+      if (!isSyntheticGmailCard(app)) return false;
+      if (JUNK_AUTO_SENDERS.has(low)) return true;
+      if (/\b(workday|do not reply|noreply|no-reply|earlycareers|dayforce|gtios|thanks for|thank you for|auto-?reply)\b/i.test(low)) {
+        return true;
+      }
+      if (/^(re|fwd|fw)\b/i.test(low)) return true;
+      return false;
+    }
+
+    function sanitizeAndDedupeApps(list, deletedIds = []) {
+      const deletedSet = new Set((deletedIds || []).map(String));
+      const normalized = (Array.isArray(list) ? list : [])
+        .map(normalizeApp)
+        .filter(Boolean)
+        .map(a => a.stage === "Closed / Unsuccessful" ? { ...a, deadline: null } : a);
+
+      // Collect canonical firm keys of all real (non-synthetic) tracker entries first
+      const realFirmKeys = new Set();
+      const realApps = [];
+      for (const a of normalized) {
+        if (deletedSet.has(String(a.id))) continue;
+        if (!isSyntheticGmailCard(a)) {
+          realApps.push(a);
+          const fk = canonicalFirmKey(a.company);
+          if (fk) realFirmKeys.add(fk);
+        }
+      }
+
+      // Only keep synthetic Gmail cards that are real firms, not deleted, and not duplicates of existing/closed firms
+      const seenSynthKeys = new Set();
+      const keptSynth = [];
+      for (const a of normalized) {
+        if (!isSyntheticGmailCard(a)) continue;
+        if (deletedSet.has(String(a.id))) continue;
+        if (isJunkEmailCard(a)) continue;
+        const fk = canonicalFirmKey(a.company);
+        if (!fk) continue;
+        if (realFirmKeys.has(fk) || seenSynthKeys.has(fk)) continue;
+        // Also catch concatenated names like "fidelityinternational" matching "fidelity"
+        let overlapsExisting = false;
+        for (const existingKey of realFirmKeys) {
+          if (existingKey.length >= 4 && (fk.startsWith(existingKey) || existingKey.startsWith(fk))) {
+            overlapsExisting = true;
+            break;
+          }
+        }
+        if (overlapsExisting) continue;
+        seenSynthKeys.add(fk);
+        keptSynth.push(a);
+      }
+
+      return [...keptSynth, ...realApps];
+    }
+
     function normalizeStage(rawStage) {
       const valid = new Set(STAGES.map(st => st.id));
       if (valid.has(rawStage)) return rawStage;
@@ -1084,7 +1181,7 @@
           return [];
         }
         const saved = JSON.parse(raw);
-        return Array.isArray(saved) ? saved.map(normalizeApp).filter(Boolean) : [];
+        return Array.isArray(saved) ? sanitizeAndDedupeApps(saved, loadDeletedAppIds()) : [];
       } catch {
         return [];
       }
@@ -1279,6 +1376,7 @@
       const recsPaused = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.archived || cycleArchive.recommendationsPaused));
       const [rawRecs, setRawRecs] = useState(loadCachedRecs);
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
+      const [deletedAppIds, setDeletedAppIds] = useState(loadDeletedAppIds);
       const [isStateLoading, setIsStateLoading] = useState(() => loadMergedApps().length === 0 && !loadCycleArchive());
 
       // Cloud Sync Token & GitHub REST API state
@@ -1294,8 +1392,8 @@
       const [isTestingToken, setIsTestingToken] = useState(false);
       const cloudQueueRef = React.useRef(Promise.resolve());
       const remoteExtrasRef = React.useRef({});
-      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive });
-      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive };
+      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive, deletedIds: deletedAppIds });
+      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive, deletedIds: deletedAppIds };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
       const [recsCollapsed, setRecsCollapsed] = useState(false);
 
@@ -1542,13 +1640,19 @@
         try { localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(rawRecs)); } catch {}
       }, [rawRecs]);
 
+      useEffect(() => {
+        try { localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(deletedAppIds)); } catch {}
+      }, [deletedAppIds]);
+
       // Build unified master state snapshot and push state.json + deadlines.ics to GitHub if token is configured
       const pushSnapshotToCloud = (overrides = {}, commitMsg = "Mobile sync from Rags to Riches") => {
         const cur = latestStateRef.current;
         const nextApps = overrides.applications !== undefined ? overrides.applications : cur.apps;
         const nextRecs = overrides.recommendations !== undefined ? overrides.recommendations : cur.recs;
         const nextHandled = overrides.handledRecIds !== undefined ? overrides.handledRecIds : cur.handled;
+        const nextDeleted = overrides.deletedAppIds !== undefined ? overrides.deletedAppIds : cur.deletedIds;
         const nextArchive = overrides.cycleArchive !== undefined ? overrides.cycleArchive : cur.archive;
+        const cleanApps = sanitizeAndDedupeApps(nextApps, nextDeleted);
         const nextOfferAccepted = Boolean(nextArchive && nextArchive.offerAccepted);
         const nextPaused = Boolean(nextArchive && (nextArchive.offerAccepted || nextArchive.archived || nextArchive.recommendationsPaused));
         const nowIso = new Date().toISOString();
@@ -1557,10 +1661,11 @@
           ...remoteExtrasRef.current,
           version: 6,
           updatedAt: nowIso,
-          applications: nextApps,
+          applications: cleanApps,
           recommendations: nextRecs,
           handledRecIds: nextHandled,
           dismissedIds: nextHandled,
+          deletedAppIds: nextDeleted,
           cycleArchive: nextArchive || null,
           offerAccepted: nextOfferAccepted,
           recommendationsPaused: nextPaused
@@ -1568,9 +1673,10 @@
 
         try {
           localStorage.setItem(LOCAL_UPDATED_AT_KEY, nowIso);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextApps));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanApps));
           localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(nextRecs));
           localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(nextHandled));
+          localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(nextDeleted));
         } catch {}
 
         const activeToken = overrides._token !== undefined ? overrides._token : ghToken;
@@ -1584,7 +1690,7 @@
           try {
             const stateJsonStr = JSON.stringify(masterPayload, null, 2) + "\n";
             await githubPutFile(activeToken, activeCfg, "state.json", stateJsonStr, commitMsg);
-            const icsStr = generateIcsFromState(nextApps, nextRecs, nextHandled, nextPaused);
+            const icsStr = generateIcsFromState(cleanApps, nextRecs, nextHandled, nextPaused);
             await githubPutFile(activeToken, activeCfg, "deadlines.ics", icsStr, `${commitMsg} (deadlines.ics)`);
             const tLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
             setCloudSyncStatus("synced");
@@ -1604,10 +1710,16 @@
           if (!remote || !Array.isArray(remote.applications)) return null;
 
           // Keep extra keys written by external sync jobs (e.g. processedEmailIds from Cloud Gmail Sync)
-          const { version, updatedAt, applications, recommendations, handledRecIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
+          const { version, updatedAt, applications, recommendations, handledRecIds, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
           remoteExtrasRef.current = extraKeys;
 
-          const normalizedRemoteApps = remote.applications.map(normalizeApp).filter(Boolean);
+          const mergedDeletedIds = Array.from(new Set([
+            ...loadDeletedAppIds(),
+            ...((Array.isArray(remoteDeletedIds) ? remoteDeletedIds : []).map(String))
+          ]));
+          setDeletedAppIds(mergedDeletedIds);
+
+          const normalizedRemoteApps = sanitizeAndDedupeApps(remote.applications, mergedDeletedIds);
           const combinedRemoteRecs = [
             ...(Array.isArray(remote.recommendations) ? remote.recommendations : []),
             ...(Array.isArray(remote.recommended) ? remote.recommended : [])
@@ -1664,7 +1776,7 @@
               }
               const nextApps = forceRemote || !hasLocalData
                 ? normalizedRemoteApps
-                : smartMergeApps(normalizedRemoteApps, localAppsNow);
+                : sanitizeAndDedupeApps(smartMergeApps(normalizedRemoteApps, localAppsNow), mergedDeletedIds);
               setApps(nextApps);
             }
             if (remoteUpdatedAt) {
@@ -2228,9 +2340,11 @@
         if (!target) return;
         if (!confirm(`Delete "${target.company} — ${target.role}" from your tracker?`)) return;
         const nextApps = rawApps.filter(a => a.id !== id);
+        const nextDeleted = Array.from(new Set([...deletedAppIds, String(id)]));
         setApps(nextApps);
+        setDeletedAppIds(nextDeleted);
         setSelectedApp(null);
-        pushSnapshotToCloud({ applications: nextApps }, `Delete ${target.company}`);
+        pushSnapshotToCloud({ applications: nextApps, deletedAppIds: nextDeleted }, `Delete ${target.company}`);
       };
 
       useEffect(() => {

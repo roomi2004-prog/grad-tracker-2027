@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//Ramis Ahmad//2027 Application Tracker//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Rags to Riches — 2027 Deadlines
+X-WR-CALNAME:2027 Application Tracker Deadlines
 X-WR-TIMEZONE:Europe/London
 X-WR-CALDESC:Upcoming Online Assessments, HireVue/Video Interviews, Assessm
  ent Centres, and 2027 Summer Internship Closing Dates
@@ -27,7 +27,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:app-deadline-3@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261123T164000
 DTEND;TZID=Europe/London:20261123T174000
 SUMMARY:DEADLINE: M&G Investments — Stage 1: Online Assessment Due (5-day
@@ -56,7 +56,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:app-deadline-5@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261123T102652
 DTEND;TZID=Europe/London:20261123T112652
 SUMMARY:DEADLINE: Sky — Stage 1: Digital Assessments 1 & 2 (50% Extra Tim
@@ -84,7 +84,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:app-deadline-7@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261130T124356
 DTEND;TZID=Europe/London:20261130T134356
 SUMMARY:DEADLINE: Citigroup — Stage 1: Plum Profile Assessment Due
@@ -112,17 +112,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-partners-group-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261130T160000
 DTEND;TZID=Europe/London:20261130T170000
 SUMMARY:CLOSING DATE: Partners Group — 2027 Private Markets Summer Analys
  t ? Client Solutions & Investment Management (London)
-DESCRIPTION:Recommended Role (The Trackr ? UK Finance (Investment Managemen
- t))\nCompany: Partners Group\nRole: 2027 Private Markets Summer Analyst ? 
- Client Solutions & Investment Management (London)\nSector: Investment Mana
- gement\nOpened: 2026-11-16\nClosing Date: 2026-11-30\nApply Link: https://
- www.partnersgroup.com/en/careers/\nNotes: Opened Nov 16 on The Trackr UK F
- inance tracker under Investment Management & Specialist Coverage.
+DESCRIPTION:Company: Partners Group\nRole: 2027 Private Markets Summer Anal
+ yst ? Client Solutions & Investment Management (London)\nSector: Investmen
+ t Management\nSource: The Trackr ? UK Finance (Investment Management)\nOpe
+ ned Date: 2026-11-16\nClosing Date: 2026-11-30\nApply Link: https://www.pa
+ rtnersgroup.com/en/careers/\nNotes: Opened Nov 16 on The Trackr UK Finance
+  tracker under Investment Management & Specialist Coverage.
 STATUS:CONFIRMED
 URL:https://www.partnersgroup.com/en/careers/
 BEGIN:VALARM
@@ -142,17 +142,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-oliver-wyman-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261127T160000
 DTEND;TZID=Europe/London:20261127T170000
 SUMMARY:CLOSING DATE: Oliver Wyman — 2027 Summer Consultant Internship ? 
  Financial Services & Strategy (London)
-DESCRIPTION:Recommended Role (The Trackr ? UK Consulting)\nCompany: Oliver 
- Wyman\nRole: 2027 Summer Consultant Internship ? Financial Services & Stra
- tegy (London)\nSector: Strategy & Consulting\nOpened: 2026-11-16\nClosing 
- Date: 2026-11-27\nApply Link: https://www.oliverwyman.com/careers.html\nNo
- tes: Opened Nov 16 on The Trackr UK Consulting tracker. Strong fit for qua
- ntitative/physics background in Financial Services practice.
+DESCRIPTION:Company: Oliver Wyman\nRole: 2027 Summer Consultant Internship 
+ ? Financial Services & Strategy (London)\nSector: Strategy & Consulting\nS
+ ource: The Trackr ? UK Consulting\nOpened Date: 2026-11-16\nClosing Date: 
+ 2026-11-27\nApply Link: https://www.oliverwyman.com/careers.html\nNotes: O
+ pened Nov 16 on The Trackr UK Consulting tracker. Strong fit for quantitat
+ ive/physics background in Financial Services practice.
 STATUS:CONFIRMED
 URL:https://www.oliverwyman.com/careers.html
 BEGIN:VALARM
@@ -170,17 +170,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-pimco-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261204T160000
 DTEND;TZID=Europe/London:20261204T170000
 SUMMARY:CLOSING DATE: PIMCO — 2027 Summer Intern ? Account Management & I
  nstitutional Client Coverage (London)
-DESCRIPTION:Recommended Role (The Trackr ? UK Finance (Investment Managemen
- t))\nCompany: PIMCO\nRole: 2027 Summer Intern ? Account Management & Insti
- tutional Client Coverage (London)\nSector: Investment Management\nOpened: 
- 2026-11-15\nClosing Date: 2026-12-04\nApply Link: https://www.pimco.com/gb
- /en/careers\nNotes: Opened Nov 15 on The Trackr UK Finance tracker under I
- nvestment Management.
+DESCRIPTION:Company: PIMCO\nRole: 2027 Summer Intern ? Account Management &
+  Institutional Client Coverage (London)\nSector: Investment Management\nSo
+ urce: The Trackr ? UK Finance (Investment Management)\nOpened Date: 2026-1
+ 1-15\nClosing Date: 2026-12-04\nApply Link: https://www.pimco.com/gb/en/ca
+ reers\nNotes: Opened Nov 15 on The Trackr UK Finance tracker under Investm
+ ent Management.
 STATUS:CONFIRMED
 URL:https://www.pimco.com/gb/en/careers
 BEGIN:VALARM
@@ -198,18 +198,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261118T233127Z
+DTSTAMP:20261118T233748Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
  ternship ? Markets\, Data & Financial Analytics (London)
-DESCRIPTION:Recommended Role (Gradcracker Weekly Alert (Nov 16))\nCompany: 
- London Stock Exchange Group (LSEG)\nRole: 2027 Summer Internship ? Markets
- \, Data & Financial Analytics (London)\nSector: Corporate & Investment Ban
- king\nOpened: 2026-11-16\nClosing Date: 2026-11-29\nApply Link: https://ww
- w.lseg.com/en/careers/graduates-interns\nNotes: Extracted from Gradcracker
-  Weekly Briefing email (Nov 16\, 2026). Open to Physics\, Maths & Finance 
- penultimate-year students.
+DESCRIPTION:Company: London Stock Exchange Group (LSEG)\nRole: 2027 Summer 
+ Internship ? Markets\, Data & Financial Analytics (London)\nSector: Corpor
+ ate & Investment Banking\nSource: Gradcracker Weekly Alert (Nov 16)\nOpene
+ d Date: 2026-11-16\nClosing Date: 2026-11-29\nApply Link: https://www.lseg
+ .com/en/careers/graduates-interns\nNotes: Extracted from Gradcracker Weekl
+ y Briefing email (Nov 16\, 2026). Open to Physics\, Maths & Finance penult
+ imate-year students.
 STATUS:CONFIRMED
 URL:https://www.lseg.com/en/careers/graduates-interns
 BEGIN:VALARM
