@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2027 Internship Command Center | Ramis Ahmad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background-color: #06080F;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 18% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
+        radial-gradient(ellipse 70% 45% at 82% -12%, rgba(16, 185, 129, 0.13), transparent 60%),
+        radial-gradient(ellipse 50% 35% at 50% 0%, rgba(14, 165, 233, 0.07), transparent 55%);
+      background-attachment: fixed;
+      color: #F1F5F9;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-num {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .glass-surface {
+      background-color: rgba(13, 18, 31, 0.8);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.55);
+    }
+    .glass-card {
+      background-color: rgba(16, 23, 40, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 0 4px 16px -4px rgba(0, 0, 0, 0.45);
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.17);
+      background-color: rgba(21, 30, 52, 0.88);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 28px -8px rgba(0, 0, 0, 0.65);
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(6, 8, 15, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.38); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // Lightweight Lucide icon wrapper for standalone HTML
+    const Icon = ({ name, className = "w-4 h-4" }) => {
+      const ref = React.useRef(null);
+      useEffect(() => {
+        if (ref.current && window.lucide) {
+          const iconNode = window.lucide.icons[name];
+          if (iconNode) {
+            ref.current.innerHTML = '';
+            const svg = window.lucide.createElement(iconNode);
+            svg.setAttribute('class', className);
+            ref.current.appendChild(svg);
+          }
+        }
+      }, [name, className]);
+      return <span ref={ref} className="inline-flex items-center justify-center shrink-0" />;
+    };
+
+    const MONOGRAM_PALETTES = [
+      "from-indigo-500/90 to-violet-600/90 text-white border-indigo-400/30 shadow-indigo-500/20",
+      "from-emerald-500/90 to-teal-600/90 text-white border-emerald-400/30 shadow-emerald-500/20",
+      "from-cyan-500/90 to-blue-600/90 text-white border-cyan-400/30 shadow-cyan-500/20",
+      "from-amber-500/90 to-orange-600/90 text-white border-amber-400/30 shadow-amber-500/20",
+      "from-fuchsia-500/90 to-pink-600/90 text-white border-fuchsia-400/30 shadow-fuchsia-500/20",
+      "from-sky-500/90 to-indigo-600/90 text-white border-sky-400/30 shadow-sky-500/20",
+      "from-rose-500/90 to-red-600/90 text-white border-rose-400/30 shadow-rose-500/20"
+    ];
+
+    function getCompanyInitials(company) {
+      if (!company) return "??";
+      const clean = company.replace(/\(.*?\)/g, "").replace(/[^a-zA-Z0-9&\s]/g, "").trim();
+      if (clean.includes("&") && clean.length <= 6) return clean.replace(/\s+/g, "").slice(0, 3).toUpperCase();
+      const parts = clean.split(/\s+/).filter(Boolean);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    function getMonogramStyle(company) {
+      let hash = 0;
+      for (let i = 0; i < (company || "").length; i++) {
+        hash = company.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return MONOGRAM_PALETTES[Math.abs(hash) % MONOGRAM_PALETTES.length];
+    }
+
+    const CompanyMonogram = ({ company }) => {
+      const initials = getCompanyInitials(company);
+      const gradientClass = getMonogramStyle(company);
+      return (
+        <div
+          className={`w-7 h-7 rounded-lg bg-gradient-to-br ${gradientClass} border flex items-center justify-center text-[10px] font-extrabold tracking-tighter shrink-0 shadow-md select-none font-mono-num`}
+          title={company}
+        >
+          {initials}
+        </div>
+      );
+    };
+
+    const REJECTION_STAGES = [
+      { id: "CV / Application Screen", label: "After CV / App Screen", shortLabel: "After CV Screen", badge: "bg-slate-500/20 text-slate-300 border-slate-400/25", dot: "bg-slate-400" },
+      { id: "Stage 1 - Online Assessment", label: "After Stage 1 (Online Assessment)", shortLabel: "After Stage 1 OA", badge: "bg-cyan-500/15 text-cyan-300 border-cyan-400/30", dot: "bg-cyan-400" },
+      { id: "Stage 2 - Video Interview", label: "After Stage 2 (Video Interview)", shortLabel: "After Stage 2 VI", badge: "bg-emerald-500/15 text-emerald-300 border-emerald-400/30", dot: "bg-emerald-400" },
+      { id: "Stage 3 - Assessment Centre", label: "After Stage 3 (Assessment Centre)", shortLabel: "After Stage 3 AC", badge: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-400/30", dot: "bg-fuchsia-400" }
+    ];
+
+    function getRejectionBadge(rejectedAfterStage) {
+      return REJECTION_STAGES.find(r => r.id === rejectedAfterStage) || REJECTION_STAGES[0];
+    }
+
+    // __INITIAL_APPLICATIONS_START__
+    const INITIAL_APPLICATIONS = [
+      // ACTION REQUIRED (6)
+      { id: 1, category: "internship", company: "Morgan Stanley (Off-Cycle)", role: "2027 Investment Management Off-Cycle Internship – Global Sales, Consultant Relations (London)", sector: "Investment Management", appliedDate: "2026-11-16", stage: "Action Required", subStatus: "Stage 1: Online Assessments Due (48h window from Nov 16, 13:31)", deadline: "2026-11-18T13:31:00", portalLink: "https://morganstanley.tal.net/vx/candidate/login", calendarSynced: true, notes: "Numerical Reasoning, Inductive Reasoning, Situational Judgement Test. Check portal immediately!" },
+      { id: 3, category: "internship", company: "M&G Investments", role: "Asset Management: Client Group & Product Internship (London) (R20839)", sector: "Investment Management", appliedDate: "2026-11-06", stage: "Action Required", subStatus: "Approved to Reapply via New Email!", deadline: "2026-11-21T17:00:00", portalLink: "https://mgpru.wd3.myworkdayjobs.com/mandgprudential", calendarSynced: true, notes: "Originally auto-screened out due to accidental 'Yes' on multiple applications question. Contested Nov 12; M&G confirmed Nov 18 (12:51 PM) you can reapply using a new email address!" },
+      { id: 4, category: "internship", company: "Fidelity International", role: "2027 Summer Internship Programme", sector: "Investment Management", appliedDate: "2026-11-15", stage: "Action Required", subStatus: "Stage 1: Aon Online Assessments (Verbal, Numerical, Inductive)", deadline: "2026-11-22T19:49:52", portalLink: "https://fidelityinternational.tal.net/vx/lang-en-GB/mobile-0/brand-5/user-761369/candidate/application/598644", calendarSynced: true, notes: "3 timed tests (6 mins each: Verbal, Numerical, Inductive Reasoning). Must complete by Nov 22, 7:49 PM GMT." },
+      { id: 5, category: "internship", company: "Sky", role: "Commercial Strategy Internship (2027)", sector: "Strategy & Commercial", appliedDate: "2026-11-13", stage: "Action Required", subStatus: "Stage 1: Digital Assessments 1 & 2 (50% Extra Time Applied)", deadline: "2026-11-23T11:26:52", portalLink: "https://apply.skyearlycareers.targetconnect.com/", calendarSynced: true, notes: "Invited Nov 18. 5-day deadline. 50% extra time adjustment confirmed for timed questions (~65-75 mins total). Prep hub: https://sky.preparationplus.com" },
+      { id: 6, category: "internship", company: "Mishcon de Reya", role: "Vacation Scheme: Spring 2027", sector: "Commercial & Law", appliedDate: "2026-11-13", stage: "Action Required", subStatus: "Application Started on cvMail Portal", deadline: "2026-11-24T23:59:00", portalLink: "https://fsr.cvmailuk.com/mishcon/applying.cfm?job_id=79061&goto_page=1", calendarSynced: true, notes: "Started on Talent Acquisition Portal on Nov 13; log in and click 'Send App' to finalize submission." },
+      { id: 7, category: "internship", company: "Citigroup", role: "Banking, Financing, Equity Capital Markets, Placement Analyst (London 2027)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-16", stage: "Action Required", subStatus: "Stage 1: Plum Profile Assessment Due", deadline: "2026-11-30T13:43:56", portalLink: "https://secure.plum.io/invite/q9ZjEV1H0Q1HxYIHlVjrtoWPxPuA7ooFRVNyV-d0Pko", calendarSynced: true, notes: "Req ID 2027-26993441. Moved to next stage on Nov 16; 14-day expiry window for Plum Assessment." },
+
+      // STAGE 1 - ONLINE ASSESSMENT (9)
+      { id: 2, category: "internship", company: "Bank of England", role: "2027 Summer Internship - Risk (London) - 2924", sector: "Banking & Regulatory", appliedDate: "2026-11-16", stage: "Stage 1 - Online Assessment", subStatus: "Situational Judgement Test Completed (Nov 18)", deadline: null, portalLink: "https://app.evolveassess.com/#/auto/9dbcd331-3e76-4293-9862-20af71f5a098/e858870c-fafc-4d68-26f9-08df4095b3aa/cd8c8629-cc26-4ee4-da10-08dc1916f6a7", calendarSynced: false, notes: "Completed Situational Judgement Test on Nov 18 (18:20 GMT). Outcome expected 10 days after application close date; next stage is Stage 2 Video Interview." },
+      { id: 9, category: "internship", company: "Royal Bank of Canada (RBC)", role: "2027 Summer Analyst - Corporate Banking (A233676)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-12", stage: "Stage 1 - Online Assessment", subStatus: "Online Assessments Completed (Nov 16)", deadline: null, portalLink: "https://rbccmgraduates.gtisolutions.co.uk/", calendarSynced: false, notes: "Completed online assessments on Nov 16 (06:03 GMT). Team reviewing test results, CV, and application form." },
+      { id: 10, category: "internship", company: "Aon", role: "Aon Summer Internship Programme 2027 - Strategic Consulting (2026-107789)", sector: "Strategy & Consulting", appliedDate: "2026-11-05", stage: "Stage 1 - Online Assessment", subStatus: "Spotted Zebra Assessment Completed (Nov 12)", deadline: null, portalLink: "https://aon.icims.com", calendarSynced: false, notes: "Progressed to online assessment Nov 11; completed Spotted Zebra Consulting Intern assessment & received feedback report PDF on Nov 12." },
+      { id: 11, category: "internship", company: "OC&C Strategy Consultants", role: "Associate Consultant Summer Internship 2027 (London Office)", sector: "Strategy & Consulting", appliedDate: "2026-10-27", stage: "Stage 1 - Online Assessment", subStatus: "Cappfinity Blended Assessment Completed (Nov 7)", deadline: null, portalLink: "https://www.occstrategy.com/en/careers/", calendarSynced: false, notes: "Granted 48h extension on Nov 5; completed Online Blended Assessment and received feedback report on Nov 7." },
+      { id: 13, category: "internship", company: "Lloyds Banking Group", role: "Consumer Internship (London) 2027", sector: "Corporate & Retail Banking", appliedDate: "2026-11-03", stage: "Stage 1 - Online Assessment", subStatus: "Cappfinity Online Assessment Completed (Nov 4)", deadline: null, portalLink: "https://www.lloydsbankinggroup.com/careers.html", calendarSynced: false, notes: "Reinstated after contesting initial screen-out on Nov 3. Completed Online Assessment Nov 4; received personalised feedback report Nov 6." },
+      { id: 18, category: "internship", company: "Howden Group", role: "Early Careers Programme 2027 (London)", sector: "Insurance & Broking", appliedDate: "2026-10-10", stage: "Stage 1 - Online Assessment", subStatus: "Arctic Shores Assessment Completed (Oct 20)", deadline: null, portalLink: "https://www.howdengroupholdings.com/careers", calendarSynced: false, notes: "Granted deadline extension by Ava Emery on Oct 19 until Oct 20 midnight for Arctic Shores assessment." },
+      { id: 47, category: "internship", company: "Barclays", role: "2027 Retail, Business and Customer Banking Summer Internship Programme London (JR-0000129194)", sector: "Corporate & Retail Banking", appliedDate: "2026-09-21", stage: "Stage 1 - Online Assessment", subStatus: "SHL Assessments Completed with Extra Time (Oct 7)", deadline: null, portalLink: "https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays", calendarSynced: false, notes: "Applied Sep 21; granted extra time & 5-day extension by Wenjie Salas on Sep 30; evergreen internship application confirmed active Oct 7." },
+      { id: 49, category: "internship", company: "Tesco Group", role: "Technology - Product Management Internship (2027)", sector: "Strategy & Commercial", appliedDate: "2026-09-29", stage: "Stage 1 - Online Assessment", subStatus: "Win Together Online Assessments Stage (Oct 1)", deadline: null, portalLink: "https://tescoearlycareers.groupgti.com/", calendarSynced: false, notes: "Applied Sep 29; invited to Win Together Online Assessments on Oct 1 (15:18 GMT)." },
+      { id: 53, category: "internship", company: "Susquehanna (SIG)", role: "Equity Research Internship: Summer 2027 (London & Dublin)", sector: "Investment Management", appliedDate: "2026-09-24", stage: "Stage 1 - Online Assessment", subStatus: "Mettl Quantitative Assessment Stage (Sep 24)", deadline: null, portalLink: "https://sig.com/campus-programs/", calendarSynced: false, notes: "Invited to 23-minute timed Mettl online assessment by Jordan Morley on Sep 24. Rolling review (up to 8 weeks)." },
+
+      // STAGE 2 - VIDEO INTERVIEW (8)
+      { id: 8, category: "internship", company: "Capital Group", role: "Client & Product Track Summer Associate (2027) - EUROPE (London)", sector: "Investment Management", appliedDate: "2026-11-15", stage: "Stage 2 - Video Interview", subStatus: "ConveyIQ Digital Video Interview Submitted (Nov 16)", deadline: null, portalLink: "https://www.capitalgroup.com/careers", calendarSynced: false, notes: "ConveyIQ Digital Interview completed and submitted on Nov 16 at 18:39 GMT. Awaiting recruiter review for Stage 3 Assessment Centre." },
+      { id: 12, category: "internship", company: "FTI Consulting", role: "2027 Summer Internship, TMT Business Transformation, Corporate Finance", sector: "Strategy & Consulting", appliedDate: "2026-10-27", stage: "Stage 2 - Video Interview", subStatus: "Pre-Recorded Video Interview Completed (Nov 5)", deadline: null, portalLink: "https://fticonsulting.wd1.myworkdayjobs.com", calendarSynced: false, notes: "Passed Stage 1 eSkill reasoning test (+25% extra time) on Nov 3; invited to and completed Stage 2 Pre-Recorded Video Interview on Nov 5 (16:22 GMT)." },
+      { id: 14, category: "internship", company: "HSBC", role: "Relationship Management - Corporate & Institutional Banking - Internship 2027", sector: "Corporate & Investment Banking", appliedDate: "2026-10-25", stage: "Stage 2 - Video Interview", subStatus: "Job Simulation & Video Interview Completed (Nov 2)", deadline: null, portalLink: "https://www.hsbc.com/careers", calendarSynced: false, notes: "Completed Job Simulation Assessment & Video Interview on Nov 2 (10:29 GMT). Awaiting Stage 3 Assessment Centre outcome." },
+      { id: 15, category: "internship", company: "J.P. Morgan", role: "2027 Corporate Functions - Global Finance & Business Management - Summer Internship (London)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-16", stage: "Stage 2 - Video Interview", subStatus: "HireVue Video Interview Submitted (Oct 25)", deadline: null, portalLink: "https://careers.jpmorgan.com", calendarSynced: false, notes: "Invited to HireVue Oct 16; submitted recorded video interview on Oct 25 (14:48 GMT)." },
+      { id: 16, category: "internship", company: "bp", role: "Summer Internship - Supply, Trading & Shipping - UK (RQ117128)", sector: "Energy & Commodities", appliedDate: "2026-10-17", stage: "Stage 2 - Video Interview", subStatus: "HireVue Video Interview Completed (Oct 25)", deadline: null, portalLink: "https://www.bp.com/careers", calendarSynced: false, notes: "Completed Stage 1 Saville Oasys assessment (Oct 17) & Stage 2 HireVue video interview (Oct 25). High-volume holding updates received Oct 29 & Nov 10." },
+      { id: 17, category: "internship", company: "PwC UK", role: "Summer Internship 2027", sector: "Strategy & Consulting", appliedDate: "2026-10-12", stage: "Stage 2 - Video Interview", subStatus: "Video Interview Completed (Oct 20) - Awaiting Virtual AC", deadline: null, portalLink: "https://www.pwc.co.uk/careers.html", calendarSynced: false, notes: "Completed Video Interview Oct 20. Progress update received Nov 11 confirming submission is still under review for Stage 3 Virtual Assessment Centre." },
+      { id: 28, category: "internship", company: "NatWest Group", role: "2027 Summer Internship Programme", sector: "Corporate & Investment Banking", appliedDate: "2026-10-01", stage: "Stage 2 - Video Interview", subStatus: "SHL Video Interview Completed (Oct 9) - Active Review for AC", deadline: null, portalLink: "https://wd3.myworkday.com/rbs", calendarSynced: false, notes: "Applied Oct 1; received SHL Assessment Feedback Report Oct 7 & Video Interview completion confirmation Oct 9. Holding updates Oct 26 & Nov 16 confirm active consideration for rolling ACs." },
+      { id: 48, category: "internship", company: "Standard Chartered", role: "Strategic Advisory & Solutions Intern UK 2027", sector: "Corporate & Investment Banking", appliedDate: "2026-09-22", stage: "Stage 2 - Video Interview", subStatus: "Workplace Scenario & SHL Video Assessment Completed (Oct 1)", deadline: null, portalLink: "https://www.sc.com/en/global-careers/early-careers/", calendarSynced: false, notes: "Applied Sep 22; completed SHL Skills Insight, Workplace Scenario & Video Assessment on Oct 1 (17:49 GMT). Under Early Careers Team review." },
+
+      // APPLICATION SUBMITTED (19)
+      { id: 44, category: "internship", company: "Rothschild & Co", role: "2026 Discover Rothschild & Co Insight Day", sector: "Corporate & Investment Banking", appliedDate: "2026-11-18", stage: "Application Submitted", subStatus: "Event Registration Under Review (Nov 18)", deadline: null, portalLink: "https://rothschildandco.tal.net/vx/candidate/login", calendarSynced: false, notes: "Event registration update received Nov 18 (17:26 GMT) confirming submission for the Discover Rothschild & Co Insight Day is currently under review." },
+      { id: 19, category: "internship", company: "Corient UK", role: "2027 Corient UK Wealth Management Summer Intern Programme", sector: "Wealth & Asset Management", appliedDate: "2026-11-15", stage: "Application Submitted", subStatus: "Under Review (Dayforce)", deadline: null, portalLink: "https://www.corient.com", calendarSynced: false, notes: "Application confirmation received Nov 15 (20:30 GMT)." },
+      { id: 20, category: "internship", company: "MFS Investment Management", role: "Summer MFS 2027 Global Client Service Intern", sector: "Investment Management", appliedDate: "2026-11-15", stage: "Application Submitted", subStatus: "Under Review (Workday)", deadline: null, portalLink: "https://mfs.wd1.myworkdayjobs.com", calendarSynced: false, notes: "Application confirmation received Nov 15 (13:02 GMT)." },
+      { id: 21, category: "internship", company: "Allianz Group", role: "Allianz UK Finance Summer Internship 2027", sector: "Insurance & Asset Management", appliedDate: "2026-11-11", stage: "Application Submitted", subStatus: "Application Received & Under Review", deadline: null, portalLink: "https://careers.allianz.com", calendarSynced: false, notes: "Confirmation received Nov 11 (22:16 GMT)." },
+      { id: 22, category: "internship", company: "CLS Holdings plc", role: "Speculative Application – Work Experience / Internship 2027", sector: "Real Estate & Investment", appliedDate: "2026-11-10", stage: "Application Submitted", subStatus: "Speculative Email Sent", deadline: null, portalLink: "mailto:enquiries@clsholdings.com", calendarSynced: false, notes: "Sent speculative CV and cover email to enquiries@clsholdings.com on Nov 10." },
+      { id: 23, category: "internship", company: "Hasbro", role: "2027 Summer Internships - Commercial (London, UK)", sector: "Strategy & Commercial", appliedDate: "2026-11-05", stage: "Application Submitted", subStatus: "Application Received", deadline: null, portalLink: "https://jobs.hasbro.com", calendarSynced: false, notes: "Application submitted Nov 5 (00:16 GMT)." },
+      { id: 24, category: "internship", company: "STJ Advisors", role: "2027 Summer Internship Program (ECM Advisory)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-04", stage: "Application Submitted", subStatus: "Direct Email Application Sent", deadline: null, portalLink: "mailto:hr@stjadvisors.com", calendarSynced: false, notes: "Sent tailored CV and cover letter to hr@stjadvisors.com on Nov 4 (23:59 GMT)." },
+      { id: 25, category: "internship", company: "Charles River Associates", role: "2027 Summer Internship (Economic & Management Consulting)", sector: "Strategy & Consulting", appliedDate: "2026-10-25", stage: "Application Submitted", subStatus: "Under Recruiting Team Review", deadline: null, portalLink: "https://www.crai.com/careers/", calendarSynced: false, notes: "Application received Oct 25 (15:09 GMT)." },
+      { id: 26, category: "internship", company: "Standard Bank", role: "Intern, Corporate & Investment Banking, International (2027)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-23", stage: "Application Submitted", subStatus: "Under Review (SmartRecruiters)", deadline: null, portalLink: "https://www.standardbank.com/careers", calendarSynced: false, notes: "Application received Oct 23 (00:19 GMT)." },
+      { id: 27, category: "internship", company: "Crédit Agricole CIB", role: "2027 Summer Internship - Coverage (London) (2026-116693)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-22", stage: "Application Submitted", subStatus: "Application Received", deadline: null, portalLink: "https://jobs.ca-cib.com", calendarSynced: false, notes: "Submitted Oct 22 (23:12 GMT)." },
+      { id: 45, category: "internship", company: "MUFG", role: "2027 MUFG UK Summer Analyst Programme: Global Corporate Investment Banking (10079259-WD)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-14", stage: "Application Submitted", subStatus: "Under Review (Workday)", deadline: null, portalLink: "https://mufgub.wd3.myworkdayjobs.com", calendarSynced: false, notes: "Application confirmation received Oct 14 (22:35 GMT)." },
+      { id: 46, category: "internship", company: "Citigroup (Open Day)", role: "London Office Open Day (Services, Tech, Client & Wealth)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-14", stage: "Application Submitted", subStatus: "Open Day Application Submitted (Oct 14)", deadline: null, portalLink: "https://jobs.citi.com", calendarSynced: false, notes: "Applied Oct 14 (22:40 GMT). Separate Placement Analyst ECM application (Nov 16) is currently at Action Required (Plum Assessment)." },
+      { id: 50, category: "internship", company: "AIG (Talbot)", role: "2027 Talbot Portfolio Management Summer Internship (JR2604190)", sector: "Insurance & Asset Management", appliedDate: "2026-09-29", stage: "Application Submitted", subStatus: "Under Review (Workday)", deadline: null, portalLink: "https://aig.wd1.myworkdayjobs.com/aig", calendarSynced: false, notes: "Application confirmation received Sep 29 (22:18 GMT) for CAND2600168554." },
+      { id: 51, category: "internship", company: "Panmure Liberum", role: "2027 Summer Internship Programme", sector: "Corporate & Investment Banking", appliedDate: "2026-09-28", stage: "Application Submitted", subStatus: "Application Received (BambooHR)", deadline: null, portalLink: "https://www.panmureliberum.com/careers/", calendarSynced: false, notes: "Application confirmation received Sep 28 (17:29 GMT)." },
+      { id: 52, category: "internship", company: "Goldman Sachs", role: "2027 Summer Analyst Programme (London)", sector: "Corporate & Investment Banking", appliedDate: "2026-09-28", stage: "Application Submitted", subStatus: "Under Review (Oracle Cloud Portal)", deadline: null, portalLink: "https://www.goldmansachs.com/careers", calendarSynced: false, notes: "Application submitted Sep 28 (17:25 GMT)." },
+      { id: 54, category: "internship", company: "TikTok", role: "Product Solutions and Operations Project Intern (Scaled Growth)", sector: "Strategy & Commercial", appliedDate: "2026-09-21", stage: "Application Submitted", subStatus: "Under Talent Acquisition Review", deadline: null, portalLink: "https://careers.tiktok.com/login", calendarSynced: false, notes: "Application received Sep 21 (23:07 GMT)." },
+      { id: 55, category: "internship", company: "American Express", role: "Campus - Internship Programme - Undergraduate Product Manager - 2027 (UK - London) (26013766)", sector: "Strategy & Commercial", appliedDate: "2026-09-16", stage: "Application Submitted", subStatus: "Application Received & Under Review", deadline: null, portalLink: "https://www.americanexpress.com/en-us/careers/", calendarSynced: false, notes: "Submitted Sep 16 (23:01 GMT)." },
+      { id: 56, category: "internship", company: "Marex", role: "Marex UK Internships 2027", sector: "Energy & Commodities", appliedDate: "2026-09-16", stage: "Application Submitted", subStatus: "Passed to Hiring Manager for Review (Sep 16)", deadline: null, portalLink: "https://marex.breezy.hr/p/9ece5ed02fce01-marex-uk-internships-register-your-interest", calendarSynced: false, notes: "Confirmation from Adam Rubin on Sep 16 (13:56 GMT) that application was passed to the hiring manager." },
+      { id: 57, category: "internship", company: "BNY", role: "2027 BNY Summer Internship Program - Product Management (London) (81922)", sector: "Investment Management", appliedDate: "2026-09-13", stage: "Application Submitted", subStatus: "Under Talent Acquisition Review", deadline: null, portalLink: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers", calendarSynced: false, notes: "Application received Sep 13 (14:49 GMT)." },
+
+      // ON HOLD / WAITLIST (2)
+      { id: 29, category: "internship", company: "S&W (Evelyn Partners)", role: "Internship Programme, Corporate Finance - London (July 2027)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-12", stage: "On Hold / Waitlist", subStatus: "On Hold After Stage 1 Online Assessments", deadline: null, portalLink: "https://careers.swgroup.com", calendarSynced: false, notes: "Completed Numerical, Verbal, and Values & Behaviours assessments on Nov 15. Informed Nov 17 that details are kept on hold for the remainder of the cycle." },
+      { id: 30, category: "internship", company: "Castleton Commodities (CCI)", role: "Principal Investments Intern (Summer 2027)", sector: "Energy & Commodities", appliedDate: "2026-10-22", stage: "On Hold / Waitlist", subStatus: "ModernHire OnDemand Assessment Sent", deadline: null, portalLink: "https://sus.hvue.io/IQRh7F4CqIzInvcS", calendarSynced: false, notes: "Applied Oct 22; automated reminders received Oct 25-26 for OnDemand assessment." },
+
+      // CLOSED / UNSUCCESSFUL (17) — Differentiated by rejectedAfterStage
+      { id: 31, category: "internship", company: "StepStone Group", role: "2027 Private Equity Summer Analyst (London)", sector: "Investment Management", appliedDate: "2026-11-11", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Screen (Nov 17)", deadline: null, portalLink: "https://www.stepstonegroup.com", calendarSynced: false, notes: "Applied Nov 11; outcome email received Nov 17 at CV/application screening stage." },
+      { id: 32, category: "internship", company: "AlphaSights", role: "Insight Days, Client Service, 2027 (London)", sector: "Strategy & Consulting", appliedDate: "2026-11-06", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Screen (Nov 12)", deadline: null, portalLink: "https://www.alphasights.com/careers", calendarSynced: false, notes: "Applied Nov 6 (and earlier Sep 2 application); outcome email received Nov 12." },
+      { id: 33, category: "internship", company: "Lazard", role: "2027 London Financial Advisory Summer Internship", sector: "Corporate & Investment Banking", appliedDate: "2026-10-07", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Criteria Corp OA - Not Progressed (Nov 11)", deadline: null, portalLink: "https://www.lazard.com/careers/", calendarSynced: false, notes: "Applied Oct 7; completed Criteria Corp cognitive & numerical assessment Oct 13; outcome email received Nov 11." },
+      { id: 34, category: "internship", company: "EY", role: "Consulting Summer Internship Programme (London 2027) (ID: 1069334)", sector: "Strategy & Consulting", appliedDate: "2026-10-15", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 2 - Video Interview", subStatus: "Completed Stage 1 & Stage 2 Video - Not Progressed (Nov 5)", deadline: null, portalLink: "https://ukstudents.ey.com/", calendarSynced: false, notes: "Completed Stage 1 (Nov 2) & Stage 2 Video Assessment (Nov 4) with 25% extra time. Outcome received Nov 5." },
+      { id: 35, category: "internship", company: "Morgan Stanley (Summer Analyst)", role: "2027 Investment Management Summer Analyst Programme - Global Sales and Marketing", sector: "Investment Management", appliedDate: "2026-10-14", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After Application Review (Oct 30)", deadline: null, portalLink: "https://morganstanley.tal.net/vx/candidate/login", calendarSynced: false, notes: "Summer Analyst application closed Oct 30; Off-Cycle Global Sales application is currently active!" },
+      { id: 36, category: "internship", company: "Nomura", role: "2027 Investment Banking - Coverage & Advisory - Summer Internship (London)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-23", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Stage 1 OA - Not Progressed (Oct 30)", deadline: null, portalLink: "https://nomuracampus.tal.net/vx/candidate/login", calendarSynced: false, notes: "Completed online assessments Oct 27; outcome received Oct 30." },
+      { id: 37, category: "internship", company: "Civil Service Fast Stream", role: "Summer Internship Programme (SIP) 2027", sector: "Public Sector", appliedDate: "2026-10-15", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Stage 1 Assessment - Not Progressed (Oct 23)", deadline: null, portalLink: "https://www.faststream.gov.uk", calendarSynced: false, notes: "Outcome received Oct 23 after initial online assessment stage." },
+      { id: 38, category: "internship", company: "Deloitte", role: "Summer Vacation Scheme, Executive Reward Consulting (London 2027)", sector: "Strategy & Consulting", appliedDate: "2026-10-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Online Assessment - Not Progressed (Oct 21)", deadline: null, portalLink: "https://www2.deloitte.com/uk/en/careers/students.html", calendarSynced: false, notes: "Applied Oct 1; completed Deloitte Online Job Simulation Assessment Oct 5 & received feedback report Oct 7; outcome received Oct 21." },
+      { id: 39, category: "internship", company: "Deutsche Bank", role: "Internship Programme - Corporate Bank - London - 2027", sector: "Corporate & Investment Banking", appliedDate: "2026-10-16", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Initial Application Screen Out (Oct 16)", deadline: null, portalLink: "https://careers.db.com", calendarSynced: false, notes: "Outcome received Oct 16 at initial application screen." },
+      { id: 58, category: "internship", company: "Shell", role: "Shell Assessed Internship / Graduate Programme 2027", sector: "Energy & Commodities", appliedDate: "2026-09-16", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed VJT Competencies Assessment - Not Progressed (Oct 8)", deadline: null, portalLink: "https://www.shell.com/careers", calendarSynced: false, notes: "Applied Sep 16; completed Virtual Job Tryout & received Competencies Report Sep 23; outcome received Oct 8." },
+      { id: 59, category: "internship", company: "BDO UK", role: "2027 Summer Internship / Early Careers Programme", sector: "Strategy & Consulting", appliedDate: "2026-10-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Arctic Shores Assessment - Not Progressed (Oct 6)", deadline: null, portalLink: "https://www.bdo.co.uk/en-gb/careers", calendarSynced: false, notes: "Applied Oct 1; completed Arctic Shores assessment & received feedback report Oct 6; outcome received Oct 6." },
+      { id: 60, category: "internship", company: "Bank of America", role: "Global Markets Chief Operating Office 2027 Summer Analyst Program - London (5018211)", sector: "Corporate & Investment Banking", appliedDate: "2026-09-28", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Review (Sep 29)", deadline: null, portalLink: "https://bankcampuscareers.tal.net", calendarSynced: false, notes: "Applied Sep 28; outcome email received Sep 29." },
+      { id: 61, category: "internship", company: "Schroders", role: "2027 Finance Graduate Programme (1954)", sector: "Investment Management", appliedDate: "2026-09-09", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Stage 1 Cognitive Assessment - Not Progressed (Sep 17)", deadline: null, portalLink: "https://www.schroders.com/en/careers", calendarSynced: false, notes: "Invited to Cappfinity Cognitive Assessment Sep 9; received Cognitive Feedback Report & Stage 1 outcome on Sep 17." },
+      { id: 62, category: "internship", company: "Capital One", role: "Strategy Analyst Graduate Programme (R999265)", sector: "Strategy & Consulting", appliedDate: "2026-09-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 2 - Video Interview", subStatus: "Closed at Video Assessment Stage (Contested Link Issue Sep 16)", deadline: null, portalLink: "https://jobs.capitalone.co.uk/earlycareers", calendarSynced: false, notes: "Invited to Strategy Analyst Video Assessment Sep 1; contested missing video interview link with Early Careers on Sep 16-17." },
+      { id: 63, category: "internship", company: "Stantec UK", role: "Graduate Project Manager (Energy) - 2027 (Vacancy 8941)", sector: "Energy & Commodities", appliedDate: "2026-08-31", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After Application Review (Sep 16)", deadline: null, portalLink: "https://careers-uk-ireland.stantec.com", calendarSynced: false, notes: "Outcome email received Sep 16 (09:38 GMT)." },
+      { id: 64, category: "internship", company: "Bending Spoons", role: "2027 Internship / Early Careers Programme", sector: "Strategy & Commercial", appliedDate: "2026-09-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After Application Review (Sep 3)", deadline: null, portalLink: "https://bendingspoons.com/careers", calendarSynced: false, notes: "Outcome email received Sep 3 (08:42 GMT)." },
+      { id: 65, category: "internship", company: "Revolut", role: "Graduate Programme 2027: Product Owner (Technical)", sector: "Strategy & Commercial", appliedDate: "2026-09-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Review (Sep 1)", deadline: null, portalLink: "https://www.revolut.com/careers/", calendarSynced: false, notes: "Outcome email received Sep 1 (07:50 GMT)." },
+
+      // PART-TIME / FLEXIBLE ROLES (5)
+      { id: 40, category: "parttime", company: "Beyond The Plate Foodservice Ltd", role: "Front-of-House & Instagram / Community Outreach", sector: "Hospitality & Marketing", appliedDate: "2026-10-27", stage: "Offer / Successful", subStatus: "Contract Received (Nov 11) - Active Role", deadline: null, portalLink: "mailto:gabi@beyondtheplate.uk", calendarSynced: false, notes: "Working with Gabriela Toma & Francis Skeat; managing cafe Instagram & community outreach." },
+      { id: 41, category: "parttime", company: "Examberry Tuition", role: "Operational Support & GCSE/A-Level Physics/Maths Tutor", sector: "Education & Tutoring", appliedDate: "2026-11-03", stage: "Application Submitted", subStatus: "Replied to Alice Maxwell (Nov 3)", deadline: null, portalLink: "mailto:alice@examberry.com", calendarSynced: false, notes: "Discussing operational support & A-Level/GCSE Physics & Maths tutoring." },
+      { id: 42, category: "parttime", company: "Titan Worldwide / Blackwater", role: "Sales & Customer Service Associate", sector: "Sales & Commercial", appliedDate: "2026-11-10", stage: "Stage 2 - Video Interview", subStatus: "CV Shortlisted (Nov 11)", deadline: null, portalLink: "mailto:admin@titanworldwideltd.co.uk", calendarSynced: false, notes: "CV shortlisted by Titan Worldwide recruitment team on Nov 11." },
+      { id: 43, category: "parttime", company: "Santander Group (Kingston Branch)", role: "Customer Service Consultant | S1 | Branch Banking (12M FTC)", sector: "Retail Banking", appliedDate: "2026-11-13", stage: "Application Submitted", subStatus: "Application Received (Workday)", deadline: null, portalLink: "https://www.santanderjobs.co.uk", calendarSynced: false, notes: "Applied Nov 13 for Kingston Branch Banking 12-month FTC." },
+      { id: 66, category: "parttime", company: "Santander Group (Kingston Work Café)", role: "Customer Experience Advisor | S1 | Retail Banking | Kingston Work Café", sector: "Retail Banking", appliedDate: "2026-09-15", stage: "Stage 2 - Video Interview", subStatus: "Assessments & Video Interview Under Review (Oct 14)", deadline: null, portalLink: "https://www.santanderjobs.co.uk", calendarSynced: false, notes: "Applied Sep 15; completed assessments & digital interview Sep 17; Santander Resourcing confirmed Oct 14 assessments are under review." }
+    ];
+    // __INITIAL_APPLICATIONS_END__
+
+    const STAGES = [
+      { id: "Action Required", label: "Action Required", color: "amber", dotColor: "bg-amber-400 text-amber-400", barColor: "bg-amber-500", badge: "bg-amber-500/15 text-amber-300 border-amber-500/30" },
+      { id: "Stage 1 - Online Assessment", label: "Stage 1 - Online Assessment", color: "cyan", dotColor: "bg-cyan-400 text-cyan-400", barColor: "bg-cyan-500", badge: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30" },
+      { id: "Stage 2 - Video Interview", label: "Stage 2 - Video Interview", color: "emerald", dotColor: "bg-emerald-400 text-emerald-400", barColor: "bg-emerald-500", badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" },
+      { id: "Stage 3 - Assessment Centre", label: "Stage 3 - Assessment Centre", color: "fuchsia", dotColor: "bg-fuchsia-400 text-fuchsia-400", barColor: "bg-fuchsia-500", badge: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30" },
+      { id: "Offer / Successful", label: "Offer / Successful", color: "lime", dotColor: "bg-lime-400 text-lime-400", barColor: "bg-lime-400", badge: "bg-lime-500/15 text-lime-300 border-lime-400/35" },
+      { id: "Application Submitted", label: "Application Submitted", color: "indigo", dotColor: "bg-indigo-400 text-indigo-400", barColor: "bg-indigo-500", badge: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30" },
+      { id: "On Hold / Waitlist", label: "On Hold / Waitlist", color: "purple", dotColor: "bg-purple-400 text-purple-400", barColor: "bg-purple-500", badge: "bg-purple-500/15 text-purple-300 border-purple-500/30" },
+      { id: "Closed / Unsuccessful", label: "Closed / Unsuccessful", color: "slate", dotColor: "bg-rose-400 text-rose-400", barColor: "bg-slate-500", badge: "bg-slate-500/15 text-slate-300 border-slate-500/30" }
+    ];
+
+    const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
+
+    function loadMergedApps() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return INITIAL_APPLICATIONS;
+        const saved = JSON.parse(raw);
+        if (!Array.isArray(saved)) return INITIAL_APPLICATIONS;
+        const initialById = new Map(INITIAL_APPLICATIONS.map(item => [item.id, item]));
+        const savedById = new Map(saved.map(item => [item.id, item]));
+        const merged = INITIAL_APPLICATIONS.map(initItem => {
+          const s = savedById.get(initItem.id);
+          if (!s) return initItem;
+          const validStage = STAGES.some(st => st.id === s.stage) ? s.stage : initItem.stage;
+          return {
+            ...initItem,
+            ...s,
+            stage: validStage,
+            rejectedAfterStage: s.rejectedAfterStage || initItem.rejectedAfterStage || null
+          };
+        });
+        for (const s of saved) {
+          if (!initialById.has(s.id)) {
+            const validStage = STAGES.some(st => st.id === s.stage) ? s.stage : "Application Submitted";
+            merged.unshift({ ...s, stage: validStage });
+          }
+        }
+        return merged;
+      } catch {
+        return INITIAL_APPLICATIONS;
+      }
+    }
+
+    function formatCountdown(deadlineStr, appliedDateStr, now) {
+      if (!deadlineStr) return null;
+      const targetMs = new Date(deadlineStr).getTime();
+      const startMs = appliedDateStr ? new Date(appliedDateStr + "T09:00:00").getTime() : targetMs - 5 * 86400000;
+      const totalWindow = Math.max(targetMs - startMs, 3600000);
+      const diff = targetMs - now;
+      if (diff <= 0) {
+        return { text: "WINDOW EXPIRED / CHECK PORTAL", urgent: true, expired: true, pctRemaining: 100 };
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      const pctElapsed = Math.min(100, Math.max(8, Math.round(((totalWindow - diff) / totalWindow) * 100)));
+      return {
+        text: `${days > 0 ? days + 'd ' : ''}${String(hours).padStart(2,'0')}h ${String(mins).padStart(2,'0')}m ${String(secs).padStart(2,'0')}s`,
+        urgent: days < 2,
+        expired: false,
+        pctElapsed
+      };
+    }
+
+    function inferRejectedAfterStage(prevStage, existingRejectedAfter) {
+      if (existingRejectedAfter) return existingRejectedAfter;
+      if (prevStage === "Stage 3 - Assessment Centre") return "Stage 3 - Assessment Centre";
+      if (prevStage === "Stage 2 - Video Interview") return "Stage 2 - Video Interview";
+      if (prevStage === "Stage 1 - Online Assessment" || prevStage === "Action Required" || prevStage === "On Hold / Waitlist") {
+        return "Stage 1 - Online Assessment";
+      }
+      return "CV / Application Screen";
+    }
+
+    function App() {
+      const [apps, setApps] = useState(loadMergedApps);
+      const [now, setNow] = useState(Date.now());
+      const [activeTab, setActiveTab] = useState("kanban");
+      const [roleCategory, setRoleCategory] = useState("internship");
+      const [search, setSearch] = useState("");
+      const [sectorFilter, setSectorFilter] = useState("All");
+      const [stageFilter, setStageFilter] = useState("All");
+      const [rejectionFilter, setRejectionFilter] = useState("All");
+      const [selectedApp, setSelectedApp] = useState(null);
+      const [showAddModal, setShowAddModal] = useState(false);
+      const [calMonth, setCalMonth] = useState("2026-11");
+      const [selectedDay, setSelectedDay] = useState("2026-11-18");
+
+      // Drag and drop state
+      const [draggedAppId, setDraggedAppId] = useState(null);
+      const [dragOverStage, setDragOverStage] = useState(null);
+
+      // Live Email Refresh state
+      const [isRefreshing, setIsRefreshing] = useState(false);
+      const [syncStatus, setSyncStatus] = useState(null);
+
+      const [newApp, setNewApp] = useState({
+        company: "", role: "", sector: "Investment Management",
+        appliedDate: new Date().toISOString().slice(0, 10),
+        stage: "Action Required", rejectedAfterStage: "CV / Application Screen",
+        subStatus: "Stage 1: Online Assessment Invited",
+        deadline: "", portalLink: "", notes: "", category: "internship"
+      });
+
+      useEffect(() => {
+        const timer = setInterval(() => setNow(Date.now()), 1000);
+        return () => clearInterval(timer);
+      }, []);
+
+      useEffect(() => {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(apps)); } catch {}
+      }, [apps]);
+
+      const handleRefreshEmail = async () => {
+        setIsRefreshing(true);
+        try {
+          let apiResult = null;
+          try {
+            const res = await fetch("/api/refresh", { method: "POST" });
+            if (res.ok) {
+              apiResult = await res.json();
+            }
+          } catch {}
+
+          try {
+            const htmlRes = await fetch(`/index.html?t=${Date.now()}`, { cache: "no-store" });
+            if (htmlRes.ok) {
+              const htmlText = await htmlRes.text();
+              const match = htmlText.match(/\/\/ __INITIAL_APPLICATIONS_START__[\s\S]*?const INITIAL_APPLICATIONS = (\[[\s\S]*?\]);[\s\S]*?\/\/ __INITIAL_APPLICATIONS_END__/);
+              if (match && match[1]) {
+                const latestInitial = new Function(`return ${match[1]}`)();
+                if (Array.isArray(latestInitial) && latestInitial.length > 0) {
+                  setApps(prev => {
+                    const latestById = new Map(latestInitial.map(i => [i.id, i]));
+                    const customApps = prev.filter(p => !latestById.has(p.id));
+                    return [...customApps, ...latestInitial];
+                  });
+                }
+              }
+            }
+          } catch {}
+
+          const timeLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
+          if (apiResult && apiResult.ok) {
+            setSyncStatus({
+              ok: true,
+              time: timeLabel,
+              message: apiResult.message || `Synced with ramis.ahmad04@gmail.com (${apiResult.checkedCount || 0} recent emails checked).`,
+              emails: apiResult.recentRelevantEmails || []
+            });
+          } else {
+            setSyncStatus({
+              ok: true,
+              time: timeLabel,
+              message: "Refreshed applications from latest Gmail sync in index.html.",
+              emails: []
+            });
+          }
+        } catch {
+          setSyncStatus({
+            ok: false,
+            time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+            message: "Could not reach local Gmail refresh API; reloaded local tracker data.",
+            emails: []
+          });
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+
+      const categoryApps = useMemo(() => {
+        if (roleCategory === "successful") {
+          return apps.filter(a => a.stage === "Offer / Successful");
+        }
+        return apps.filter(a => a.category === roleCategory);
+      }, [apps, roleCategory]);
+      const sectors = useMemo(() => ["All", ...new Set(categoryApps.map(a => a.sector))], [categoryApps]);
+
+      const filteredApps = useMemo(() => {
+        return categoryApps.filter(app => {
+          const matchesSearch = app.company.toLowerCase().includes(search.toLowerCase()) ||
+            app.role.toLowerCase().includes(search.toLowerCase()) ||
+            app.subStatus.toLowerCase().includes(search.toLowerCase());
+          const matchesSector = sectorFilter === "All" || app.sector === sectorFilter;
+          const matchesStage = stageFilter === "All" || app.stage === stageFilter;
+          const matchesRejection = rejectionFilter === "All" ||
+            (app.stage === "Closed / Unsuccessful" && (app.rejectedAfterStage || "CV / Application Screen") === rejectionFilter);
+          return matchesSearch && matchesSector && matchesStage && (activeTab !== "table" || rejectionFilter === "All" || matchesRejection);
+        });
+      }, [categoryApps, search, sectorFilter, stageFilter, rejectionFilter, activeTab]);
+
+      const urgentItems = useMemo(() => {
+        return apps
+          .filter(a => a.stage === "Action Required")
+          .sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
+      }, [apps]);
+
+      const stats = useMemo(() => {
+        const internships = apps.filter(a => a.category === "internship");
+        const total = internships.length;
+        const action = internships.filter(a => a.stage === "Action Required").length;
+        const stage1 = internships.filter(a => a.stage === "Stage 1 - Online Assessment").length;
+        const stage2 = internships.filter(a => a.stage === "Stage 2 - Video Interview").length;
+        const stage3 = internships.filter(a => a.stage === "Stage 3 - Assessment Centre").length;
+        const offers = internships.filter(a => a.stage === "Offer / Successful").length;
+        const allOffers = apps.filter(a => a.stage === "Offer / Successful").length;
+        const closed = internships.filter(a => a.stage === "Closed / Unsuccessful");
+        const closedAfterOA = closed.filter(a => a.rejectedAfterStage === "Stage 1 - Online Assessment").length;
+        const closedAfterVI = closed.filter(a => a.rejectedAfterStage === "Stage 2 - Video Interview").length;
+        const closedAfterAC = closed.filter(a => a.rejectedAfterStage === "Stage 3 - Assessment Centre").length;
+        const closedAfterCV = closed.length - closedAfterOA - closedAfterVI - closedAfterAC;
+        const active = internships.filter(a => a.stage !== "Closed / Unsuccessful").length;
+        const everReachedStage1Plus = action + stage1 + stage2 + stage3 + offers + closedAfterOA + closedAfterVI + closedAfterAC;
+        const progressionRate = total > 0 ? Math.round((everReachedStage1Plus / total) * 100) : 0;
+        return {
+          total, action, stage1, stage2, stage3, offers, allOffers, active,
+          everReachedStage1Plus, progressionRate,
+          closedTotal: closed.length, closedAfterCV, closedAfterOA, closedAfterVI, closedAfterAC
+        };
+      }, [apps]);
+
+      const updateAppStage = (id, newStage) => {
+        setApps(prev => prev.map(a => {
+          if (a.id !== id) return a;
+          const nextRejected = newStage === "Closed / Unsuccessful"
+            ? inferRejectedAfterStage(a.stage, a.rejectedAfterStage)
+            : a.rejectedAfterStage;
+          return { ...a, stage: newStage, rejectedAfterStage: nextRejected };
+        }));
+        if (selectedApp && selectedApp.id === id) {
+          setSelectedApp(prev => ({
+            ...prev,
+            stage: newStage,
+            rejectedAfterStage: newStage === "Closed / Unsuccessful"
+              ? inferRejectedAfterStage(prev.stage, prev.rejectedAfterStage)
+              : prev.rejectedAfterStage
+          }));
+        }
+      };
+
+      const handleDragStart = (e, appId) => {
+        setDraggedAppId(appId);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(appId));
+      };
+
+      const handleDragOver = (e, stageId) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        if (dragOverStage !== stageId) setDragOverStage(stageId);
+      };
+
+      const handleDrop = (e, targetStageId) => {
+        e.preventDefault();
+        const rawId = e.dataTransfer.getData("text/plain");
+        const id = draggedAppId || Number(rawId);
+        if (id) {
+          updateAppStage(id, targetStageId);
+        }
+        setDraggedAppId(null);
+        setDragOverStage(null);
+      };
+
+      const handleSaveEdit = (updated) => {
+        setApps(prev => prev.map(a => a.id === updated.id ? updated : a));
+        setSelectedApp(null);
+      };
+
+      const handleAddApp = (e) => {
+        e.preventDefault();
+        if (!newApp.company || !newApp.role) return;
+        const item = {
+          ...newApp,
+          id: Date.now(),
+          deadline: newApp.deadline || null,
+          calendarSynced: Boolean(newApp.deadline),
+          rejectedAfterStage: newApp.stage === "Closed / Unsuccessful" ? (newApp.rejectedAfterStage || "CV / Application Screen") : null
+        };
+        setApps(prev => [item, ...prev]);
+        setShowAddModal(false);
+        setNewApp({
+          company: "", role: "", sector: "Investment Management",
+          appliedDate: new Date().toISOString().slice(0, 10),
+          stage: "Action Required", rejectedAfterStage: "CV / Application Screen",
+          subStatus: "Stage 1: Online Assessment Invited",
+          deadline: "", portalLink: "", notes: "", category: roleCategory
+        });
+      };
+
+      const resetData = () => {
+        if (confirm("Reset dashboard back to the 57 synced Gmail applications (Sept–Nov 2026) in index.html?")) {
+          setApps(INITIAL_APPLICATIONS);
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      };
+
+      // Calendar Grid Builder
+      const calendarDays = useMemo(() => {
+        const [year, month] = calMonth.split("-").map(Number);
+        const firstDay = new Date(year, month - 1, 1).getDay();
+        const startOffset = (firstDay + 6) % 7; // Monday start
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const cells = [];
+        for (let i = 0; i < startOffset; i++) cells.push(null);
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+          const deadlines = apps.filter(a => a.deadline && a.deadline.startsWith(dateStr));
+          const applied = apps.filter(a => a.appliedDate === dateStr);
+          cells.push({ day: d, dateStr, deadlines, applied });
+        }
+        return cells;
+      }, [calMonth, apps]);
+
+      return (
+        <div className="min-h-screen text-slate-100 pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
+          {/* Top Command Header */}
+          <header className="sticky top-0 z-30 bg-[#06080F]/85 backdrop-blur-2xl border-b border-white/[0.08] px-4 md:px-8 py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
+            <div className="max-w-[1640px] mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 border border-white/15">
+                  <Icon name="Terminal" className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <h1 className="text-base md:text-lg font-extrabold tracking-tight text-white">2027 GRAD & INTERNSHIP COMMAND</h1>
+                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
+                      Gmail (Sept–Nov) + GCal Synced
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 font-medium">Ramis Ahmad • BSc Physics (Exeter) • Client, Markets & Strategy Track</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="glass-surface rounded-xl p-1 flex flex-wrap text-xs">
+                  <button
+                    onClick={() => { setRoleCategory("internship"); setSectorFilter("All"); }}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${roleCategory === "internship" ? "bg-indigo-600/90 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/30" : "text-slate-400 hover:text-white"}`}
+                  >
+                    2027 Internships & Grad ({apps.filter(a => a.category === "internship").length})
+                  </button>
+                  <button
+                    onClick={() => { setRoleCategory("parttime"); setSectorFilter("All"); }}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${roleCategory === "parttime" ? "bg-indigo-600/90 text-white shadow-md shadow-indigo-500/20 border border-indigo-400/30" : "text-slate-400 hover:text-white"}`}
+                  >
+                    Part-Time & Flex ({apps.filter(a => a.category === "parttime").length})
+                  </button>
+                  <button
+                    onClick={() => { setRoleCategory("successful"); setSectorFilter("All"); }}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${roleCategory === "successful" ? "bg-lime-500/25 text-lime-200 shadow-md shadow-lime-500/20 border border-lime-400/40" : "text-lime-300/80 hover:text-lime-200"}`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_6px_#a3e635]"></span>
+                    Successful / Offers ({apps.filter(a => a.stage === "Offer / Successful").length})
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleRefreshEmail}
+                  disabled={isRefreshing}
+                  className="flex items-center gap-1.5 bg-indigo-600/90 hover:bg-indigo-500 disabled:opacity-60 text-white font-semibold text-xs px-3.5 py-2 rounded-xl transition-all shadow-lg shadow-indigo-500/20 border border-indigo-400/30"
+                >
+                  <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  {isRefreshing ? "Checking Gmail..." : "Refresh & Check Email"}
+                </button>
+
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/20 border border-emerald-300/40"
+                >
+                  <Icon name="Plus" className="w-4 h-4" />
+                  Add Role
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <main className="max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-6">
+            {/* Live Gmail Refresh Status Banner */}
+            {syncStatus && (
+              <div className={`glass-surface rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
+                syncStatus.ok ? "border-emerald-500/35 bg-emerald-950/25 text-emerald-200" : "border-amber-500/35 bg-amber-950/25 text-amber-200"
+              }`}>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold">
+                    <span className={`w-2 h-2 rounded-full ${syncStatus.ok ? "bg-emerald-400 shadow-[0_0_8px_#34d399]" : "bg-amber-400 shadow-[0_0_8px_#fbbf24]"}`}></span>
+                    <span>{syncStatus.message}</span>
+                    <span className="text-[11px] font-mono-num text-slate-400">({syncStatus.time} GMT)</span>
+                  </div>
+                  {syncStatus.emails && syncStatus.emails.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                      <span className="text-[11px] text-slate-400">Latest relevant emails today:</span>
+                      {syncStatus.emails.map(em => (
+                        <span key={em.id} className="text-[11px] px-2.5 py-0.5 rounded-lg bg-[#090D18]/90 border border-white/[0.08] text-slate-200 font-medium">
+                          {em.subject}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => setSyncStatus(null)}
+                  className="text-xs text-slate-400 hover:text-white self-end sm:self-center px-2.5 py-1 rounded-lg hover:bg-white/5 transition"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* KPI Strip (Linear / Bloomberg Obsidian Glass Tiles) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+              <div className="glass-surface rounded-2xl p-4 hover:border-white/[0.15] transition-all">
+                <div className="text-xs text-slate-400 font-medium flex items-center justify-between">
+                  <span>Total 2027 Apps</span>
+                  <Icon name="Briefcase" className="w-4 h-4 text-indigo-400" />
+                </div>
+                <div className="text-2xl font-bold mt-1.5 font-mono-num tracking-tight text-white">{stats.total}</div>
+                <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_#818cf8]"></span>
+                  <span><strong className="font-mono-num text-slate-200">{stats.active}</strong> active • Sept–Nov</span>
+                </div>
+              </div>
+
+              <div className="glass-surface rounded-2xl p-4 border-amber-500/25 hover:border-amber-400/40 transition-all">
+                <div className="text-xs text-amber-300/90 font-semibold flex items-center justify-between">
+                  <span>Action Required</span>
+                  <Icon name="AlertTriangle" className="w-4 h-4 text-amber-400" />
+                </div>
+                <div className="text-2xl font-bold mt-1.5 text-amber-400 font-mono-num tracking-tight">{stats.action}</div>
+                <div className="text-[11px] text-amber-200/70 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24] animate-pulse"></span>
+                  <span>6 synced to GCal</span>
+                </div>
+              </div>
+
+              <div className="glass-surface rounded-2xl p-4 border-cyan-500/25 hover:border-cyan-400/40 transition-all">
+                <div className="text-xs text-cyan-300/90 font-semibold flex items-center justify-between">
+                  <span>Stage 1: Online Test</span>
+                  <Icon name="FileCheck2" className="w-4 h-4 text-cyan-400" />
+                </div>
+                <div className="text-2xl font-bold mt-1.5 text-cyan-400 font-mono-num tracking-tight">{stats.stage1}</div>
+                <div className="text-[11px] text-slate-400 mt-1">Active in Stage 1 OA/SJT</div>
+              </div>
+
+              <div className="glass-surface rounded-2xl p-4 border-emerald-500/25 hover:border-emerald-400/40 transition-all">
+                <div className="text-xs text-emerald-300/90 font-semibold flex items-center justify-between">
+                  <span>Stage 2: Video Int.</span>
+                  <Icon name="Video" className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className="text-2xl font-bold mt-1.5 text-emerald-400 font-mono-num tracking-tight">{stats.stage2}</div>
+                <div className="text-[11px] text-slate-400 mt-1">HireVue / VI completed</div>
+              </div>
+
+              <div className="glass-surface rounded-2xl p-4 border-fuchsia-500/25 hover:border-fuchsia-400/40 transition-all">
+                <div className="text-xs text-fuchsia-300/90 font-semibold flex items-center justify-between">
+                  <span>Stage 3: Assess. Ctr</span>
+                  <Icon name="Award" className="w-4 h-4 text-fuchsia-400" />
+                </div>
+                <div className="text-2xl font-bold mt-1.5 text-fuchsia-400 font-mono-num tracking-tight">{stats.stage3}</div>
+                <div className="text-[11px] text-slate-400 mt-1">AC / Final round</div>
+              </div>
+
+              <div
+                onClick={() => { setRoleCategory("successful"); setSectorFilter("All"); }}
+                className="glass-surface rounded-2xl p-4 border-lime-500/30 hover:border-lime-400/50 transition-all cursor-pointer"
+              >
+                <div className="text-xs text-lime-300 font-semibold flex items-center justify-between">
+                  <span>Offer / Successful</span>
+                  <Icon name="Trophy" className="w-4 h-4 text-lime-400" />
+                </div>
+                <div className="text-2xl font-bold mt-1.5 text-lime-400 font-mono-num tracking-tight">{stats.allOffers}</div>
+                <div className="text-[11px] text-lime-200/70 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_6px_#a3e635]"></span>
+                  <span>{stats.offers} Intern • {stats.allOffers - stats.offers} Flex</span>
+                </div>
+              </div>
+
+              <div className="glass-surface rounded-2xl p-4 bg-gradient-to-br from-indigo-950/50 via-[#0D121F]/85 to-emerald-950/30 border-indigo-500/25">
+                <div className="text-xs text-indigo-300 font-semibold flex items-center justify-between">
+                  <span>Closed Breakdown</span>
+                  <Icon name="PieChart" className="w-4 h-4 text-indigo-400" />
+                </div>
+                <div className="text-lg font-bold mt-1.5 text-white font-mono-num flex items-baseline gap-2">
+                  <span>{stats.closedTotal} Closed</span>
+                  <span className="text-[11px] text-emerald-400 font-semibold">({stats.progressionRate}% → OA+)</span>
+                </div>
+                <div className="text-[10px] text-slate-300 mt-1 font-mono-num flex items-center gap-2">
+                  <span className="text-slate-400">CV:{stats.closedAfterCV}</span>
+                  <span className="text-cyan-300">S1:{stats.closedAfterOA}</span>
+                  <span className="text-emerald-300">S2:{stats.closedAfterVI}</span>
+                  <span className="text-fuchsia-300">S3:{stats.closedAfterAC}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Urgent Deadlines Radar */}
+            {urgentItems.length > 0 && (
+              <section className="glass-surface rounded-2xl p-4 md:p-5 border-amber-500/25">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] animate-ping"></span>
+                    <h2 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-amber-300">Immediate Deadlines & Action Radar ({urgentItems.length})</h2>
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono-num">EUROPE/LONDON (GMT) • LIVE TELEMETRY</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+                  {urgentItems.map(item => {
+                    const cd = formatCountdown(item.deadline, item.appliedDate, now);
+                    return (
+                      <div key={item.id} className="glass-card rounded-xl p-3.5 flex flex-col justify-between group">
+                        <div>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <CompanyMonogram company={item.company} />
+                              <span className="font-bold text-xs text-white group-hover:text-amber-300 transition truncate">{item.company}</span>
+                            </div>
+                            {item.calendarSynced && (
+                              <span title="Synced to Google Calendar" className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 shrink-0">
+                                GCal
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-400 line-clamp-1 mt-2">{item.role}</p>
+                          <p className="text-[11px] text-amber-200/90 mt-1.5 font-medium line-clamp-2">{item.subStatus}</p>
+                        </div>
+
+                        <div className="mt-3 pt-2.5 border-t border-white/[0.07] space-y-2">
+                          {/* Subtle urgency progress bar */}
+                          {cd && (
+                            <div className="w-full h-1 bg-slate-900/90 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  cd.expired ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : cd.urgent ? "bg-amber-400 shadow-[0_0_8px_#fbbf24]" : "bg-emerald-400"
+                                }`}
+                                style={{ width: `${cd.expired ? 100 : cd.pctElapsed}%` }}
+                              />
+                            </div>
+                          )}
+
+                          <div className="flex items-center justify-between gap-1.5">
+                            {cd ? (
+                              <span className={`text-[10px] font-mono-num font-semibold px-2 py-0.5 rounded-md border ${
+                                cd.expired
+                                  ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                                  : cd.urgent
+                                  ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                                  : "bg-slate-900/90 text-slate-300 border-white/[0.08]"
+                              }`}>
+                                {cd.text}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-slate-400 font-mono-num">Action pending</span>
+                            )}
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => setSelectedApp(item)} className="text-[11px] text-slate-300 hover:text-white px-2 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.06] transition">
+                                Edit
+                              </button>
+                              {item.portalLink && (
+                                <a href={item.portalLink} target="_blank" rel="noreferrer" className="text-[11px] bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded-md flex items-center gap-1 transition shadow-sm shadow-amber-500/30">
+                                  Open <Icon name="ExternalLink" className="w-3 h-3" />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Navigation & Filter Bar */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 glass-surface rounded-2xl p-3">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {[
+                  { id: "kanban", label: "Pipeline Board", icon: "Columns" },
+                  { id: "table", label: "Master Table", icon: "ListFilter" },
+                  { id: "calendar", label: "Deadlines Calendar", icon: "Calendar" },
+                  { id: "analytics", label: "Funnel & Stage Drop-off", icon: "BarChart3" }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      activeTab === tab.id
+                        ? "bg-white/[0.1] text-white border border-white/[0.15] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)]"
+                        : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+                    }`}
+                  >
+                    <Icon name={tab.icon} className="w-3.5 h-3.5" />
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative flex-1 sm:w-56">
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Search firm, role, stage..."
+                    className="w-full bg-[#06080F]/90 border border-white/[0.09] rounded-xl pl-3 pr-8 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/70 transition"
+                  />
+                </div>
+
+                <select
+                  value={sectorFilter}
+                  onChange={e => setSectorFilter(e.target.value)}
+                  className="bg-[#06080F]/90 border border-white/[0.09] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/70"
+                >
+                  {sectors.map(s => <option key={s} value={s}>{s === "All" ? "All Sectors" : s}</option>)}
+                </select>
+
+                <select
+                  value={rejectionFilter}
+                  onChange={e => setRejectionFilter(e.target.value)}
+                  title="Filter Closed / Unsuccessful by which stage you were unsuccessful after"
+                  className="bg-[#06080F]/90 border border-white/[0.09] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/70"
+                >
+                  <option value="All">Unsuccessful Stage: All</option>
+                  {REJECTION_STAGES.map(r => (
+                    <option key={r.id} value={r.id}>{r.label}</option>
+                  ))}
+                </select>
+
+                {activeTab === "table" && (
+                  <select
+                    value={stageFilter}
+                    onChange={e => setStageFilter(e.target.value)}
+                    className="bg-[#06080F]/90 border border-white/[0.09] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/70"
+                  >
+                    <option value="All">All Stages</option>
+                    {STAGES.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
+                  </select>
+                )}
+
+                <button onClick={resetData} title="Reset to default Gmail sync" className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl hover:bg-white/[0.05] transition">
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            {/* VIEW 1: KANBAN PIPELINE (8 STAGES WITH DRAG & DROP + OFFER / SUCCESSFUL + UNSUCCESSFUL-AFTER DIFFERENTIATION) */}
+            {activeTab === "kanban" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3.5 items-start">
+                {STAGES.map(stage => {
+                  const colApps = filteredApps.filter(a => {
+                    if (a.stage !== stage.id) return false;
+                    if (stage.id === "Closed / Unsuccessful" && rejectionFilter !== "All") {
+                      return (a.rejectedAfterStage || "CV / Application Screen") === rejectionFilter;
+                    }
+                    return true;
+                  });
+                  const isDragTarget = dragOverStage === stage.id;
+                  return (
+                    <div
+                      key={stage.id}
+                      onDragOver={e => handleDragOver(e, stage.id)}
+                      onDragLeave={() => setDragOverStage(prev => prev === stage.id ? null : prev)}
+                      onDrop={e => handleDrop(e, stage.id)}
+                      className={`glass-surface rounded-2xl p-3 flex flex-col max-h-[78vh] transition-all duration-150 ${
+                        isDragTarget
+                          ? "border-indigo-400/80 ring-2 ring-indigo-500/35 bg-[#121B33]/90 shadow-[0_0_30px_rgba(99,102,241,0.28)]"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-1.5 pb-2.5 mb-2.5 border-b border-white/[0.08]">
+                        <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border truncate ${stage.badge}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 shadow-[0_0_8px_currentColor] ${stage.dotColor}`}></span>
+                          <span className="truncate">{stage.label}</span>
+                        </span>
+                        <span className="text-xs font-mono-num text-slate-300 font-bold px-1.5 py-0.5 rounded-md bg-white/[0.05] shrink-0">
+                          {colApps.length}
+                        </span>
+                      </div>
+
+                      {/* Sub-filter chips inside Closed / Unsuccessful column */}
+                      {stage.id === "Closed / Unsuccessful" && (
+                        <div className="flex flex-wrap gap-1 pb-2.5 mb-2 border-b border-white/[0.06]">
+                          <button
+                            onClick={() => setRejectionFilter("All")}
+                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
+                              rejectionFilter === "All"
+                                ? "bg-white/15 text-white border-white/30 font-bold"
+                                : "bg-white/[0.03] text-slate-400 border-white/[0.06] hover:text-slate-200"
+                            }`}
+                          >
+                            All ({stats.closedTotal})
+                          </button>
+                          <button
+                            onClick={() => setRejectionFilter("CV / Application Screen")}
+                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
+                              rejectionFilter === "CV / Application Screen"
+                                ? "bg-slate-500/30 text-white border-slate-400/50 font-bold"
+                                : "bg-white/[0.03] text-slate-400 border-white/[0.06] hover:text-slate-200"
+                            }`}
+                          >
+                            CV ({stats.closedAfterCV})
+                          </button>
+                          <button
+                            onClick={() => setRejectionFilter("Stage 1 - Online Assessment")}
+                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
+                              rejectionFilter === "Stage 1 - Online Assessment"
+                                ? "bg-cyan-500/25 text-cyan-200 border-cyan-400/50 font-bold"
+                                : "bg-white/[0.03] text-cyan-300/80 border-white/[0.06] hover:text-cyan-200"
+                            }`}
+                          >
+                            S1 ({stats.closedAfterOA})
+                          </button>
+                          <button
+                            onClick={() => setRejectionFilter("Stage 2 - Video Interview")}
+                            className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded border transition ${
+                              rejectionFilter === "Stage 2 - Video Interview"
+                                ? "bg-emerald-500/25 text-emerald-200 border-emerald-400/50 font-bold"
+                                : "bg-white/[0.03] text-emerald-300/80 border-white/[0.06] hover:text-emerald-200"
+                            }`}
+                          >
+                            S2 ({stats.closedAfterVI})
+                          </button>
+                        </div>
+                      )}
+
+                      <div className="space-y-2.5 overflow-y-auto pr-1">
+                        {colApps.map(app => {
+                          const rejBadge = app.stage === "Closed / Unsuccessful"
+                            ? getRejectionBadge(app.rejectedAfterStage)
+                            : null;
+                          return (
+                            <div
+                              key={app.id}
+                              draggable
+                              onDragStart={e => handleDragStart(e, app.id)}
+                              onDragEnd={() => { setDraggedAppId(null); setDragOverStage(null); }}
+                              onClick={() => setSelectedApp(app)}
+                              className={`glass-card rounded-xl p-3 cursor-grab active:cursor-grabbing space-y-2 ${
+                                draggedAppId === app.id ? "opacity-40 scale-95" : ""
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <CompanyMonogram company={app.company} />
+                                  <h3 className="text-xs font-bold text-white leading-snug truncate">{app.company}</h3>
+                                </div>
+                                <span className="text-[10px] font-mono-num text-slate-400 shrink-0">{app.appliedDate.slice(5)}</span>
+                              </div>
+
+                              <p className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed">{app.role}</p>
+
+                              {rejBadge && (
+                                <div className="pt-0.5">
+                                  <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md border ${rejBadge.badge}`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${rejBadge.dot}`}></span>
+                                    {rejBadge.shortLabel}
+                                  </span>
+                                </div>
+                              )}
+
+                              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#06080F]/80 text-slate-400 border border-white/[0.06]">
+                                  {app.sector}
+                                </span>
+                                {app.calendarSynced && (
+                                  <span className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/10 text-sky-300 border border-sky-500/25">
+                                    GCal
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="text-[11px] text-slate-400 border-t border-white/[0.06] pt-1.5 line-clamp-2">
+                                {app.subStatus}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {colApps.length === 0 && (
+                          <div className="text-center py-8 text-xs text-slate-500 border border-dashed border-white/[0.06] rounded-xl">
+                            Drop card here
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* VIEW 2: MASTER TABLE */}
+            {activeTab === "table" && (
+              <div className="glass-surface rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-white/[0.08] text-[11px] uppercase tracking-wider text-slate-400 bg-[#06080F]/60">
+                        <th className="py-3.5 px-4">Company</th>
+                        <th className="py-3.5 px-4">Role</th>
+                        <th className="py-3.5 px-4">Sector</th>
+                        <th className="py-3.5 px-4">Applied</th>
+                        <th className="py-3.5 px-4">Pipeline Stage</th>
+                        <th className="py-3.5 px-4">Unsuccessful After</th>
+                        <th className="py-3.5 px-4">Current Status / Deadline</th>
+                        <th className="py-3.5 px-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/[0.06] text-xs">
+                      {filteredApps.map(app => {
+                        const stageObj = STAGES.find(s => s.id === app.stage) || STAGES[4];
+                        const rejObj = app.stage === "Closed / Unsuccessful" ? getRejectionBadge(app.rejectedAfterStage) : null;
+                        return (
+                          <tr key={app.id} className="hover:bg-white/[0.04] transition">
+                            <td className="py-3 px-4 font-bold text-white whitespace-nowrap">
+                              <div className="flex items-center gap-2.5">
+                                <CompanyMonogram company={app.company} />
+                                <span>{app.company}</span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 text-slate-300 max-w-xs truncate">{app.role}</td>
+                            <td className="py-3 px-4 text-slate-400 whitespace-nowrap">{app.sector}</td>
+                            <td className="py-3 px-4 font-mono-num text-slate-400 whitespace-nowrap">{app.appliedDate}</td>
+                            <td className="py-3 px-4 whitespace-nowrap">
+                              <select
+                                value={app.stage}
+                                onChange={e => updateAppStage(app.id, e.target.value)}
+                                className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border bg-[#06080F] focus:outline-none ${stageObj.badge}`}
+                              >
+                                {STAGES.map(s => <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">{s.label}</option>)}
+                              </select>
+                            </td>
+                            <td className="py-3 px-4 whitespace-nowrap">
+                              {rejObj ? (
+                                <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-lg border ${rejObj.badge}`}>
+                                  <span className={`w-1.5 h-1.5 rounded-full ${rejObj.dot}`}></span>
+                                  {rejObj.shortLabel}
+                                </span>
+                              ) : (
+                                <span className="text-slate-600 font-mono-num">—</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-slate-300 max-w-xs truncate">{app.subStatus}</td>
+                            <td className="py-3 px-4 text-right whitespace-nowrap space-x-2.5">
+                              <button onClick={() => setSelectedApp(app)} className="text-indigo-400 hover:text-indigo-300 font-semibold">
+                                Details
+                              </button>
+                              {app.portalLink && (
+                                <a href={app.portalLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:text-emerald-300 font-semibold">
+                                  Portal ↗
+                                </a>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 3: INTERACTIVE CALENDAR (SEPT–DEC 2026) */}
+            {activeTab === "calendar" && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div className="lg:col-span-2 glass-surface rounded-2xl p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <h2 className="text-sm font-bold text-white">Application & Assessment Schedule (Sept–Dec 2026)</h2>
+                    <div className="flex gap-1.5">
+                      {[
+                        { id: "2026-09", label: "Sep 2026" },
+                        { id: "2026-10", label: "Oct 2026" },
+                        { id: "2026-11", label: "Nov 2026" },
+                        { id: "2026-12", label: "Dec 2026" }
+                      ].map(m => (
+                        <button
+                          key={m.id}
+                          onClick={() => setCalMonth(m.id)}
+                          className={`px-3 py-1 rounded-xl text-xs font-semibold transition ${
+                            calMonth === m.id ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20" : "bg-[#06080F]/80 text-slate-400 hover:text-white border border-white/[0.07]"
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-semibold text-slate-500 mb-1.5">
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => <div key={d}>{d}</div>)}
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {calendarDays.map((cell, idx) => {
+                      if (!cell) return <div key={idx} className="h-20 rounded-xl bg-[#06080F]/30 border border-white/[0.03]" />;
+                      const isToday = cell.dateStr === "2026-11-18";
+                      const isSelected = cell.dateStr === selectedDay;
+                      return (
+                        <div
+                          key={cell.dateStr}
+                          onClick={() => setSelectedDay(cell.dateStr)}
+                          className={`h-20 rounded-xl p-1.5 border cursor-pointer transition flex flex-col justify-between ${
+                            isSelected
+                              ? "bg-indigo-950/60 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.25)]"
+                              : isToday
+                              ? "bg-emerald-950/30 border-emerald-500/50"
+                              : "bg-[#0B101D]/80 border-white/[0.06] hover:border-white/[0.15]"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-xs font-mono-num font-bold ${isToday ? "text-emerald-400" : "text-slate-300"}`}>
+                              {cell.day}
+                            </span>
+                            {isToday && <span className="text-[9px] uppercase font-bold text-emerald-400">Today</span>}
+                          </div>
+
+                          <div className="space-y-1 overflow-hidden">
+                            {cell.deadlines.map(d => (
+                              <div key={d.id} className="text-[10px] truncate px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-medium">
+                                DUE: {d.company}
+                              </div>
+                            ))}
+                            {cell.applied.length > 0 && (
+                              <div className="text-[10px] font-mono-num truncate px-1 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+                                +{cell.applied.length} Applied
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Selected Day Agenda */}
+                <div className="glass-surface rounded-2xl p-5 space-y-4">
+                  <div className="border-b border-white/[0.08] pb-3">
+                    <div className="text-xs text-slate-400">Selected Date</div>
+                    <div className="text-base font-bold text-white font-mono-num mt-0.5">{selectedDay}</div>
+                  </div>
+
+                  {(() => {
+                    const dayDeadlines = apps.filter(a => a.deadline && a.deadline.startsWith(selectedDay));
+                    const dayApplied = apps.filter(a => a.appliedDate === selectedDay);
+                    if (dayDeadlines.length === 0 && dayApplied.length === 0) {
+                      return <p className="text-xs text-slate-500 py-6 text-center">No logged submissions or assessment deadlines on this date.</p>;
+                    }
+                    return (
+                      <div className="space-y-3">
+                        {dayDeadlines.map(d => (
+                          <div key={d.id} className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 space-y-1.5">
+                            <div className="text-[11px] font-bold uppercase text-amber-400">Assessment / Action Deadline</div>
+                            <div className="flex items-center gap-2">
+                              <CompanyMonogram company={d.company} />
+                              <div className="text-sm font-bold text-white">{d.company}</div>
+                            </div>
+                            <div className="text-xs text-slate-300">{d.subStatus}</div>
+                            <div className="text-[11px] font-mono-num text-amber-300 pt-1">Due: {d.deadline.replace("T", " ")}</div>
+                          </div>
+                        ))}
+                        {dayApplied.map(a => (
+                          <div key={a.id} onClick={() => setSelectedApp(a)} className="glass-card rounded-xl p-3 cursor-pointer space-y-1">
+                            <div className="text-[10px] uppercase font-semibold text-indigo-400">Application Submitted</div>
+                            <div className="flex items-center gap-2">
+                              <CompanyMonogram company={a.company} />
+                              <div className="text-xs font-bold text-white">{a.company}</div>
+                            </div>
+                            <div className="text-[11px] text-slate-400 truncate">{a.role}</div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 4: ANALYTICS, FUNNEL & UNSUCCESSFUL STAGE BREAKDOWN */}
+            {activeTab === "analytics" && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div className="glass-surface rounded-2xl p-5 space-y-4">
+                  <h3 className="text-sm font-bold text-white">2027 Pipeline Breakdown (Stage 1 / Stage 2 / Stage 3)</h3>
+                  <div className="space-y-3.5">
+                    {STAGES.map(st => {
+                      const count = apps.filter(a => a.category === "internship" && a.stage === st.id).length;
+                      const pct = Math.round((count / Math.max(stats.total, 1)) * 100);
+                      return (
+                        <div key={st.id} className="space-y-1.5">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-slate-300 font-medium flex items-center gap-2">
+                              <span className={`w-2 h-2 rounded-full ${st.dotColor}`}></span>
+                              {st.label}
+                            </span>
+                            <span className="font-mono-num text-slate-300 font-semibold">{count} ({pct}%)</span>
+                          </div>
+                          <div className="w-full h-2 bg-[#06080F] rounded-full overflow-hidden border border-white/[0.05]">
+                            <div className={`h-full ${st.barColor || "bg-indigo-500"} rounded-full`} style={{ width: `${pct}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Unsuccessful By Stage Reached Breakdown */}
+                <div className="glass-surface rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-white">Unsuccessful Breakdown by Stage Reached</h3>
+                    <span className="text-xs font-mono-num text-slate-400">{stats.closedTotal} Closed</span>
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Differentiates between applications closed at initial CV review vs after completing Stage 1 Online Assessments or Stage 2 Video Interviews.
+                  </p>
+                  <div className="space-y-3.5 pt-1">
+                    {[
+                      { id: "CV / Application Screen", label: "After CV / Application Screen", count: stats.closedAfterCV, bar: "bg-slate-400", dot: "bg-slate-400" },
+                      { id: "Stage 1 - Online Assessment", label: "After Stage 1 (Online Assessment)", count: stats.closedAfterOA, bar: "bg-cyan-400", dot: "bg-cyan-400" },
+                      { id: "Stage 2 - Video Interview", label: "After Stage 2 (Video Interview)", count: stats.closedAfterVI, bar: "bg-emerald-400", dot: "bg-emerald-400" },
+                      { id: "Stage 3 - Assessment Centre", label: "After Stage 3 (Assessment Centre)", count: stats.closedAfterAC, bar: "bg-fuchsia-400", dot: "bg-fuchsia-400" }
+                    ].map(row => {
+                      const pct = Math.round((row.count / Math.max(stats.closedTotal, 1)) * 100);
+                      const matchingFirms = apps
+                        .filter(a => a.category === "internship" && a.stage === "Closed / Unsuccessful" && (a.rejectedAfterStage || "CV / Application Screen") === row.id)
+                        .map(a => a.company);
+                      return (
+                        <div key={row.id} className="bg-[#080C17]/80 border border-white/[0.06] rounded-xl p-3 space-y-2">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-slate-200 font-semibold flex items-center gap-2">
+                              <span className={`w-2 h-2 rounded-full ${row.dot}`}></span>
+                              {row.label}
+                            </span>
+                            <span className="font-mono-num text-white font-bold">{row.count} ({pct}%)</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                            <div className={`h-full ${row.bar} rounded-full`} style={{ width: `${pct}%` }} />
+                          </div>
+                          {matchingFirms.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-0.5">
+                              {matchingFirms.map(firm => (
+                                <span key={firm} className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.04] text-slate-300 border border-white/[0.06]">
+                                  {firm}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="glass-surface rounded-2xl p-5 space-y-4">
+                  <h3 className="text-sm font-bold text-white">Applications by Target Sector</h3>
+                  <div className="space-y-3">
+                    {[...new Set(apps.filter(a => a.category === "internship").map(a => a.sector))].map(sec => {
+                      const count = apps.filter(a => a.category === "internship" && a.sector === sec).length;
+                      const pct = Math.round((count / Math.max(stats.total, 1)) * 100);
+                      return (
+                        <div key={sec} className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-slate-300 font-medium">{sec}</span>
+                            <span className="font-mono-num text-slate-400">{count} ({pct}%)</span>
+                          </div>
+                          <div className="w-full h-2 bg-[#06080F] rounded-full overflow-hidden border border-white/[0.05]">
+                            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${pct}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* Edit / Detail Modal */}
+          {selectedApp && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setSelectedApp(null)}>
+              <div className="glass-surface border border-white/[0.15] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <CompanyMonogram company={selectedApp.company} />
+                    <div>
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">{selectedApp.sector}</span>
+                      <h3 className="text-lg font-bold text-white mt-0.5">{selectedApp.company}</h3>
+                      <p className="text-xs text-slate-400 mt-0.5">{selectedApp.role}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setSelectedApp(null)} className="text-slate-400 hover:text-white p-1">
+                    <Icon name="X" className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Pipeline Stage</label>
+                    <select
+                      value={selectedApp.stage}
+                      onChange={e => {
+                        const nextStage = e.target.value;
+                        setSelectedApp({
+                          ...selectedApp,
+                          stage: nextStage,
+                          rejectedAfterStage: nextStage === "Closed / Unsuccessful"
+                            ? inferRejectedAfterStage(selectedApp.stage, selectedApp.rejectedAfterStage)
+                            : selectedApp.rejectedAfterStage
+                        });
+                      }}
+                      className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-slate-200"
+                    >
+                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Deadline (ISO / Local)</label>
+                    <input
+                      type="text"
+                      value={selectedApp.deadline || ""}
+                      placeholder="YYYY-MM-DDTHH:MM:SS"
+                      onChange={e => setSelectedApp({ ...selectedApp, deadline: e.target.value || null })}
+                      className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-slate-200 font-mono-num"
+                    />
+                  </div>
+                </div>
+
+                {selectedApp.stage === "Closed / Unsuccessful" && (
+                  <div className="text-xs">
+                    <label className="block text-rose-300 font-semibold mb-1">Unsuccessful After Which Stage?</label>
+                    <select
+                      value={selectedApp.rejectedAfterStage || "CV / Application Screen"}
+                      onChange={e => setSelectedApp({ ...selectedApp, rejectedAfterStage: e.target.value })}
+                      className="w-full bg-[#06080F] border border-rose-500/30 rounded-xl px-2.5 py-2 text-slate-200"
+                    >
+                      {REJECTION_STAGES.map(r => (
+                        <option key={r.id} value={r.id}>{r.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Current Sub-Status</label>
+                  <input
+                    type="text"
+                    value={selectedApp.subStatus}
+                    onChange={e => setSelectedApp({ ...selectedApp, subStatus: e.target.value })}
+                    className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-slate-200"
+                  />
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Notes & Assessment Details</label>
+                  <textarea
+                    rows={3}
+                    value={selectedApp.notes}
+                    onChange={e => setSelectedApp({ ...selectedApp, notes: e.target.value })}
+                    className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-slate-200"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  {selectedApp.portalLink ? (
+                    <a href={selectedApp.portalLink} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:underline flex items-center gap-1 font-semibold">
+                      Open Candidate Portal <Icon name="ExternalLink" className="w-3.5 h-3.5" />
+                    </a>
+                  ) : <span />}
+                  <div className="flex gap-2">
+                    <button onClick={() => setSelectedApp(null)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white">
+                      Cancel
+                    </button>
+                    <button onClick={() => handleSaveEdit(selectedApp)} className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Add New Role Modal */}
+          {showAddModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
+              <form onSubmit={handleAddApp} className="glass-surface border border-white/[0.15] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-white">Add New Application</h3>
+                  <button type="button" onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+                    <Icon name="X" className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Company *</label>
+                    <input required type="text" value={newApp.company} onChange={e => setNewApp({ ...newApp, company: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Sector</label>
+                    <input type="text" value={newApp.sector} onChange={e => setNewApp({ ...newApp, sector: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                  </div>
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Role Title *</label>
+                  <input required type="text" value={newApp.role} onChange={e => setNewApp({ ...newApp, role: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Stage</label>
+                    <select value={newApp.stage} onChange={e => setNewApp({ ...newApp, stage: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-white">
+                      {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Deadline (Optional)</label>
+                    <input type="datetime-local" value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-2.5 py-2 text-white font-mono-num" />
+                  </div>
+                </div>
+
+                {newApp.stage === "Closed / Unsuccessful" && (
+                  <div className="text-xs">
+                    <label className="block text-rose-300 font-semibold mb-1">Unsuccessful After Which Stage?</label>
+                    <select
+                      value={newApp.rejectedAfterStage || "CV / Application Screen"}
+                      onChange={e => setNewApp({ ...newApp, rejectedAfterStage: e.target.value })}
+                      className="w-full bg-[#06080F] border border-rose-500/30 rounded-xl px-2.5 py-2 text-white"
+                    >
+                      {REJECTION_STAGES.map(r => (
+                        <option key={r.id} value={r.id}>{r.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Portal / Assessment Link</label>
+                  <input type="url" value={newApp.portalLink} onChange={e => setNewApp({ ...newApp, portalLink: e.target.value })} placeholder="https://..." className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">Notes</label>
+                  <textarea rows={2} value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })} className="w-full bg-[#06080F] border border-white/[0.1] rounded-xl px-3 py-2 text-white" />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <button type="button" onClick={() => setShowAddModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400">Cancel</button>
+                  <button type="submit" className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950">Add to Tracker</button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
