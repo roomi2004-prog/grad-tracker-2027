@@ -21,7 +21,7 @@
   ],
   "dismissedIds": [],
   "version": 6,
-  "updatedAt": "2026-11-18T22:38:06.062Z",
+  "updatedAt": "2026-11-18T22:38:14.741Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -1203,25 +1203,6 @@
       "calendarSynced": false,
       "notes": "",
       "_gmailSubStatus": "Unsuccessful",
-      "_gmailDeadline": null
-    },
-    {
-      "id": "app-1a1ee68ddcb571fb",
-      "firm": "Your application to Sky",
-      "role": "2027 Summer Internship",
-      "stage": "Offer / Successful",
-      "status": "Offer Received",
-      "appliedDate": "2026-11-18",
-      "lastUpdated": "2026-11-18",
-      "category": "internship",
-      "company": "Your application to Sky",
-      "sector": "Corporate & Investment Banking",
-      "subStatus": "Offer Received",
-      "deadline": null,
-      "portalLink": "",
-      "calendarSynced": false,
-      "notes": "",
-      "_gmailSubStatus": "Offer Received",
       "_gmailDeadline": null
     },
     {
