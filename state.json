@@ -26,7 +26,7 @@
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T23:12:18.463Z",
+  "updatedAt": "2026-11-18T23:12:51.229Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -1189,25 +1189,6 @@
       "calendarSynced": false,
       "notes": "",
       "_gmailSubStatus": "Unsuccessful",
-      "_gmailDeadline": null
-    },
-    {
-      "id": "app-1a1f0b475a8b8756",
-      "firm": "ramis ahmad",
-      "role": "2027 Summer Internship",
-      "stage": "Stage 3 - Assessment Centre",
-      "status": "Assessment Centre",
-      "appliedDate": "2026-11-18",
-      "lastUpdated": "2026-11-18",
-      "category": "internship",
-      "company": "ramis ahmad",
-      "sector": "Corporate & Investment Banking",
-      "subStatus": "Assessment Centre",
-      "deadline": null,
-      "portalLink": "",
-      "calendarSynced": false,
-      "notes": "",
-      "_gmailSubStatus": "Assessment Centre",
       "_gmailDeadline": null
     }
   ],
