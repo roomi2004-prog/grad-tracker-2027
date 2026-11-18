@@ -31,11 +31,29 @@
     "rec-trackr-roland-berger-2027",
     "roland berger::2027 consulting summer internship ? london office",
     "rec-trackr-bank-of-england-2027-summer-internsh-2027",
-    "bank of england::2027 summer internship programme"
+    "bank of england::2027 summer internship programme",
+    "rec-trackr-st-james-s-place-2027-investment-inte-2027",
+    "st james's place::2027 investment internship programme"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T23:24:17.639Z",
+  "updatedAt": "2026-11-18T23:24:24.522Z",
   "applications": [
+    {
+      "id": 1795044264522,
+      "category": "internship",
+      "company": "St James's Place",
+      "role": "2027 Investment Internship Programme",
+      "sector": "Corporate & Investment Banking",
+      "appliedDate": "2026-11-18",
+      "stage": "Application Submitted",
+      "subStatus": "Applied via The Trackr (11-18)",
+      "deadline": null,
+      "portalLink": "https://clientsites.sanctuarygraduates.co.uk/sjp2026/roles/620916?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027",
+      "calendarSynced": false,
+      "notes": "Applied on 2026-11-18 from Recommended to Apply (The Trackr • UK Finance). Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16).",
+      "_gmailSubStatus": "Applied via The Trackr (11-18)",
+      "_gmailDeadline": null
+    },
     {
       "id": 1795044257639,
       "category": "internship",
@@ -1374,7 +1392,9 @@
     "rec-trackr-roland-berger-2027",
     "roland berger::2027 consulting summer internship ? london office",
     "rec-trackr-bank-of-england-2027-summer-internsh-2027",
-    "bank of england::2027 summer internship programme"
+    "bank of england::2027 summer internship programme",
+    "rec-trackr-st-james-s-place-2027-investment-inte-2027",
+    "st james's place::2027 investment internship programme"
   ],
   "cycleArchive": null,
   "offerAccepted": false,
