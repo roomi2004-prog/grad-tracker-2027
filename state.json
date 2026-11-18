@@ -21,7 +21,7 @@
   ],
   "dismissedIds": [],
   "version": 6,
-  "updatedAt": "2026-11-18T22:38:14.741Z",
+  "updatedAt": "2026-11-18T22:42:19.380Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -1146,25 +1146,6 @@
       "notes": "Applied Sep 15; completed assessments & digital interview Sep 17; Santander Resourcing confirmed Oct 14 assessments are under review.",
       "rejectedAfterStage": null,
       "_gmailSubStatus": "Assessments & Video Interview Under Review (Oct 14)",
-      "_gmailDeadline": null
-    },
-    {
-      "id": "app-1a1e69f12ea833c2",
-      "firm": "Your recent job application for 2027 Sum",
-      "role": "2027 Summer Internship",
-      "stage": "Offer / Successful",
-      "status": "Offer Received",
-      "appliedDate": "2026-11-16",
-      "lastUpdated": "2026-11-16",
-      "category": "internship",
-      "company": "Your recent job application for 2027 Sum",
-      "sector": "Corporate & Investment Banking",
-      "subStatus": "Offer Received",
-      "deadline": null,
-      "portalLink": "",
-      "calendarSynced": false,
-      "notes": "",
-      "_gmailSubStatus": "Offer Received",
       "_gmailDeadline": null
     },
     {
