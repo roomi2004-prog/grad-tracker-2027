@@ -21,62 +21,8 @@
   ],
   "dismissedIds": [],
   "version": 6,
-  "updatedAt": "2026-11-18T22:09:15.022Z",
+  "updatedAt": "2026-11-18T22:38:06.062Z",
   "applications": [
-    {
-      "id": "app-1a1e69eb569e764a",
-      "firm": "Confirm your identity for job 2027 Summe",
-      "role": "2027 Summer Internship",
-      "stage": "08 ? Offer / Success",
-      "status": "Offer Received",
-      "appliedDate": "2026-11-16",
-      "lastUpdated": "2026-11-16"
-    },
-    {
-      "id": "app-1a1e69f12ea833c2",
-      "firm": "Your recent job application for 2027 Sum",
-      "role": "2027 Summer Internship",
-      "stage": "08 ? Offer / Success",
-      "status": "Offer Received",
-      "appliedDate": "2026-11-16",
-      "lastUpdated": "2026-11-16"
-    },
-    {
-      "id": "app-1a1e965354974995",
-      "firm": "SW Group Hiring",
-      "role": "2027 Summer Internship",
-      "stage": "03 ? Stage 1 OA",
-      "status": "Online Assessment Due",
-      "appliedDate": "2026-11-17",
-      "lastUpdated": "2026-11-17"
-    },
-    {
-      "id": "app-1a1ea06550873c5b",
-      "firm": "Thank you for your application",
-      "role": "2027 Summer Internship",
-      "stage": "07 ? Closed",
-      "status": "Unsuccessful",
-      "appliedDate": "2026-11-17",
-      "lastUpdated": "2026-11-17"
-    },
-    {
-      "id": "app-1a1ee68ddcb571fb",
-      "firm": "Your application to Sky",
-      "role": "2027 Summer Internship",
-      "stage": "08 ? Offer / Success",
-      "status": "Offer Received",
-      "appliedDate": "2026-11-18",
-      "lastUpdated": "2026-11-18"
-    },
-    {
-      "id": "app-1a1f0b475a8b8756",
-      "firm": "ramis ahmad",
-      "role": "2027 Summer Internship",
-      "stage": "05 ? Stage 3 AC",
-      "status": "Assessment Centre",
-      "appliedDate": "2026-11-18",
-      "lastUpdated": "2026-11-18"
-    },
     {
       "id": "app-1a1efbecac2d1388",
       "firm": "Workday Notifications",
@@ -92,7 +38,10 @@
       "deadline": null,
       "portalLink": "",
       "calendarSynced": false,
-      "notes": ""
+      "notes": "",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Update",
+      "_gmailDeadline": null
     },
     {
       "id": 1,
@@ -106,7 +55,10 @@
       "deadline": "2026-11-18T13:31:00",
       "portalLink": "https://morganstanley.tal.net/vx/candidate/login",
       "calendarSynced": true,
-      "notes": "Numerical Reasoning, Inductive Reasoning, Situational Judgement Test. Check portal immediately!"
+      "notes": "Numerical Reasoning, Inductive Reasoning, Situational Judgement Test. Check portal immediately!",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Stage 1: Online Assessments Due (48h window from Nov 16, 13:31)",
+      "_gmailDeadline": "2026-11-18T13:31:00"
     },
     {
       "id": 3,
@@ -120,7 +72,10 @@
       "deadline": "2026-11-21T17:00:00",
       "portalLink": "https://mgpru.wd3.myworkdayjobs.com/mandgprudential",
       "calendarSynced": true,
-      "notes": "Originally auto-screened out due to accidental 'Yes' on multiple applications question. Contested Nov 12; M&G confirmed Nov 18 (12:51 PM) you can reapply using a new email address!"
+      "notes": "Originally auto-screened out due to accidental 'Yes' on multiple applications question. Contested Nov 12; M&G confirmed Nov 18 (12:51 PM) you can reapply using a new email address!",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Approved to Reapply via New Email!",
+      "_gmailDeadline": "2026-11-21T17:00:00"
     },
     {
       "id": 4,
@@ -135,7 +90,9 @@
       "portalLink": "https://fidelityinternational.tal.net/vx/lang-en-GB/mobile-0/brand-5/user-761369/candidate/application/598644",
       "calendarSynced": true,
       "notes": "3 timed tests (6 mins each: Verbal, Numerical, Inductive Reasoning). Must complete by Nov 22, 7:49 PM GMT.",
-      "rejectedAfterStage": "Stage 1 - Online Assessment"
+      "rejectedAfterStage": "Stage 1 - Online Assessment",
+      "_gmailSubStatus": "Stage 1: Aon Online Assessments (Verbal, Numerical, Inductive)",
+      "_gmailDeadline": "2026-11-22T19:49:52"
     },
     {
       "id": 5,
@@ -149,7 +106,10 @@
       "deadline": "2026-11-23T11:26:52",
       "portalLink": "https://apply.skyearlycareers.targetconnect.com/",
       "calendarSynced": true,
-      "notes": "Invited Nov 18. 5-day deadline. 50% extra time adjustment confirmed for timed questions (~65-75 mins total). Prep hub: https://sky.preparationplus.com"
+      "notes": "Invited Nov 18. 5-day deadline. 50% extra time adjustment confirmed for timed questions (~65-75 mins total). Prep hub: https://sky.preparationplus.com",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Stage 1: Digital Assessments 1 & 2 (50% Extra Time Applied)",
+      "_gmailDeadline": "2026-11-23T11:26:52"
     },
     {
       "id": 7,
@@ -163,7 +123,10 @@
       "deadline": "2026-11-30T13:43:56",
       "portalLink": "https://secure.plum.io/invite/q9ZjEV1H0Q1HxYIHlVjrtoWPxPuA7ooFRVNyV-d0Pko",
       "calendarSynced": true,
-      "notes": "Req ID 2027-26993441. Moved to next stage on Nov 16; 14-day expiry window for Plum Assessment."
+      "notes": "Req ID 2027-26993441. Moved to next stage on Nov 16; 14-day expiry window for Plum Assessment.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Stage 1: Plum Profile Assessment Due",
+      "_gmailDeadline": "2026-11-30T13:43:56"
     },
     {
       "id": 2,
@@ -177,7 +140,10 @@
       "deadline": null,
       "portalLink": "https://app.evolveassess.com/#/auto/9dbcd331-3e76-4293-9862-20af71f5a098/e858870c-fafc-4d68-26f9-08df4095b3aa/cd8c8629-cc26-4ee4-da10-08dc1916f6a7",
       "calendarSynced": false,
-      "notes": "Completed Situational Judgement Test on Nov 18 (18:20 GMT). Outcome expected 10 days after application close date; next stage is Stage 2 Video Interview."
+      "notes": "Completed Situational Judgement Test on Nov 18 (18:20 GMT). Outcome expected 10 days after application close date; next stage is Stage 2 Video Interview.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Situational Judgement Test Completed (Nov 18)",
+      "_gmailDeadline": null
     },
     {
       "id": 9,
@@ -191,7 +157,10 @@
       "deadline": null,
       "portalLink": "https://rbccmgraduates.gtisolutions.co.uk/",
       "calendarSynced": false,
-      "notes": "Completed online assessments on Nov 16 (06:03 GMT). Team reviewing test results, CV, and application form."
+      "notes": "Completed online assessments on Nov 16 (06:03 GMT). Team reviewing test results, CV, and application form.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Online Assessments Completed (Nov 16)",
+      "_gmailDeadline": null
     },
     {
       "id": 10,
@@ -205,7 +174,10 @@
       "deadline": null,
       "portalLink": "https://aon.icims.com",
       "calendarSynced": false,
-      "notes": "Progressed to online assessment Nov 11; completed Spotted Zebra Consulting Intern assessment & received feedback report PDF on Nov 12."
+      "notes": "Progressed to online assessment Nov 11; completed Spotted Zebra Consulting Intern assessment & received feedback report PDF on Nov 12.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Spotted Zebra Assessment Completed (Nov 12)",
+      "_gmailDeadline": null
     },
     {
       "id": 11,
@@ -219,7 +191,10 @@
       "deadline": null,
       "portalLink": "https://www.occstrategy.com/en/careers/",
       "calendarSynced": false,
-      "notes": "Granted 48h extension on Nov 5; completed Online Blended Assessment and received feedback report on Nov 7."
+      "notes": "Granted 48h extension on Nov 5; completed Online Blended Assessment and received feedback report on Nov 7.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Cappfinity Blended Assessment Completed (Nov 7)",
+      "_gmailDeadline": null
     },
     {
       "id": 13,
@@ -233,7 +208,10 @@
       "deadline": null,
       "portalLink": "https://www.lloydsbankinggroup.com/careers.html",
       "calendarSynced": false,
-      "notes": "Reinstated after contesting initial screen-out on Nov 3. Completed Online Assessment Nov 4; received personalised feedback report Nov 6."
+      "notes": "Reinstated after contesting initial screen-out on Nov 3. Completed Online Assessment Nov 4; received personalised feedback report Nov 6.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Cappfinity Online Assessment Completed (Nov 4)",
+      "_gmailDeadline": null
     },
     {
       "id": 18,
@@ -247,7 +225,10 @@
       "deadline": null,
       "portalLink": "https://www.howdengroupholdings.com/careers",
       "calendarSynced": false,
-      "notes": "Granted deadline extension by Ava Emery on Oct 19 until Oct 20 midnight for Arctic Shores assessment."
+      "notes": "Granted deadline extension by Ava Emery on Oct 19 until Oct 20 midnight for Arctic Shores assessment.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Arctic Shores Assessment Completed (Oct 20)",
+      "_gmailDeadline": null
     },
     {
       "id": 47,
@@ -261,7 +242,10 @@
       "deadline": null,
       "portalLink": "https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays",
       "calendarSynced": false,
-      "notes": "Applied Sep 21; granted extra time & 5-day extension by Wenjie Salas on Sep 30; evergreen internship application confirmed active Oct 7."
+      "notes": "Applied Sep 21; granted extra time & 5-day extension by Wenjie Salas on Sep 30; evergreen internship application confirmed active Oct 7.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "SHL Assessments Completed with Extra Time (Oct 7)",
+      "_gmailDeadline": null
     },
     {
       "id": 49,
@@ -275,7 +259,10 @@
       "deadline": null,
       "portalLink": "https://tescoearlycareers.groupgti.com/",
       "calendarSynced": false,
-      "notes": "Applied Sep 29; invited to Win Together Online Assessments on Oct 1 (15:18 GMT)."
+      "notes": "Applied Sep 29; invited to Win Together Online Assessments on Oct 1 (15:18 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Win Together Online Assessments Stage (Oct 1)",
+      "_gmailDeadline": null
     },
     {
       "id": 53,
@@ -289,7 +276,10 @@
       "deadline": null,
       "portalLink": "https://sig.com/campus-programs/",
       "calendarSynced": false,
-      "notes": "Invited to 23-minute timed Mettl online assessment by Jordan Morley on Sep 24. Rolling review (up to 8 weeks)."
+      "notes": "Invited to 23-minute timed Mettl online assessment by Jordan Morley on Sep 24. Rolling review (up to 8 weeks).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Mettl Quantitative Assessment Stage (Sep 24)",
+      "_gmailDeadline": null
     },
     {
       "id": 8,
@@ -303,7 +293,10 @@
       "deadline": null,
       "portalLink": "https://www.capitalgroup.com/careers",
       "calendarSynced": false,
-      "notes": "ConveyIQ Digital Interview completed and submitted on Nov 16 at 18:39 GMT. Awaiting recruiter review for Stage 3 Assessment Centre."
+      "notes": "ConveyIQ Digital Interview completed and submitted on Nov 16 at 18:39 GMT. Awaiting recruiter review for Stage 3 Assessment Centre.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "ConveyIQ Digital Video Interview Submitted (Nov 16)",
+      "_gmailDeadline": null
     },
     {
       "id": 12,
@@ -317,7 +310,10 @@
       "deadline": null,
       "portalLink": "https://fticonsulting.wd1.myworkdayjobs.com",
       "calendarSynced": false,
-      "notes": "Passed Stage 1 eSkill reasoning test (+25% extra time) on Nov 3; invited to and completed Stage 2 Pre-Recorded Video Interview on Nov 5 (16:22 GMT)."
+      "notes": "Passed Stage 1 eSkill reasoning test (+25% extra time) on Nov 3; invited to and completed Stage 2 Pre-Recorded Video Interview on Nov 5 (16:22 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Pre-Recorded Video Interview Completed (Nov 5)",
+      "_gmailDeadline": null
     },
     {
       "id": 14,
@@ -331,7 +327,10 @@
       "deadline": null,
       "portalLink": "https://www.hsbc.com/careers",
       "calendarSynced": false,
-      "notes": "Completed Job Simulation Assessment & Video Interview on Nov 2 (10:29 GMT). Awaiting Stage 3 Assessment Centre outcome."
+      "notes": "Completed Job Simulation Assessment & Video Interview on Nov 2 (10:29 GMT). Awaiting Stage 3 Assessment Centre outcome.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Job Simulation & Video Interview Completed (Nov 2)",
+      "_gmailDeadline": null
     },
     {
       "id": 15,
@@ -345,7 +344,10 @@
       "deadline": null,
       "portalLink": "https://careers.jpmorgan.com",
       "calendarSynced": false,
-      "notes": "Invited to HireVue Oct 16; submitted recorded video interview on Oct 25 (14:48 GMT)."
+      "notes": "Invited to HireVue Oct 16; submitted recorded video interview on Oct 25 (14:48 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "HireVue Video Interview Submitted (Oct 25)",
+      "_gmailDeadline": null
     },
     {
       "id": 16,
@@ -359,7 +361,10 @@
       "deadline": null,
       "portalLink": "https://www.bp.com/careers",
       "calendarSynced": false,
-      "notes": "Completed Stage 1 Saville Oasys assessment (Oct 17) & Stage 2 HireVue video interview (Oct 25). High-volume holding updates received Oct 29 & Nov 10."
+      "notes": "Completed Stage 1 Saville Oasys assessment (Oct 17) & Stage 2 HireVue video interview (Oct 25). High-volume holding updates received Oct 29 & Nov 10.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "HireVue Video Interview Completed (Oct 25)",
+      "_gmailDeadline": null
     },
     {
       "id": 17,
@@ -373,7 +378,10 @@
       "deadline": null,
       "portalLink": "https://www.pwc.co.uk/careers.html",
       "calendarSynced": false,
-      "notes": "Completed Video Interview Oct 20. Progress update received Nov 11 confirming submission is still under review for Stage 3 Virtual Assessment Centre."
+      "notes": "Completed Video Interview Oct 20. Progress update received Nov 11 confirming submission is still under review for Stage 3 Virtual Assessment Centre.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Video Interview Completed (Oct 20) - Awaiting Virtual AC",
+      "_gmailDeadline": null
     },
     {
       "id": 28,
@@ -387,7 +395,10 @@
       "deadline": null,
       "portalLink": "https://wd3.myworkday.com/rbs",
       "calendarSynced": false,
-      "notes": "Applied Oct 1; received SHL Assessment Feedback Report Oct 7 & Video Interview completion confirmation Oct 9. Holding updates Oct 26 & Nov 16 confirm active consideration for rolling ACs."
+      "notes": "Applied Oct 1; received SHL Assessment Feedback Report Oct 7 & Video Interview completion confirmation Oct 9. Holding updates Oct 26 & Nov 16 confirm active consideration for rolling ACs.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "SHL Video Interview Completed (Oct 9) - Active Review for AC",
+      "_gmailDeadline": null
     },
     {
       "id": 48,
@@ -401,7 +412,10 @@
       "deadline": null,
       "portalLink": "https://www.sc.com/en/global-careers/early-careers/",
       "calendarSynced": false,
-      "notes": "Applied Sep 22; completed SHL Skills Insight, Workplace Scenario & Video Assessment on Oct 1 (17:49 GMT). Under Early Careers Team review."
+      "notes": "Applied Sep 22; completed SHL Skills Insight, Workplace Scenario & Video Assessment on Oct 1 (17:49 GMT). Under Early Careers Team review.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Workplace Scenario & SHL Video Assessment Completed (Oct 1)",
+      "_gmailDeadline": null
     },
     {
       "id": 44,
@@ -415,7 +429,10 @@
       "deadline": null,
       "portalLink": "https://rothschildandco.tal.net/vx/candidate/login",
       "calendarSynced": false,
-      "notes": "Event registration update received Nov 18 (17:26 GMT) confirming submission for the Discover Rothschild & Co Insight Day is currently under review."
+      "notes": "Event registration update received Nov 18 (17:26 GMT) confirming submission for the Discover Rothschild & Co Insight Day is currently under review.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Event Registration Under Review (Nov 18)",
+      "_gmailDeadline": null
     },
     {
       "id": 19,
@@ -429,7 +446,10 @@
       "deadline": null,
       "portalLink": "https://www.corient.com",
       "calendarSynced": false,
-      "notes": "Application confirmation received Nov 15 (20:30 GMT)."
+      "notes": "Application confirmation received Nov 15 (20:30 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Review (Dayforce)",
+      "_gmailDeadline": null
     },
     {
       "id": 20,
@@ -443,7 +463,10 @@
       "deadline": null,
       "portalLink": "https://mfs.wd1.myworkdayjobs.com",
       "calendarSynced": false,
-      "notes": "Application confirmation received Nov 15 (13:02 GMT)."
+      "notes": "Application confirmation received Nov 15 (13:02 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Review (Workday)",
+      "_gmailDeadline": null
     },
     {
       "id": 21,
@@ -457,7 +480,10 @@
       "deadline": null,
       "portalLink": "https://careers.allianz.com",
       "calendarSynced": false,
-      "notes": "Confirmation received Nov 11 (22:16 GMT)."
+      "notes": "Confirmation received Nov 11 (22:16 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Application Received & Under Review",
+      "_gmailDeadline": null
     },
     {
       "id": 22,
@@ -471,7 +497,10 @@
       "deadline": null,
       "portalLink": "mailto:enquiries@clsholdings.com",
       "calendarSynced": false,
-      "notes": "Sent speculative CV and cover email to enquiries@clsholdings.com on Nov 10."
+      "notes": "Sent speculative CV and cover email to enquiries@clsholdings.com on Nov 10.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Speculative Email Sent",
+      "_gmailDeadline": null
     },
     {
       "id": 23,
@@ -485,7 +514,10 @@
       "deadline": null,
       "portalLink": "https://jobs.hasbro.com",
       "calendarSynced": false,
-      "notes": "Application submitted Nov 5 (00:16 GMT)."
+      "notes": "Application submitted Nov 5 (00:16 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Application Received",
+      "_gmailDeadline": null
     },
     {
       "id": 24,
@@ -499,7 +531,10 @@
       "deadline": null,
       "portalLink": "mailto:hr@stjadvisors.com",
       "calendarSynced": false,
-      "notes": "Sent tailored CV and cover letter to hr@stjadvisors.com on Nov 4 (23:59 GMT)."
+      "notes": "Sent tailored CV and cover letter to hr@stjadvisors.com on Nov 4 (23:59 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Direct Email Application Sent",
+      "_gmailDeadline": null
     },
     {
       "id": 25,
@@ -513,7 +548,10 @@
       "deadline": null,
       "portalLink": "https://www.crai.com/careers/",
       "calendarSynced": false,
-      "notes": "Application received Oct 25 (15:09 GMT)."
+      "notes": "Application received Oct 25 (15:09 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Recruiting Team Review",
+      "_gmailDeadline": null
     },
     {
       "id": 26,
@@ -527,7 +565,10 @@
       "deadline": null,
       "portalLink": "https://www.standardbank.com/careers",
       "calendarSynced": false,
-      "notes": "Application received Oct 23 (00:19 GMT)."
+      "notes": "Application received Oct 23 (00:19 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Review (SmartRecruiters)",
+      "_gmailDeadline": null
     },
     {
       "id": 27,
@@ -541,7 +582,10 @@
       "deadline": null,
       "portalLink": "https://jobs.ca-cib.com",
       "calendarSynced": false,
-      "notes": "Submitted Oct 22 (23:12 GMT)."
+      "notes": "Submitted Oct 22 (23:12 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Application Received",
+      "_gmailDeadline": null
     },
     {
       "id": 45,
@@ -555,7 +599,10 @@
       "deadline": null,
       "portalLink": "https://mufgub.wd3.myworkdayjobs.com",
       "calendarSynced": false,
-      "notes": "Application confirmation received Oct 14 (22:35 GMT)."
+      "notes": "Application confirmation received Oct 14 (22:35 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Review (Workday)",
+      "_gmailDeadline": null
     },
     {
       "id": 46,
@@ -569,7 +616,10 @@
       "deadline": null,
       "portalLink": "https://jobs.citi.com",
       "calendarSynced": false,
-      "notes": "Applied Oct 14 (22:40 GMT). Separate Placement Analyst ECM application (Nov 16) is currently at Action Required (Plum Assessment)."
+      "notes": "Applied Oct 14 (22:40 GMT). Separate Placement Analyst ECM application (Nov 16) is currently at Action Required (Plum Assessment).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Open Day Application Submitted (Oct 14)",
+      "_gmailDeadline": null
     },
     {
       "id": 50,
@@ -583,7 +633,10 @@
       "deadline": null,
       "portalLink": "https://aig.wd1.myworkdayjobs.com/aig",
       "calendarSynced": false,
-      "notes": "Application confirmation received Sep 29 (22:18 GMT) for CAND2600168554."
+      "notes": "Application confirmation received Sep 29 (22:18 GMT) for CAND2600168554.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Review (Workday)",
+      "_gmailDeadline": null
     },
     {
       "id": 51,
@@ -597,7 +650,10 @@
       "deadline": null,
       "portalLink": "https://www.panmureliberum.com/careers/",
       "calendarSynced": false,
-      "notes": "Application confirmation received Sep 28 (17:29 GMT)."
+      "notes": "Application confirmation received Sep 28 (17:29 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Application Received (BambooHR)",
+      "_gmailDeadline": null
     },
     {
       "id": 52,
@@ -611,7 +667,10 @@
       "deadline": null,
       "portalLink": "https://www.goldmansachs.com/careers",
       "calendarSynced": false,
-      "notes": "Application submitted Sep 28 (17:25 GMT)."
+      "notes": "Application submitted Sep 28 (17:25 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Review (Oracle Cloud Portal)",
+      "_gmailDeadline": null
     },
     {
       "id": 54,
@@ -625,7 +684,10 @@
       "deadline": null,
       "portalLink": "https://careers.tiktok.com/login",
       "calendarSynced": false,
-      "notes": "Application received Sep 21 (23:07 GMT)."
+      "notes": "Application received Sep 21 (23:07 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Talent Acquisition Review",
+      "_gmailDeadline": null
     },
     {
       "id": 55,
@@ -639,7 +701,10 @@
       "deadline": null,
       "portalLink": "https://www.americanexpress.com/en-us/careers/",
       "calendarSynced": false,
-      "notes": "Submitted Sep 16 (23:01 GMT)."
+      "notes": "Submitted Sep 16 (23:01 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Application Received & Under Review",
+      "_gmailDeadline": null
     },
     {
       "id": 56,
@@ -653,7 +718,10 @@
       "deadline": null,
       "portalLink": "https://marex.breezy.hr/p/9ece5ed02fce01-marex-uk-internships-register-your-interest",
       "calendarSynced": false,
-      "notes": "Confirmation from Adam Rubin on Sep 16 (13:56 GMT) that application was passed to the hiring manager."
+      "notes": "Confirmation from Adam Rubin on Sep 16 (13:56 GMT) that application was passed to the hiring manager.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Passed to Hiring Manager for Review (Sep 16)",
+      "_gmailDeadline": null
     },
     {
       "id": 57,
@@ -667,7 +735,10 @@
       "deadline": null,
       "portalLink": "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers",
       "calendarSynced": false,
-      "notes": "Application received Sep 13 (14:49 GMT)."
+      "notes": "Application received Sep 13 (14:49 GMT).",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Under Talent Acquisition Review",
+      "_gmailDeadline": null
     },
     {
       "id": 29,
@@ -681,7 +752,10 @@
       "deadline": null,
       "portalLink": "https://careers.swgroup.com",
       "calendarSynced": false,
-      "notes": "Completed Numerical, Verbal, and Values & Behaviours assessments on Nov 15. Informed Nov 17 that details are kept on hold for the remainder of the cycle."
+      "notes": "Completed Numerical, Verbal, and Values & Behaviours assessments on Nov 15. Informed Nov 17 that details are kept on hold for the remainder of the cycle.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "On Hold After Stage 1 Online Assessments",
+      "_gmailDeadline": null
     },
     {
       "id": 30,
@@ -695,7 +769,10 @@
       "deadline": null,
       "portalLink": "https://sus.hvue.io/IQRh7F4CqIzInvcS",
       "calendarSynced": false,
-      "notes": "Applied Oct 22; automated reminders received Oct 25-26 for OnDemand assessment."
+      "notes": "Applied Oct 22; automated reminders received Oct 25-26 for OnDemand assessment.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "ModernHire OnDemand Assessment Sent",
+      "_gmailDeadline": null
     },
     {
       "id": 31,
@@ -710,7 +787,9 @@
       "deadline": null,
       "portalLink": "https://www.stepstonegroup.com",
       "calendarSynced": false,
-      "notes": "Applied Nov 11; outcome email received Nov 17 at CV/application screening stage."
+      "notes": "Applied Nov 11; outcome email received Nov 17 at CV/application screening stage.",
+      "_gmailSubStatus": "Not Progressed After CV Screen (Nov 17)",
+      "_gmailDeadline": null
     },
     {
       "id": 32,
@@ -725,7 +804,9 @@
       "deadline": null,
       "portalLink": "https://www.alphasights.com/careers",
       "calendarSynced": false,
-      "notes": "Applied Nov 6 (and earlier Sep 2 application); outcome email received Nov 12."
+      "notes": "Applied Nov 6 (and earlier Sep 2 application); outcome email received Nov 12.",
+      "_gmailSubStatus": "Not Progressed After CV Screen (Nov 12)",
+      "_gmailDeadline": null
     },
     {
       "id": 33,
@@ -740,7 +821,9 @@
       "deadline": null,
       "portalLink": "https://www.lazard.com/careers/",
       "calendarSynced": false,
-      "notes": "Applied Oct 7; completed Criteria Corp cognitive & numerical assessment Oct 13; outcome email received Nov 11."
+      "notes": "Applied Oct 7; completed Criteria Corp cognitive & numerical assessment Oct 13; outcome email received Nov 11.",
+      "_gmailSubStatus": "Completed Criteria Corp OA - Not Progressed (Nov 11)",
+      "_gmailDeadline": null
     },
     {
       "id": 34,
@@ -755,7 +838,9 @@
       "deadline": null,
       "portalLink": "https://ukstudents.ey.com/",
       "calendarSynced": false,
-      "notes": "Completed Stage 1 (Nov 2) & Stage 2 Video Assessment (Nov 4) with 25% extra time. Outcome received Nov 5."
+      "notes": "Completed Stage 1 (Nov 2) & Stage 2 Video Assessment (Nov 4) with 25% extra time. Outcome received Nov 5.",
+      "_gmailSubStatus": "Completed Stage 1 & Stage 2 Video - Not Progressed (Nov 5)",
+      "_gmailDeadline": null
     },
     {
       "id": 35,
@@ -770,7 +855,9 @@
       "deadline": null,
       "portalLink": "https://morganstanley.tal.net/vx/candidate/login",
       "calendarSynced": false,
-      "notes": "Summer Analyst application closed Oct 30; Off-Cycle Global Sales application is currently active!"
+      "notes": "Summer Analyst application closed Oct 30; Off-Cycle Global Sales application is currently active!",
+      "_gmailSubStatus": "Not Progressed After Application Review (Oct 30)",
+      "_gmailDeadline": null
     },
     {
       "id": 36,
@@ -785,7 +872,9 @@
       "deadline": null,
       "portalLink": "https://nomuracampus.tal.net/vx/candidate/login",
       "calendarSynced": false,
-      "notes": "Completed online assessments Oct 27; outcome received Oct 30."
+      "notes": "Completed online assessments Oct 27; outcome received Oct 30.",
+      "_gmailSubStatus": "Completed Stage 1 OA - Not Progressed (Oct 30)",
+      "_gmailDeadline": null
     },
     {
       "id": 37,
@@ -800,7 +889,9 @@
       "deadline": null,
       "portalLink": "https://www.faststream.gov.uk",
       "calendarSynced": false,
-      "notes": "Outcome received Oct 23 after initial online assessment stage."
+      "notes": "Outcome received Oct 23 after initial online assessment stage.",
+      "_gmailSubStatus": "Completed Stage 1 Assessment - Not Progressed (Oct 23)",
+      "_gmailDeadline": null
     },
     {
       "id": 38,
@@ -815,7 +906,9 @@
       "deadline": null,
       "portalLink": "https://www2.deloitte.com/uk/en/careers/students.html",
       "calendarSynced": false,
-      "notes": "Applied Oct 1; completed Deloitte Online Job Simulation Assessment Oct 5 & received feedback report Oct 7; outcome received Oct 21."
+      "notes": "Applied Oct 1; completed Deloitte Online Job Simulation Assessment Oct 5 & received feedback report Oct 7; outcome received Oct 21.",
+      "_gmailSubStatus": "Completed Online Assessment - Not Progressed (Oct 21)",
+      "_gmailDeadline": null
     },
     {
       "id": 39,
@@ -830,7 +923,9 @@
       "deadline": null,
       "portalLink": "https://careers.db.com",
       "calendarSynced": false,
-      "notes": "Outcome received Oct 16 at initial application screen."
+      "notes": "Outcome received Oct 16 at initial application screen.",
+      "_gmailSubStatus": "Initial Application Screen Out (Oct 16)",
+      "_gmailDeadline": null
     },
     {
       "id": 58,
@@ -845,7 +940,9 @@
       "deadline": null,
       "portalLink": "https://www.shell.com/careers",
       "calendarSynced": false,
-      "notes": "Applied Sep 16; completed Virtual Job Tryout & received Competencies Report Sep 23; outcome received Oct 8."
+      "notes": "Applied Sep 16; completed Virtual Job Tryout & received Competencies Report Sep 23; outcome received Oct 8.",
+      "_gmailSubStatus": "Completed VJT Competencies Assessment - Not Progressed (Oct 8)",
+      "_gmailDeadline": null
     },
     {
       "id": 59,
@@ -860,7 +957,9 @@
       "deadline": null,
       "portalLink": "https://www.bdo.co.uk/en-gb/careers",
       "calendarSynced": false,
-      "notes": "Applied Oct 1; completed Arctic Shores assessment & received feedback report Oct 6; outcome received Oct 6."
+      "notes": "Applied Oct 1; completed Arctic Shores assessment & received feedback report Oct 6; outcome received Oct 6.",
+      "_gmailSubStatus": "Completed Arctic Shores Assessment - Not Progressed (Oct 6)",
+      "_gmailDeadline": null
     },
     {
       "id": 60,
@@ -875,7 +974,9 @@
       "deadline": null,
       "portalLink": "https://bankcampuscareers.tal.net",
       "calendarSynced": false,
-      "notes": "Applied Sep 28; outcome email received Sep 29."
+      "notes": "Applied Sep 28; outcome email received Sep 29.",
+      "_gmailSubStatus": "Not Progressed After CV Review (Sep 29)",
+      "_gmailDeadline": null
     },
     {
       "id": 61,
@@ -890,7 +991,9 @@
       "deadline": null,
       "portalLink": "https://www.schroders.com/en/careers",
       "calendarSynced": false,
-      "notes": "Invited to Cappfinity Cognitive Assessment Sep 9; received Cognitive Feedback Report & Stage 1 outcome on Sep 17."
+      "notes": "Invited to Cappfinity Cognitive Assessment Sep 9; received Cognitive Feedback Report & Stage 1 outcome on Sep 17.",
+      "_gmailSubStatus": "Completed Stage 1 Cognitive Assessment - Not Progressed (Sep 17)",
+      "_gmailDeadline": null
     },
     {
       "id": 62,
@@ -905,7 +1008,9 @@
       "deadline": null,
       "portalLink": "https://jobs.capitalone.co.uk/earlycareers",
       "calendarSynced": false,
-      "notes": "Invited to Strategy Analyst Video Assessment Sep 1; contested missing video interview link with Early Careers on Sep 16-17."
+      "notes": "Invited to Strategy Analyst Video Assessment Sep 1; contested missing video interview link with Early Careers on Sep 16-17.",
+      "_gmailSubStatus": "Closed at Video Assessment Stage (Contested Link Issue Sep 16)",
+      "_gmailDeadline": null
     },
     {
       "id": 63,
@@ -920,7 +1025,9 @@
       "deadline": null,
       "portalLink": "https://careers-uk-ireland.stantec.com",
       "calendarSynced": false,
-      "notes": "Outcome email received Sep 16 (09:38 GMT)."
+      "notes": "Outcome email received Sep 16 (09:38 GMT).",
+      "_gmailSubStatus": "Not Progressed After Application Review (Sep 16)",
+      "_gmailDeadline": null
     },
     {
       "id": 64,
@@ -935,7 +1042,9 @@
       "deadline": null,
       "portalLink": "https://bendingspoons.com/careers",
       "calendarSynced": false,
-      "notes": "Outcome email received Sep 3 (08:42 GMT)."
+      "notes": "Outcome email received Sep 3 (08:42 GMT).",
+      "_gmailSubStatus": "Not Progressed After Application Review (Sep 3)",
+      "_gmailDeadline": null
     },
     {
       "id": 65,
@@ -950,7 +1059,9 @@
       "deadline": null,
       "portalLink": "https://www.revolut.com/careers/",
       "calendarSynced": false,
-      "notes": "Outcome email received Sep 1 (07:50 GMT)."
+      "notes": "Outcome email received Sep 1 (07:50 GMT).",
+      "_gmailSubStatus": "Not Progressed After CV Review (Sep 1)",
+      "_gmailDeadline": null
     },
     {
       "id": 40,
@@ -964,7 +1075,10 @@
       "deadline": null,
       "portalLink": "mailto:gabi@beyondtheplate.uk",
       "calendarSynced": false,
-      "notes": "Working with Gabriela Toma & Francis Skeat; managing cafe Instagram & community outreach."
+      "notes": "Working with Gabriela Toma & Francis Skeat; managing cafe Instagram & community outreach.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Contract Received (Nov 11) - Active Role",
+      "_gmailDeadline": null
     },
     {
       "id": 41,
@@ -978,7 +1092,10 @@
       "deadline": null,
       "portalLink": "mailto:alice@examberry.com",
       "calendarSynced": false,
-      "notes": "Discussing operational support & A-Level/GCSE Physics & Maths tutoring."
+      "notes": "Discussing operational support & A-Level/GCSE Physics & Maths tutoring.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Replied to Alice Maxwell (Nov 3)",
+      "_gmailDeadline": null
     },
     {
       "id": 42,
@@ -992,7 +1109,10 @@
       "deadline": null,
       "portalLink": "mailto:admin@titanworldwideltd.co.uk",
       "calendarSynced": false,
-      "notes": "CV shortlisted by Titan Worldwide recruitment team on Nov 11."
+      "notes": "CV shortlisted by Titan Worldwide recruitment team on Nov 11.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "CV Shortlisted (Nov 11)",
+      "_gmailDeadline": null
     },
     {
       "id": 43,
@@ -1006,7 +1126,10 @@
       "deadline": null,
       "portalLink": "https://www.santanderjobs.co.uk",
       "calendarSynced": false,
-      "notes": "Applied Nov 13 for Kingston Branch Banking 12-month FTC."
+      "notes": "Applied Nov 13 for Kingston Branch Banking 12-month FTC.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Application Received (Workday)",
+      "_gmailDeadline": null
     },
     {
       "id": 66,
@@ -1020,7 +1143,105 @@
       "deadline": null,
       "portalLink": "https://www.santanderjobs.co.uk",
       "calendarSynced": false,
-      "notes": "Applied Sep 15; completed assessments & digital interview Sep 17; Santander Resourcing confirmed Oct 14 assessments are under review."
+      "notes": "Applied Sep 15; completed assessments & digital interview Sep 17; Santander Resourcing confirmed Oct 14 assessments are under review.",
+      "rejectedAfterStage": null,
+      "_gmailSubStatus": "Assessments & Video Interview Under Review (Oct 14)",
+      "_gmailDeadline": null
+    },
+    {
+      "id": "app-1a1e69f12ea833c2",
+      "firm": "Your recent job application for 2027 Sum",
+      "role": "2027 Summer Internship",
+      "stage": "Offer / Successful",
+      "status": "Offer Received",
+      "appliedDate": "2026-11-16",
+      "lastUpdated": "2026-11-16",
+      "category": "internship",
+      "company": "Your recent job application for 2027 Sum",
+      "sector": "Corporate & Investment Banking",
+      "subStatus": "Offer Received",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "notes": "",
+      "_gmailSubStatus": "Offer Received",
+      "_gmailDeadline": null
+    },
+    {
+      "id": "app-1a1e965354974995",
+      "firm": "SW Group Hiring",
+      "role": "2027 Summer Internship",
+      "stage": "Stage 1 - Online Assessment",
+      "status": "Online Assessment Due",
+      "appliedDate": "2026-11-17",
+      "lastUpdated": "2026-11-17",
+      "category": "internship",
+      "company": "SW Group Hiring",
+      "sector": "Corporate & Investment Banking",
+      "subStatus": "Online Assessment Due",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "notes": "",
+      "_gmailSubStatus": "Online Assessment Due",
+      "_gmailDeadline": null
+    },
+    {
+      "id": "app-1a1ea06550873c5b",
+      "firm": "Thank you for your application",
+      "role": "2027 Summer Internship",
+      "stage": "Closed / Unsuccessful",
+      "status": "Unsuccessful",
+      "appliedDate": "2026-11-17",
+      "lastUpdated": "2026-11-17",
+      "category": "internship",
+      "company": "Thank you for your application",
+      "sector": "Corporate & Investment Banking",
+      "subStatus": "Unsuccessful",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "notes": "",
+      "_gmailSubStatus": "Unsuccessful",
+      "_gmailDeadline": null
+    },
+    {
+      "id": "app-1a1ee68ddcb571fb",
+      "firm": "Your application to Sky",
+      "role": "2027 Summer Internship",
+      "stage": "Offer / Successful",
+      "status": "Offer Received",
+      "appliedDate": "2026-11-18",
+      "lastUpdated": "2026-11-18",
+      "category": "internship",
+      "company": "Your application to Sky",
+      "sector": "Corporate & Investment Banking",
+      "subStatus": "Offer Received",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "notes": "",
+      "_gmailSubStatus": "Offer Received",
+      "_gmailDeadline": null
+    },
+    {
+      "id": "app-1a1f0b475a8b8756",
+      "firm": "ramis ahmad",
+      "role": "2027 Summer Internship",
+      "stage": "Stage 3 - Assessment Centre",
+      "status": "Assessment Centre",
+      "appliedDate": "2026-11-18",
+      "lastUpdated": "2026-11-18",
+      "category": "internship",
+      "company": "ramis ahmad",
+      "sector": "Corporate & Investment Banking",
+      "subStatus": "Assessment Centre",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "notes": "",
+      "_gmailSubStatus": "Assessment Centre",
+      "_gmailDeadline": null
     }
   ],
   "recommendations": [
