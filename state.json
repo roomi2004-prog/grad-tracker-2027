@@ -5,12 +5,24 @@
     "1a1f07e141c838e8",
     "1a1efbecac2d1388",
     "1a1efbd7c62ca519",
-    "1a1efb9c13e9cc15"
+    "1a1efb9c13e9cc15",
+    "1a1f092fddcec36e",
+    "1a1f0b475a8b8756",
+    "1a1f0b429202eb02"
   ],
   "dismissedIds": [],
   "version": 6,
   "updatedAt": "2026-11-18T22:09:15.022Z",
   "applications": [
+    {
+      "id": "app-1a1f0b475a8b8756",
+      "firm": "ramis ahmad",
+      "role": "2027 Summer Internship",
+      "stage": "05 ? Stage 3 AC",
+      "status": "Assessment Centre",
+      "appliedDate": "2026-11-18",
+      "lastUpdated": "2026-11-18"
+    },
     {
       "id": "app-1a1efbecac2d1388",
       "firm": "Workday Notifications",
