@@ -21,10 +21,12 @@
   ],
   "dismissedIds": [
     "rec-email-bny-trade-2027",
-    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)"
+    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
+    "rec-email-bny-credit-2027",
+    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T22:42:42.806Z",
+  "updatedAt": "2026-11-18T22:42:43.689Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -1333,7 +1335,9 @@
   ],
   "handledRecIds": [
     "rec-email-bny-trade-2027",
-    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)"
+    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
+    "rec-email-bny-credit-2027",
+    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)"
   ],
   "cycleArchive": null,
   "offerAccepted": false,
