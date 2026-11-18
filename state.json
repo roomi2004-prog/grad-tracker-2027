@@ -1,15 +1,32 @@
 {
+  "recommended": [],
+  "processedEmailIds": [
+    "1a1f0812c285f88d",
+    "1a1f07e141c838e8",
+    "1a1efbecac2d1388",
+    "1a1efbd7c62ca519",
+    "1a1efb9c13e9cc15"
+  ],
+  "dismissedIds": [],
   "version": 6,
-  "updatedAt": "2026-11-18T21:16:14Z",
+  "updatedAt": "2026-11-18T22:04:13.498Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
       "firm": "Workday Notifications",
       "role": "2027 Summer Internship",
-      "stage": "01 ? Applied",
+      "stage": "Application Submitted",
       "status": "Update",
       "appliedDate": "2026-11-18",
-      "lastUpdated": "2026-11-18"
+      "lastUpdated": "2026-11-18",
+      "category": "internship",
+      "company": "Workday Notifications",
+      "sector": "Corporate & Investment Banking",
+      "subStatus": "Update",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "notes": ""
     },
     {
       "id": 1,
@@ -32,7 +49,7 @@
       "role": "Asset Management: Client Group & Product Internship (London) (R20839)",
       "sector": "Investment Management",
       "appliedDate": "2026-11-06",
-      "stage": "Action Required",
+      "stage": "Stage 1 - Online Assessment",
       "subStatus": "Approved to Reapply via New Email!",
       "deadline": "2026-11-21T17:00:00",
       "portalLink": "https://mgpru.wd3.myworkdayjobs.com/mandgprudential",
@@ -1078,14 +1095,5 @@
   "handledRecIds": [],
   "cycleArchive": null,
   "offerAccepted": false,
-  "recommendationsPaused": false,
-  "recommended": [],
-  "processedEmailIds": [
-    "1a1f0812c285f88d",
-    "1a1f07e141c838e8",
-    "1a1efbecac2d1388",
-    "1a1efbd7c62ca519",
-    "1a1efb9c13e9cc15"
-  ],
-  "dismissedIds": []
+  "recommendationsPaused": false
 }
