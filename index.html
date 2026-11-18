@@ -2,8 +2,17 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Application Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Rags to Riches</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Rags to Riches" />
+  <meta name="theme-color" content="#12061F" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -240,6 +249,12 @@
       color: #0369A1 !important;
     }
 
+    @media (display-mode: standalone) {
+      header.theme-header {
+        padding-top: max(env(safe-area-inset-top), 0.75rem);
+      }
+    }
+
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
@@ -387,217 +402,11 @@
       return REJECTION_STAGES.find(r => r.id === rejectedAfterStage) || REJECTION_STAGES[0];
     }
 
-    // __INITIAL_RECOMMENDATIONS_START__
-    const INITIAL_RECOMMENDATIONS = [
-      // Daily Trackr Scrape (the-trackr.com • UK Finance & Consulting • Opened in last 4 days: Nov 15–18, 2026)
-      {
-        id: "rec-trackr-berenberg-2027",
-        source: "Trackr",
-        sourceDetail: "The Trackr • UK Finance (Sales & Trading)",
-        company: "Berenberg",
-        role: "2027 Summer Internship – Equities, Sales & Trading / Specialist Coverage (London)",
-        sector: "Sales & Trading",
-        openedDate: "2026-11-17",
-        closingDate: "Rolling Deadline",
-        applyLink: "https://www.berenberg.de/en/careers/graduates-and-students/",
-        notes: "Opened in last 4 days on The Trackr UK Finance Summer Internships tracker. Rolling review; early application recommended."
-      },
-      {
-        id: "rec-trackr-roland-berger-2027",
-        source: "Trackr",
-        sourceDetail: "The Trackr • UK Consulting",
-        company: "Roland Berger",
-        role: "2027 Consulting Summer Internship – London Office",
-        sector: "Strategy & Consulting",
-        openedDate: "2026-11-17",
-        closingDate: "2026-12-01",
-        applyLink: "https://www.rolandberger.com/en/Join/",
-        notes: "Opened Nov 17 on The Trackr UK Consulting tracker. Strategy & management consulting internship for penultimate-year undergraduates."
-      },
-      {
-        id: "rec-trackr-partners-group-2027",
-        source: "Trackr",
-        sourceDetail: "The Trackr • UK Finance (Investment Management)",
-        company: "Partners Group",
-        role: "2027 Private Markets Summer Analyst – Client Solutions & Investment Management (London)",
-        sector: "Investment Management",
-        openedDate: "2026-11-16",
-        closingDate: "2026-11-30",
-        applyLink: "https://www.partnersgroup.com/en/careers/",
-        notes: "Opened Nov 16 on The Trackr UK Finance tracker under Investment Management & Specialist Coverage."
-      },
-      {
-        id: "rec-trackr-oliver-wyman-2027",
-        source: "Trackr",
-        sourceDetail: "The Trackr • UK Consulting",
-        company: "Oliver Wyman",
-        role: "2027 Summer Consultant Internship – Financial Services & Strategy (London)",
-        sector: "Strategy & Consulting",
-        openedDate: "2026-11-16",
-        closingDate: "2026-11-27",
-        applyLink: "https://www.oliverwyman.com/careers.html",
-        notes: "Opened Nov 16 on The Trackr UK Consulting tracker. Strong fit for quantitative/physics background in Financial Services practice."
-      },
-      {
-        id: "rec-trackr-macquarie-2027",
-        source: "Trackr",
-        sourceDetail: "The Trackr • UK Finance (Corporate Banking & Markets)",
-        company: "Macquarie Group",
-        role: "2027 Summer Internship – Commodities & Global Markets / Macquarie Capital (London)",
-        sector: "Corporate & Investment Banking",
-        openedDate: "2026-11-15",
-        closingDate: "Rolling Deadline",
-        applyLink: "https://www.macquarie.com/uk/en/careers/graduates-and-interns.html",
-        notes: "Opened Nov 15 on The Trackr UK Finance tracker (Corporate Banking, Specialist Coverage & Sales/Trading)."
-      },
-      {
-        id: "rec-trackr-pimco-2027",
-        source: "Trackr",
-        sourceDetail: "The Trackr • UK Finance (Investment Management)",
-        company: "PIMCO",
-        role: "2027 Summer Intern – Account Management & Institutional Client Coverage (London)",
-        sector: "Investment Management",
-        openedDate: "2026-11-15",
-        closingDate: "2026-12-04",
-        applyLink: "https://www.pimco.com/gb/en/careers",
-        notes: "Opened Nov 15 on The Trackr UK Finance tracker under Investment Management."
-      },
+    // Master recommendations now live in ./state.json
+    const INITIAL_RECOMMENDATIONS = [];
 
-      // Non-LinkedIn Tracker & Early-Career Newsletter Email Alerts (Gradcracker, Bright Network, BNY Careers Alert)
-      {
-        id: "rec-email-lseg-2027",
-        source: "Email",
-        sourceDetail: "Gradcracker Weekly Alert (Nov 16)",
-        company: "London Stock Exchange Group (LSEG)",
-        role: "2027 Summer Internship – Markets, Data & Financial Analytics (London)",
-        sector: "Corporate & Investment Banking",
-        openedDate: "2026-11-16",
-        closingDate: "2026-11-29",
-        applyLink: "https://www.lseg.com/en/careers/graduates-interns",
-        notes: "Extracted from Gradcracker Weekly Briefing email (Nov 16, 2026). Open to Physics, Maths & Finance penultimate-year students."
-      },
-      {
-        id: "rec-email-cgi-2027",
-        source: "Email",
-        sourceDetail: "Gradcracker Weekly Alert (Nov 16)",
-        company: "CGI",
-        role: "2027 Business Consulting & Finance Placement / Summer Internship (UK)",
-        sector: "Strategy & Consulting",
-        openedDate: "2026-11-16",
-        closingDate: "Rolling Deadline",
-        applyLink: "https://www.gradcracker.com/hub/89/cgi",
-        notes: "Extracted from Gradcracker Weekly Briefing email (Nov 16, 2026) targeting Physics, Maths, Analytics & Finance students."
-      },
-      {
-        id: "rec-email-bny-credit-2027",
-        source: "Email",
-        sourceDetail: "BNY Early Careers Alert",
-        company: "BNY",
-        role: "2027 BNY Summer Internship Program – Credit & Lending (London) (Req 83005)",
-        sector: "Corporate & Investment Banking",
-        openedDate: "2026-11-15",
-        closingDate: "Rolling Deadline",
-        applyLink: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers/job/83005",
-        notes: "Extracted from BNY Talent Acquisition email alert (distinct from your submitted Product Management Req 81922 application)."
-      },
-      {
-        id: "rec-email-bny-trade-2027",
-        source: "Email",
-        sourceDetail: "BNY Early Careers Alert",
-        company: "BNY",
-        role: "2027 BNY Summer Internship Program – Trade Execution (London) (Req 83002)",
-        sector: "Sales & Trading",
-        openedDate: "2026-11-15",
-        closingDate: "Rolling Deadline",
-        applyLink: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers/job/83002",
-        notes: "Extracted from BNY Talent Acquisition email alert for Markets & Trade Execution track in London."
-      }
-    ];
-    // __INITIAL_RECOMMENDATIONS_END__
-
-    // __INITIAL_APPLICATIONS_START__
-    const INITIAL_APPLICATIONS = [
-      // ACTION REQUIRED (6)
-      { id: 1, category: "internship", company: "Morgan Stanley (Off-Cycle)", role: "2027 Investment Management Off-Cycle Internship – Global Sales, Consultant Relations (London)", sector: "Investment Management", appliedDate: "2026-11-16", stage: "Action Required", subStatus: "Stage 1: Online Assessments Due (48h window from Nov 16, 13:31)", deadline: "2026-11-18T13:31:00", portalLink: "https://morganstanley.tal.net/vx/candidate/login", calendarSynced: true, notes: "Numerical Reasoning, Inductive Reasoning, Situational Judgement Test. Check portal immediately!" },
-      { id: 3, category: "internship", company: "M&G Investments", role: "Asset Management: Client Group & Product Internship (London) (R20839)", sector: "Investment Management", appliedDate: "2026-11-06", stage: "Action Required", subStatus: "Approved to Reapply via New Email!", deadline: "2026-11-21T17:00:00", portalLink: "https://mgpru.wd3.myworkdayjobs.com/mandgprudential", calendarSynced: true, notes: "Originally auto-screened out due to accidental 'Yes' on multiple applications question. Contested Nov 12; M&G confirmed Nov 18 (12:51 PM) you can reapply using a new email address!" },
-      { id: 4, category: "internship", company: "Fidelity International", role: "2027 Summer Internship Programme", sector: "Investment Management", appliedDate: "2026-11-15", stage: "Action Required", subStatus: "Stage 1: Aon Online Assessments (Verbal, Numerical, Inductive)", deadline: "2026-11-22T19:49:52", portalLink: "https://fidelityinternational.tal.net/vx/lang-en-GB/mobile-0/brand-5/user-761369/candidate/application/598644", calendarSynced: true, notes: "3 timed tests (6 mins each: Verbal, Numerical, Inductive Reasoning). Must complete by Nov 22, 7:49 PM GMT." },
-      { id: 5, category: "internship", company: "Sky", role: "Commercial Strategy Internship (2027)", sector: "Strategy & Commercial", appliedDate: "2026-11-13", stage: "Action Required", subStatus: "Stage 1: Digital Assessments 1 & 2 (50% Extra Time Applied)", deadline: "2026-11-23T11:26:52", portalLink: "https://apply.skyearlycareers.targetconnect.com/", calendarSynced: true, notes: "Invited Nov 18. 5-day deadline. 50% extra time adjustment confirmed for timed questions (~65-75 mins total). Prep hub: https://sky.preparationplus.com" },
-      { id: 6, category: "internship", company: "Mishcon de Reya", role: "Vacation Scheme: Spring 2027", sector: "Commercial & Law", appliedDate: "2026-11-13", stage: "Action Required", subStatus: "Application Started on cvMail Portal", deadline: "2026-11-24T23:59:00", portalLink: "https://fsr.cvmailuk.com/mishcon/applying.cfm?job_id=79061&goto_page=1", calendarSynced: true, notes: "Started on Talent Acquisition Portal on Nov 13; log in and click 'Send App' to finalize submission." },
-      { id: 7, category: "internship", company: "Citigroup", role: "Banking, Financing, Equity Capital Markets, Placement Analyst (London 2027)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-16", stage: "Action Required", subStatus: "Stage 1: Plum Profile Assessment Due", deadline: "2026-11-30T13:43:56", portalLink: "https://secure.plum.io/invite/q9ZjEV1H0Q1HxYIHlVjrtoWPxPuA7ooFRVNyV-d0Pko", calendarSynced: true, notes: "Req ID 2027-26993441. Moved to next stage on Nov 16; 14-day expiry window for Plum Assessment." },
-
-      // STAGE 1 - ONLINE ASSESSMENT (9)
-      { id: 2, category: "internship", company: "Bank of England", role: "2027 Summer Internship - Risk (London) - 2924", sector: "Banking & Regulatory", appliedDate: "2026-11-16", stage: "Stage 1 - Online Assessment", subStatus: "Situational Judgement Test Completed (Nov 18)", deadline: null, portalLink: "https://app.evolveassess.com/#/auto/9dbcd331-3e76-4293-9862-20af71f5a098/e858870c-fafc-4d68-26f9-08df4095b3aa/cd8c8629-cc26-4ee4-da10-08dc1916f6a7", calendarSynced: false, notes: "Completed Situational Judgement Test on Nov 18 (18:20 GMT). Outcome expected 10 days after application close date; next stage is Stage 2 Video Interview." },
-      { id: 9, category: "internship", company: "Royal Bank of Canada (RBC)", role: "2027 Summer Analyst - Corporate Banking (A233676)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-12", stage: "Stage 1 - Online Assessment", subStatus: "Online Assessments Completed (Nov 16)", deadline: null, portalLink: "https://rbccmgraduates.gtisolutions.co.uk/", calendarSynced: false, notes: "Completed online assessments on Nov 16 (06:03 GMT). Team reviewing test results, CV, and application form." },
-      { id: 10, category: "internship", company: "Aon", role: "Aon Summer Internship Programme 2027 - Strategic Consulting (2026-107789)", sector: "Strategy & Consulting", appliedDate: "2026-11-05", stage: "Stage 1 - Online Assessment", subStatus: "Spotted Zebra Assessment Completed (Nov 12)", deadline: null, portalLink: "https://aon.icims.com", calendarSynced: false, notes: "Progressed to online assessment Nov 11; completed Spotted Zebra Consulting Intern assessment & received feedback report PDF on Nov 12." },
-      { id: 11, category: "internship", company: "OC&C Strategy Consultants", role: "Associate Consultant Summer Internship 2027 (London Office)", sector: "Strategy & Consulting", appliedDate: "2026-10-27", stage: "Stage 1 - Online Assessment", subStatus: "Cappfinity Blended Assessment Completed (Nov 7)", deadline: null, portalLink: "https://www.occstrategy.com/en/careers/", calendarSynced: false, notes: "Granted 48h extension on Nov 5; completed Online Blended Assessment and received feedback report on Nov 7." },
-      { id: 13, category: "internship", company: "Lloyds Banking Group", role: "Consumer Internship (London) 2027", sector: "Corporate & Retail Banking", appliedDate: "2026-11-03", stage: "Stage 1 - Online Assessment", subStatus: "Cappfinity Online Assessment Completed (Nov 4)", deadline: null, portalLink: "https://www.lloydsbankinggroup.com/careers.html", calendarSynced: false, notes: "Reinstated after contesting initial screen-out on Nov 3. Completed Online Assessment Nov 4; received personalised feedback report Nov 6." },
-      { id: 18, category: "internship", company: "Howden Group", role: "Early Careers Programme 2027 (London)", sector: "Insurance & Broking", appliedDate: "2026-10-10", stage: "Stage 1 - Online Assessment", subStatus: "Arctic Shores Assessment Completed (Oct 20)", deadline: null, portalLink: "https://www.howdengroupholdings.com/careers", calendarSynced: false, notes: "Granted deadline extension by Ava Emery on Oct 19 until Oct 20 midnight for Arctic Shores assessment." },
-      { id: 47, category: "internship", company: "Barclays", role: "2027 Retail, Business and Customer Banking Summer Internship Programme London (JR-0000129194)", sector: "Corporate & Retail Banking", appliedDate: "2026-09-21", stage: "Stage 1 - Online Assessment", subStatus: "SHL Assessments Completed with Extra Time (Oct 7)", deadline: null, portalLink: "https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays", calendarSynced: false, notes: "Applied Sep 21; granted extra time & 5-day extension by Wenjie Salas on Sep 30; evergreen internship application confirmed active Oct 7." },
-      { id: 49, category: "internship", company: "Tesco Group", role: "Technology - Product Management Internship (2027)", sector: "Strategy & Commercial", appliedDate: "2026-09-29", stage: "Stage 1 - Online Assessment", subStatus: "Win Together Online Assessments Stage (Oct 1)", deadline: null, portalLink: "https://tescoearlycareers.groupgti.com/", calendarSynced: false, notes: "Applied Sep 29; invited to Win Together Online Assessments on Oct 1 (15:18 GMT)." },
-      { id: 53, category: "internship", company: "Susquehanna (SIG)", role: "Equity Research Internship: Summer 2027 (London & Dublin)", sector: "Investment Management", appliedDate: "2026-09-24", stage: "Stage 1 - Online Assessment", subStatus: "Mettl Quantitative Assessment Stage (Sep 24)", deadline: null, portalLink: "https://sig.com/campus-programs/", calendarSynced: false, notes: "Invited to 23-minute timed Mettl online assessment by Jordan Morley on Sep 24. Rolling review (up to 8 weeks)." },
-
-      // STAGE 2 - VIDEO INTERVIEW (8)
-      { id: 8, category: "internship", company: "Capital Group", role: "Client & Product Track Summer Associate (2027) - EUROPE (London)", sector: "Investment Management", appliedDate: "2026-11-15", stage: "Stage 2 - Video Interview", subStatus: "ConveyIQ Digital Video Interview Submitted (Nov 16)", deadline: null, portalLink: "https://www.capitalgroup.com/careers", calendarSynced: false, notes: "ConveyIQ Digital Interview completed and submitted on Nov 16 at 18:39 GMT. Awaiting recruiter review for Stage 3 Assessment Centre." },
-      { id: 12, category: "internship", company: "FTI Consulting", role: "2027 Summer Internship, TMT Business Transformation, Corporate Finance", sector: "Strategy & Consulting", appliedDate: "2026-10-27", stage: "Stage 2 - Video Interview", subStatus: "Pre-Recorded Video Interview Completed (Nov 5)", deadline: null, portalLink: "https://fticonsulting.wd1.myworkdayjobs.com", calendarSynced: false, notes: "Passed Stage 1 eSkill reasoning test (+25% extra time) on Nov 3; invited to and completed Stage 2 Pre-Recorded Video Interview on Nov 5 (16:22 GMT)." },
-      { id: 14, category: "internship", company: "HSBC", role: "Relationship Management - Corporate & Institutional Banking - Internship 2027", sector: "Corporate & Investment Banking", appliedDate: "2026-10-25", stage: "Stage 2 - Video Interview", subStatus: "Job Simulation & Video Interview Completed (Nov 2)", deadline: null, portalLink: "https://www.hsbc.com/careers", calendarSynced: false, notes: "Completed Job Simulation Assessment & Video Interview on Nov 2 (10:29 GMT). Awaiting Stage 3 Assessment Centre outcome." },
-      { id: 15, category: "internship", company: "J.P. Morgan", role: "2027 Corporate Functions - Global Finance & Business Management - Summer Internship (London)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-16", stage: "Stage 2 - Video Interview", subStatus: "HireVue Video Interview Submitted (Oct 25)", deadline: null, portalLink: "https://careers.jpmorgan.com", calendarSynced: false, notes: "Invited to HireVue Oct 16; submitted recorded video interview on Oct 25 (14:48 GMT)." },
-      { id: 16, category: "internship", company: "bp", role: "Summer Internship - Supply, Trading & Shipping - UK (RQ117128)", sector: "Energy & Commodities", appliedDate: "2026-10-17", stage: "Stage 2 - Video Interview", subStatus: "HireVue Video Interview Completed (Oct 25)", deadline: null, portalLink: "https://www.bp.com/careers", calendarSynced: false, notes: "Completed Stage 1 Saville Oasys assessment (Oct 17) & Stage 2 HireVue video interview (Oct 25). High-volume holding updates received Oct 29 & Nov 10." },
-      { id: 17, category: "internship", company: "PwC UK", role: "Summer Internship 2027", sector: "Strategy & Consulting", appliedDate: "2026-10-12", stage: "Stage 2 - Video Interview", subStatus: "Video Interview Completed (Oct 20) - Awaiting Virtual AC", deadline: null, portalLink: "https://www.pwc.co.uk/careers.html", calendarSynced: false, notes: "Completed Video Interview Oct 20. Progress update received Nov 11 confirming submission is still under review for Stage 3 Virtual Assessment Centre." },
-      { id: 28, category: "internship", company: "NatWest Group", role: "2027 Summer Internship Programme", sector: "Corporate & Investment Banking", appliedDate: "2026-10-01", stage: "Stage 2 - Video Interview", subStatus: "SHL Video Interview Completed (Oct 9) - Active Review for AC", deadline: null, portalLink: "https://wd3.myworkday.com/rbs", calendarSynced: false, notes: "Applied Oct 1; received SHL Assessment Feedback Report Oct 7 & Video Interview completion confirmation Oct 9. Holding updates Oct 26 & Nov 16 confirm active consideration for rolling ACs." },
-      { id: 48, category: "internship", company: "Standard Chartered", role: "Strategic Advisory & Solutions Intern UK 2027", sector: "Corporate & Investment Banking", appliedDate: "2026-09-22", stage: "Stage 2 - Video Interview", subStatus: "Workplace Scenario & SHL Video Assessment Completed (Oct 1)", deadline: null, portalLink: "https://www.sc.com/en/global-careers/early-careers/", calendarSynced: false, notes: "Applied Sep 22; completed SHL Skills Insight, Workplace Scenario & Video Assessment on Oct 1 (17:49 GMT). Under Early Careers Team review." },
-
-      // APPLICATION SUBMITTED (19)
-      { id: 44, category: "internship", company: "Rothschild & Co", role: "2026 Discover Rothschild & Co Insight Day", sector: "Corporate & Investment Banking", appliedDate: "2026-11-18", stage: "Application Submitted", subStatus: "Event Registration Under Review (Nov 18)", deadline: null, portalLink: "https://rothschildandco.tal.net/vx/candidate/login", calendarSynced: false, notes: "Event registration update received Nov 18 (17:26 GMT) confirming submission for the Discover Rothschild & Co Insight Day is currently under review." },
-      { id: 19, category: "internship", company: "Corient UK", role: "2027 Corient UK Wealth Management Summer Intern Programme", sector: "Wealth & Asset Management", appliedDate: "2026-11-15", stage: "Application Submitted", subStatus: "Under Review (Dayforce)", deadline: null, portalLink: "https://www.corient.com", calendarSynced: false, notes: "Application confirmation received Nov 15 (20:30 GMT)." },
-      { id: 20, category: "internship", company: "MFS Investment Management", role: "Summer MFS 2027 Global Client Service Intern", sector: "Investment Management", appliedDate: "2026-11-15", stage: "Application Submitted", subStatus: "Under Review (Workday)", deadline: null, portalLink: "https://mfs.wd1.myworkdayjobs.com", calendarSynced: false, notes: "Application confirmation received Nov 15 (13:02 GMT)." },
-      { id: 21, category: "internship", company: "Allianz Group", role: "Allianz UK Finance Summer Internship 2027", sector: "Insurance & Asset Management", appliedDate: "2026-11-11", stage: "Application Submitted", subStatus: "Application Received & Under Review", deadline: null, portalLink: "https://careers.allianz.com", calendarSynced: false, notes: "Confirmation received Nov 11 (22:16 GMT)." },
-      { id: 22, category: "internship", company: "CLS Holdings plc", role: "Speculative Application – Work Experience / Internship 2027", sector: "Real Estate & Investment", appliedDate: "2026-11-10", stage: "Application Submitted", subStatus: "Speculative Email Sent", deadline: null, portalLink: "mailto:enquiries@clsholdings.com", calendarSynced: false, notes: "Sent speculative CV and cover email to enquiries@clsholdings.com on Nov 10." },
-      { id: 23, category: "internship", company: "Hasbro", role: "2027 Summer Internships - Commercial (London, UK)", sector: "Strategy & Commercial", appliedDate: "2026-11-05", stage: "Application Submitted", subStatus: "Application Received", deadline: null, portalLink: "https://jobs.hasbro.com", calendarSynced: false, notes: "Application submitted Nov 5 (00:16 GMT)." },
-      { id: 24, category: "internship", company: "STJ Advisors", role: "2027 Summer Internship Program (ECM Advisory)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-04", stage: "Application Submitted", subStatus: "Direct Email Application Sent", deadline: null, portalLink: "mailto:hr@stjadvisors.com", calendarSynced: false, notes: "Sent tailored CV and cover letter to hr@stjadvisors.com on Nov 4 (23:59 GMT)." },
-      { id: 25, category: "internship", company: "Charles River Associates", role: "2027 Summer Internship (Economic & Management Consulting)", sector: "Strategy & Consulting", appliedDate: "2026-10-25", stage: "Application Submitted", subStatus: "Under Recruiting Team Review", deadline: null, portalLink: "https://www.crai.com/careers/", calendarSynced: false, notes: "Application received Oct 25 (15:09 GMT)." },
-      { id: 26, category: "internship", company: "Standard Bank", role: "Intern, Corporate & Investment Banking, International (2027)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-23", stage: "Application Submitted", subStatus: "Under Review (SmartRecruiters)", deadline: null, portalLink: "https://www.standardbank.com/careers", calendarSynced: false, notes: "Application received Oct 23 (00:19 GMT)." },
-      { id: 27, category: "internship", company: "Crédit Agricole CIB", role: "2027 Summer Internship - Coverage (London) (2026-116693)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-22", stage: "Application Submitted", subStatus: "Application Received", deadline: null, portalLink: "https://jobs.ca-cib.com", calendarSynced: false, notes: "Submitted Oct 22 (23:12 GMT)." },
-      { id: 45, category: "internship", company: "MUFG", role: "2027 MUFG UK Summer Analyst Programme: Global Corporate Investment Banking (10079259-WD)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-14", stage: "Application Submitted", subStatus: "Under Review (Workday)", deadline: null, portalLink: "https://mufgub.wd3.myworkdayjobs.com", calendarSynced: false, notes: "Application confirmation received Oct 14 (22:35 GMT)." },
-      { id: 46, category: "internship", company: "Citigroup (Open Day)", role: "London Office Open Day (Services, Tech, Client & Wealth)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-14", stage: "Application Submitted", subStatus: "Open Day Application Submitted (Oct 14)", deadline: null, portalLink: "https://jobs.citi.com", calendarSynced: false, notes: "Applied Oct 14 (22:40 GMT). Separate Placement Analyst ECM application (Nov 16) is currently at Action Required (Plum Assessment)." },
-      { id: 50, category: "internship", company: "AIG (Talbot)", role: "2027 Talbot Portfolio Management Summer Internship (JR2604190)", sector: "Insurance & Asset Management", appliedDate: "2026-09-29", stage: "Application Submitted", subStatus: "Under Review (Workday)", deadline: null, portalLink: "https://aig.wd1.myworkdayjobs.com/aig", calendarSynced: false, notes: "Application confirmation received Sep 29 (22:18 GMT) for CAND2600168554." },
-      { id: 51, category: "internship", company: "Panmure Liberum", role: "2027 Summer Internship Programme", sector: "Corporate & Investment Banking", appliedDate: "2026-09-28", stage: "Application Submitted", subStatus: "Application Received (BambooHR)", deadline: null, portalLink: "https://www.panmureliberum.com/careers/", calendarSynced: false, notes: "Application confirmation received Sep 28 (17:29 GMT)." },
-      { id: 52, category: "internship", company: "Goldman Sachs", role: "2027 Summer Analyst Programme (London)", sector: "Corporate & Investment Banking", appliedDate: "2026-09-28", stage: "Application Submitted", subStatus: "Under Review (Oracle Cloud Portal)", deadline: null, portalLink: "https://www.goldmansachs.com/careers", calendarSynced: false, notes: "Application submitted Sep 28 (17:25 GMT)." },
-      { id: 54, category: "internship", company: "TikTok", role: "Product Solutions and Operations Project Intern (Scaled Growth)", sector: "Strategy & Commercial", appliedDate: "2026-09-21", stage: "Application Submitted", subStatus: "Under Talent Acquisition Review", deadline: null, portalLink: "https://careers.tiktok.com/login", calendarSynced: false, notes: "Application received Sep 21 (23:07 GMT)." },
-      { id: 55, category: "internship", company: "American Express", role: "Campus - Internship Programme - Undergraduate Product Manager - 2027 (UK - London) (26013766)", sector: "Strategy & Commercial", appliedDate: "2026-09-16", stage: "Application Submitted", subStatus: "Application Received & Under Review", deadline: null, portalLink: "https://www.americanexpress.com/en-us/careers/", calendarSynced: false, notes: "Submitted Sep 16 (23:01 GMT)." },
-      { id: 56, category: "internship", company: "Marex", role: "Marex UK Internships 2027", sector: "Energy & Commodities", appliedDate: "2026-09-16", stage: "Application Submitted", subStatus: "Passed to Hiring Manager for Review (Sep 16)", deadline: null, portalLink: "https://marex.breezy.hr/p/9ece5ed02fce01-marex-uk-internships-register-your-interest", calendarSynced: false, notes: "Confirmation from Adam Rubin on Sep 16 (13:56 GMT) that application was passed to the hiring manager." },
-      { id: 57, category: "internship", company: "BNY", role: "2027 BNY Summer Internship Program - Product Management (London) (81922)", sector: "Investment Management", appliedDate: "2026-09-13", stage: "Application Submitted", subStatus: "Under Talent Acquisition Review", deadline: null, portalLink: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers", calendarSynced: false, notes: "Application received Sep 13 (14:49 GMT)." },
-
-      // ON HOLD / WAITLIST (2)
-      { id: 29, category: "internship", company: "S&W (Evelyn Partners)", role: "Internship Programme, Corporate Finance - London (July 2027)", sector: "Corporate & Investment Banking", appliedDate: "2026-11-12", stage: "On Hold / Waitlist", subStatus: "On Hold After Stage 1 Online Assessments", deadline: null, portalLink: "https://careers.swgroup.com", calendarSynced: false, notes: "Completed Numerical, Verbal, and Values & Behaviours assessments on Nov 15. Informed Nov 17 that details are kept on hold for the remainder of the cycle." },
-      { id: 30, category: "internship", company: "Castleton Commodities (CCI)", role: "Principal Investments Intern (Summer 2027)", sector: "Energy & Commodities", appliedDate: "2026-10-22", stage: "On Hold / Waitlist", subStatus: "ModernHire OnDemand Assessment Sent", deadline: null, portalLink: "https://sus.hvue.io/IQRh7F4CqIzInvcS", calendarSynced: false, notes: "Applied Oct 22; automated reminders received Oct 25-26 for OnDemand assessment." },
-
-      // CLOSED / UNSUCCESSFUL (17) — Differentiated by rejectedAfterStage
-      { id: 31, category: "internship", company: "StepStone Group", role: "2027 Private Equity Summer Analyst (London)", sector: "Investment Management", appliedDate: "2026-11-11", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Screen (Nov 17)", deadline: null, portalLink: "https://www.stepstonegroup.com", calendarSynced: false, notes: "Applied Nov 11; outcome email received Nov 17 at CV/application screening stage." },
-      { id: 32, category: "internship", company: "AlphaSights", role: "Insight Days, Client Service, 2027 (London)", sector: "Strategy & Consulting", appliedDate: "2026-11-06", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Screen (Nov 12)", deadline: null, portalLink: "https://www.alphasights.com/careers", calendarSynced: false, notes: "Applied Nov 6 (and earlier Sep 2 application); outcome email received Nov 12." },
-      { id: 33, category: "internship", company: "Lazard", role: "2027 London Financial Advisory Summer Internship", sector: "Corporate & Investment Banking", appliedDate: "2026-10-07", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Criteria Corp OA - Not Progressed (Nov 11)", deadline: null, portalLink: "https://www.lazard.com/careers/", calendarSynced: false, notes: "Applied Oct 7; completed Criteria Corp cognitive & numerical assessment Oct 13; outcome email received Nov 11." },
-      { id: 34, category: "internship", company: "EY", role: "Consulting Summer Internship Programme (London 2027) (ID: 1069334)", sector: "Strategy & Consulting", appliedDate: "2026-10-15", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 2 - Video Interview", subStatus: "Completed Stage 1 & Stage 2 Video - Not Progressed (Nov 5)", deadline: null, portalLink: "https://ukstudents.ey.com/", calendarSynced: false, notes: "Completed Stage 1 (Nov 2) & Stage 2 Video Assessment (Nov 4) with 25% extra time. Outcome received Nov 5." },
-      { id: 35, category: "internship", company: "Morgan Stanley (Summer Analyst)", role: "2027 Investment Management Summer Analyst Programme - Global Sales and Marketing", sector: "Investment Management", appliedDate: "2026-10-14", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After Application Review (Oct 30)", deadline: null, portalLink: "https://morganstanley.tal.net/vx/candidate/login", calendarSynced: false, notes: "Summer Analyst application closed Oct 30; Off-Cycle Global Sales application is currently active!" },
-      { id: 36, category: "internship", company: "Nomura", role: "2027 Investment Banking - Coverage & Advisory - Summer Internship (London)", sector: "Corporate & Investment Banking", appliedDate: "2026-10-23", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Stage 1 OA - Not Progressed (Oct 30)", deadline: null, portalLink: "https://nomuracampus.tal.net/vx/candidate/login", calendarSynced: false, notes: "Completed online assessments Oct 27; outcome received Oct 30." },
-      { id: 37, category: "internship", company: "Civil Service Fast Stream", role: "Summer Internship Programme (SIP) 2027", sector: "Public Sector", appliedDate: "2026-10-15", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Stage 1 Assessment - Not Progressed (Oct 23)", deadline: null, portalLink: "https://www.faststream.gov.uk", calendarSynced: false, notes: "Outcome received Oct 23 after initial online assessment stage." },
-      { id: 38, category: "internship", company: "Deloitte", role: "Summer Vacation Scheme, Executive Reward Consulting (London 2027)", sector: "Strategy & Consulting", appliedDate: "2026-10-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Online Assessment - Not Progressed (Oct 21)", deadline: null, portalLink: "https://www2.deloitte.com/uk/en/careers/students.html", calendarSynced: false, notes: "Applied Oct 1; completed Deloitte Online Job Simulation Assessment Oct 5 & received feedback report Oct 7; outcome received Oct 21." },
-      { id: 39, category: "internship", company: "Deutsche Bank", role: "Internship Programme - Corporate Bank - London - 2027", sector: "Corporate & Investment Banking", appliedDate: "2026-10-16", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Initial Application Screen Out (Oct 16)", deadline: null, portalLink: "https://careers.db.com", calendarSynced: false, notes: "Outcome received Oct 16 at initial application screen." },
-      { id: 58, category: "internship", company: "Shell", role: "Shell Assessed Internship / Graduate Programme 2027", sector: "Energy & Commodities", appliedDate: "2026-09-16", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed VJT Competencies Assessment - Not Progressed (Oct 8)", deadline: null, portalLink: "https://www.shell.com/careers", calendarSynced: false, notes: "Applied Sep 16; completed Virtual Job Tryout & received Competencies Report Sep 23; outcome received Oct 8." },
-      { id: 59, category: "internship", company: "BDO UK", role: "2027 Summer Internship / Early Careers Programme", sector: "Strategy & Consulting", appliedDate: "2026-10-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Arctic Shores Assessment - Not Progressed (Oct 6)", deadline: null, portalLink: "https://www.bdo.co.uk/en-gb/careers", calendarSynced: false, notes: "Applied Oct 1; completed Arctic Shores assessment & received feedback report Oct 6; outcome received Oct 6." },
-      { id: 60, category: "internship", company: "Bank of America", role: "Global Markets Chief Operating Office 2027 Summer Analyst Program - London (5018211)", sector: "Corporate & Investment Banking", appliedDate: "2026-09-28", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Review (Sep 29)", deadline: null, portalLink: "https://bankcampuscareers.tal.net", calendarSynced: false, notes: "Applied Sep 28; outcome email received Sep 29." },
-      { id: 61, category: "internship", company: "Schroders", role: "2027 Finance Graduate Programme (1954)", sector: "Investment Management", appliedDate: "2026-09-09", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 1 - Online Assessment", subStatus: "Completed Stage 1 Cognitive Assessment - Not Progressed (Sep 17)", deadline: null, portalLink: "https://www.schroders.com/en/careers", calendarSynced: false, notes: "Invited to Cappfinity Cognitive Assessment Sep 9; received Cognitive Feedback Report & Stage 1 outcome on Sep 17." },
-      { id: 62, category: "internship", company: "Capital One", role: "Strategy Analyst Graduate Programme (R999265)", sector: "Strategy & Consulting", appliedDate: "2026-09-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "Stage 2 - Video Interview", subStatus: "Closed at Video Assessment Stage (Contested Link Issue Sep 16)", deadline: null, portalLink: "https://jobs.capitalone.co.uk/earlycareers", calendarSynced: false, notes: "Invited to Strategy Analyst Video Assessment Sep 1; contested missing video interview link with Early Careers on Sep 16-17." },
-      { id: 63, category: "internship", company: "Stantec UK", role: "Graduate Project Manager (Energy) - 2027 (Vacancy 8941)", sector: "Energy & Commodities", appliedDate: "2026-08-31", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After Application Review (Sep 16)", deadline: null, portalLink: "https://careers-uk-ireland.stantec.com", calendarSynced: false, notes: "Outcome email received Sep 16 (09:38 GMT)." },
-      { id: 64, category: "internship", company: "Bending Spoons", role: "2027 Internship / Early Careers Programme", sector: "Strategy & Commercial", appliedDate: "2026-09-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After Application Review (Sep 3)", deadline: null, portalLink: "https://bendingspoons.com/careers", calendarSynced: false, notes: "Outcome email received Sep 3 (08:42 GMT)." },
-      { id: 65, category: "internship", company: "Revolut", role: "Graduate Programme 2027: Product Owner (Technical)", sector: "Strategy & Commercial", appliedDate: "2026-09-01", stage: "Closed / Unsuccessful", rejectedAfterStage: "CV / Application Screen", subStatus: "Not Progressed After CV Review (Sep 1)", deadline: null, portalLink: "https://www.revolut.com/careers/", calendarSynced: false, notes: "Outcome email received Sep 1 (07:50 GMT)." },
-
-      // PART-TIME / FLEXIBLE ROLES (5)
-      { id: 40, category: "parttime", company: "Beyond The Plate Foodservice Ltd", role: "Front-of-House & Instagram / Community Outreach", sector: "Hospitality & Marketing", appliedDate: "2026-10-27", stage: "Offer / Successful", subStatus: "Contract Received (Nov 11) - Active Role", deadline: null, portalLink: "mailto:gabi@beyondtheplate.uk", calendarSynced: false, notes: "Working with Gabriela Toma & Francis Skeat; managing cafe Instagram & community outreach." },
-      { id: 41, category: "parttime", company: "Examberry Tuition", role: "Operational Support & GCSE/A-Level Physics/Maths Tutor", sector: "Education & Tutoring", appliedDate: "2026-11-03", stage: "Application Submitted", subStatus: "Replied to Alice Maxwell (Nov 3)", deadline: null, portalLink: "mailto:alice@examberry.com", calendarSynced: false, notes: "Discussing operational support & A-Level/GCSE Physics & Maths tutoring." },
-      { id: 42, category: "parttime", company: "Titan Worldwide / Blackwater", role: "Sales & Customer Service Associate", sector: "Sales & Commercial", appliedDate: "2026-11-10", stage: "Stage 2 - Video Interview", subStatus: "CV Shortlisted (Nov 11)", deadline: null, portalLink: "mailto:admin@titanworldwideltd.co.uk", calendarSynced: false, notes: "CV shortlisted by Titan Worldwide recruitment team on Nov 11." },
-      { id: 43, category: "parttime", company: "Santander Group (Kingston Branch)", role: "Customer Service Consultant | S1 | Branch Banking (12M FTC)", sector: "Retail Banking", appliedDate: "2026-11-13", stage: "Application Submitted", subStatus: "Application Received (Workday)", deadline: null, portalLink: "https://www.santanderjobs.co.uk", calendarSynced: false, notes: "Applied Nov 13 for Kingston Branch Banking 12-month FTC." },
-      { id: 66, category: "parttime", company: "Santander Group (Kingston Work Café)", role: "Customer Experience Advisor | S1 | Retail Banking | Kingston Work Café", sector: "Retail Banking", appliedDate: "2026-09-15", stage: "Stage 2 - Video Interview", subStatus: "Assessments & Video Interview Under Review (Oct 14)", deadline: null, portalLink: "https://www.santanderjobs.co.uk", calendarSynced: false, notes: "Applied Sep 15; completed assessments & digital interview Sep 17; Santander Resourcing confirmed Oct 14 assessments are under review." }
-    ];
-    // __INITIAL_APPLICATIONS_END__
+    // Master applications now live in ./state.json
+    const INITIAL_APPLICATIONS = [];
 
     // Chronological Pipeline Order with Offer / Successful at the very end
     const STAGES = [
@@ -693,11 +502,296 @@
     ];
 
     const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
+    const CACHED_RECS_KEY = "ramis_grad_tracker_2027_recs_cache_v1";
     const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
+    const LOCAL_UPDATED_AT_KEY = "ramis_grad_tracker_2027_updated_at_v1";
     const CYCLE_ARCHIVE_KEY = "ramis_grad_tracker_2027_cycle_archive_v1";
     const CYCLE_ARCHIVE_HUMAN_KEY = "2027 Cycle Archive";
     const OFFER_ACCEPTED_FLAG_KEY = "offerAccepted";
     const TRACKR_PAUSED_FLAG_KEY = "trackrRecommendationsPaused";
+    const GITHUB_TOKEN_KEY = "ramis_grad_tracker_github_token_v1";
+    const GITHUB_CONFIG_KEY = "ramis_grad_tracker_github_config_v1";
+    const DEFAULT_GITHUB_CONFIG = { owner: "roomi2004-prog", repo: "grad-tracker-2027", branch: "main" };
+
+    function loadGithubToken() {
+      try { return (localStorage.getItem(GITHUB_TOKEN_KEY) || "").trim(); } catch { return ""; }
+    }
+
+    function loadGithubConfig() {
+      try {
+        const raw = localStorage.getItem(GITHUB_CONFIG_KEY);
+        if (!raw) return { ...DEFAULT_GITHUB_CONFIG };
+        const parsed = JSON.parse(raw);
+        return {
+          owner: (parsed.owner || DEFAULT_GITHUB_CONFIG.owner).trim(),
+          repo: (parsed.repo || DEFAULT_GITHUB_CONFIG.repo).trim(),
+          branch: (parsed.branch || DEFAULT_GITHUB_CONFIG.branch).trim()
+        };
+      } catch {
+        return { ...DEFAULT_GITHUB_CONFIG };
+      }
+    }
+
+    function loadCachedRecs() {
+      try {
+        const raw = localStorage.getItem(CACHED_RECS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function utf8ToBase64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = "";
+      const chunkSize = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+      }
+      return btoa(binary);
+    }
+
+    function base64ToUtf8(b64) {
+      const clean = String(b64 || "").replace(/\s+/g, "");
+      const binary = atob(clean);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new TextDecoder("utf-8").decode(bytes);
+    }
+
+    // RFC 5545 iCalendar generator (mirrors scripts/daily-trackr.mjs & generate_ics.py)
+    function icsEscape(text) {
+      if (!text) return "";
+      return String(text)
+        .replace(/\\/g, "\\\\")
+        .replace(/;/g, "\\;")
+        .replace(/,/g, "\\,")
+        .replace(/\r\n|\n|\r/g, "\\n");
+    }
+
+    function foldIcsLine(line) {
+      const enc = new TextEncoder();
+      if (enc.encode(line).length <= 75) return line;
+      const parts = [];
+      let cur = "";
+      let curBytes = 0;
+      for (const ch of line) {
+        const len = enc.encode(ch).length;
+        if (curBytes + len > 75) {
+          parts.push(cur);
+          cur = " " + ch;
+          curBytes = 1 + len;
+        } else {
+          cur += ch;
+          curBytes += len;
+        }
+      }
+      if (cur) parts.push(cur);
+      return parts.join("\r\n");
+    }
+
+    function formatIcsLocalDate(dt) {
+      const p = (n) => String(n).padStart(2, "0");
+      return `${dt.getFullYear()}${p(dt.getMonth() + 1)}${p(dt.getDate())}T${p(dt.getHours())}${p(dt.getMinutes())}${p(dt.getSeconds())}`;
+    }
+
+    function generateIcsFromState(applications, recommendations, handledRecIds, recsPaused) {
+      const appsList = Array.isArray(applications) ? applications : [];
+      const recsList = recsPaused ? [] : (Array.isArray(recommendations) ? recommendations : []);
+      const handledSet = new Set(handledRecIds || []);
+      const appSlugs = new Set(appsList.map(a => makeRecSlug(a.company, a.role)));
+      const dtstamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Ramis Ahmad//2027 Application Tracker//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:Rags to Riches — 2027 Deadlines",
+        "X-WR-TIMEZONE:Europe/London",
+        "X-WR-CALDESC:Upcoming Online Assessments, HireVue/Video Interviews, Assessment Centres, and 2027 Summer Internship Closing Dates",
+        "BEGIN:VTIMEZONE",
+        "TZID:Europe/London",
+        "X-LIC-LOCATION:Europe/London",
+        "BEGIN:DAYLIGHT",
+        "TZOFFSETFROM:+0000",
+        "TZOFFSETTO:+0100",
+        "TZNAME:BST",
+        "DTSTART:19700329T010000",
+        "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
+        "END:DAYLIGHT",
+        "BEGIN:STANDARD",
+        "TZOFFSETFROM:+0100",
+        "TZOFFSETTO:+0000",
+        "TZNAME:GMT",
+        "DTSTART:19701025T020000",
+        "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
+        "END:STANDARD",
+        "END:VTIMEZONE"
+      ];
+
+      const pushValarms = (sum) => {
+        const esc = icsEscape(sum);
+        lines.push(
+          "BEGIN:VALARM",
+          "ACTION:DISPLAY",
+          `DESCRIPTION:24-Hour Reminder: ${esc}`,
+          "TRIGGER:-PT24H",
+          "END:VALARM",
+          "BEGIN:VALARM",
+          "ACTION:DISPLAY",
+          `DESCRIPTION:2-Hour Urgent Reminder: ${esc}`,
+          "TRIGGER:-PT2H",
+          "END:VALARM"
+        );
+      };
+
+      for (const app of appsList) {
+        if (!app.deadline) continue;
+        if (app.stage === "Closed / Unsuccessful" || app.stage === "Offer / Successful") continue;
+        const m = String(app.deadline).trim().match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2}))?)?/);
+        if (!m) continue;
+        const endDt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4] || 17), Number(m[5] || 0), Number(m[6] || 0));
+        const startDt = new Date(endDt.getTime() - 3600000);
+        const sub = app.subStatus || app.stage || "Assessment Deadline";
+        const lower = `${sub} ${app.stage || ""}`.toLowerCase();
+        const prefix = (lower.includes("interview") || lower.includes("hirevue") || lower.includes("assessment centre") || lower.includes("superday"))
+          ? "INTERVIEW"
+          : "DEADLINE";
+        const summary = `${prefix}: ${app.company} — ${sub}`;
+        const desc = [
+          `Company: ${app.company}`,
+          `Role: ${app.role}`,
+          `Sector: ${app.sector || ""}`,
+          `Stage: ${app.stage || ""}`,
+          `Status: ${sub}`,
+          app.portalLink ? `Portal Link: ${app.portalLink}` : "",
+          app.notes ? `Notes: ${app.notes}` : ""
+        ].filter(Boolean).join("\n");
+
+        lines.push(
+          "BEGIN:VEVENT",
+          `UID:app-deadline-${app.id}@grad-tracker-2027.github.io`,
+          `DTSTAMP:${dtstamp}`,
+          `DTSTART;TZID=Europe/London:${formatIcsLocalDate(startDt)}`,
+          `DTEND;TZID=Europe/London:${formatIcsLocalDate(endDt)}`,
+          `SUMMARY:${icsEscape(summary)}`,
+          `DESCRIPTION:${icsEscape(desc)}`,
+          "STATUS:CONFIRMED"
+        );
+        if (app.portalLink && String(app.portalLink).startsWith("http")) {
+          lines.push(`URL:${app.portalLink}`);
+        }
+        pushValarms(summary);
+        lines.push("END:VEVENT");
+      }
+
+      for (const rec of recsList) {
+        const slug = makeRecSlug(rec.company, rec.role);
+        if (handledSet.has(rec.id) || handledSet.has(slug) || appSlugs.has(slug)) continue;
+        const closing = String(rec.closingDate || "").trim();
+        const m = closing.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!m) continue;
+        const endDt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 17, 0, 0);
+        const startDt = new Date(endDt.getTime() - 3600000);
+        const summary = `CLOSING DATE: ${rec.company} — ${rec.role}`;
+        const desc = [
+          `Recommended Role (${rec.sourceDetail || rec.source || "Trackr"})`,
+          `Company: ${rec.company}`,
+          `Role: ${rec.role}`,
+          `Sector: ${rec.sector || ""}`,
+          `Opened: ${rec.openedDate || ""}`,
+          `Closing Date: ${closing}`,
+          rec.applyLink ? `Apply Link: ${rec.applyLink}` : "",
+          rec.notes ? `Notes: ${rec.notes}` : ""
+        ].filter(Boolean).join("\n");
+
+        lines.push(
+          "BEGIN:VEVENT",
+          `UID:rec-closing-${rec.id}@grad-tracker-2027.github.io`,
+          `DTSTAMP:${dtstamp}`,
+          `DTSTART;TZID=Europe/London:${formatIcsLocalDate(startDt)}`,
+          `DTEND;TZID=Europe/London:${formatIcsLocalDate(endDt)}`,
+          `SUMMARY:${icsEscape(summary)}`,
+          `DESCRIPTION:${icsEscape(desc)}`,
+          "STATUS:CONFIRMED"
+        );
+        if (rec.applyLink && String(rec.applyLink).startsWith("http")) {
+          lines.push(`URL:${rec.applyLink}`);
+        }
+        pushValarms(summary);
+        lines.push("END:VEVENT");
+      }
+
+      lines.push("END:VCALENDAR");
+      return lines.map(foldIcsLine).join("\r\n") + "\r\n";
+    }
+
+    async function githubGetFile(token, cfg, filePath) {
+      const headers = {
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+      };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}`;
+      const res = await fetch(url, { headers, cache: "no-store" });
+      if (res.status === 404) return null;
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => "");
+        throw new Error(`GitHub GET ${filePath} failed (${res.status}): ${errBody.slice(0, 140)}`);
+      }
+      return await res.json();
+    }
+
+    async function githubPutFile(token, cfg, filePath, contentUtf8, commitMessage, attempt = 1) {
+      const existing = await githubGetFile(token, cfg, filePath);
+      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}`;
+      const body = {
+        message: commitMessage,
+        content: utf8ToBase64(contentUtf8),
+        branch: cfg.branch
+      };
+      if (existing && existing.sha) body.sha = existing.sha;
+
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+          "X-GitHub-Api-Version": "2022-11-28"
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (res.status === 409 && attempt < 3) {
+        return githubPutFile(token, cfg, filePath, contentUtf8, commitMessage, attempt + 1);
+      }
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => "");
+        throw new Error(`GitHub PUT ${filePath} failed (${res.status}): ${errBody.slice(0, 160)}`);
+      }
+      return await res.json();
+    }
+
+    async function fetchRemoteMasterState(token, cfg) {
+      // If a Cloud Sync Token is set, read state.json directly from GitHub Contents API for zero CDN delay
+      if (token) {
+        try {
+          const apiFile = await githubGetFile(token, cfg, "state.json");
+          if (apiFile && apiFile.content) {
+            return { state: JSON.parse(base64ToUtf8(apiFile.content)), source: "github-api" };
+          }
+        } catch {}
+      }
+      // Fallback to hosted ./state.json on GitHub Pages / local server
+      const res = await fetch(`./state.json?t=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return { state: await res.json(), source: "state-json" };
+    }
     const LEGACY_STORAGE_KEYS = [
       "ramis_grad_tracker_2027_v3_sept_nov",
       "ramis_grad_tracker_2027_v2",
@@ -819,12 +913,12 @@
           }
         }
         if (!raw) {
-          return smartMergeApps(INITIAL_APPLICATIONS, []);
+          return [];
         }
         const saved = JSON.parse(raw);
-        return smartMergeApps(INITIAL_APPLICATIONS, saved);
+        return Array.isArray(saved) ? saved : [];
       } catch {
-        return smartMergeApps(INITIAL_APPLICATIONS, []);
+        return [];
       }
     }
 
@@ -885,8 +979,24 @@
       }, [viewArchiveMode, cycleArchive, rawApps]);
 
       const recsPaused = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.archived || cycleArchive.recommendationsPaused));
-      const [rawRecs, setRawRecs] = useState(INITIAL_RECOMMENDATIONS);
+      const [rawRecs, setRawRecs] = useState(loadCachedRecs);
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
+      const [isStateLoading, setIsStateLoading] = useState(() => loadMergedApps().length === 0 && !loadCycleArchive());
+
+      // Cloud Sync Token & GitHub REST API state
+      const [ghToken, setGhToken] = useState(loadGithubToken);
+      const [ghConfig, setGhConfig] = useState(loadGithubConfig);
+      const [showCloudSyncModal, setShowCloudSyncModal] = useState(false);
+      const [tokenDraft, setTokenDraft] = useState(loadGithubToken);
+      const [configDraft, setConfigDraft] = useState(loadGithubConfig);
+      const [showTokenText, setShowTokenText] = useState(false);
+      const [cloudSyncStatus, setCloudSyncStatus] = useState(() => loadGithubToken() ? "ready" : "unconfigured");
+      const [cloudSyncMsg, setCloudSyncMsg] = useState("");
+      const [lastCloudSyncAt, setLastCloudSyncAt] = useState("");
+      const [isTestingToken, setIsTestingToken] = useState(false);
+      const cloudQueueRef = React.useRef(Promise.resolve());
+      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive });
+      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
       const [recsCollapsed, setRecsCollapsed] = useState(false);
 
@@ -997,6 +1107,184 @@
         try { localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(handledRecs)); } catch {}
       }, [handledRecs]);
 
+      useEffect(() => {
+        try { localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(rawRecs)); } catch {}
+      }, [rawRecs]);
+
+      // Build unified master state snapshot and push state.json + deadlines.ics to GitHub if token is configured
+      const pushSnapshotToCloud = (overrides = {}, commitMsg = "Mobile sync from Rags to Riches") => {
+        const cur = latestStateRef.current;
+        const nextApps = overrides.applications !== undefined ? overrides.applications : cur.apps;
+        const nextRecs = overrides.recommendations !== undefined ? overrides.recommendations : cur.recs;
+        const nextHandled = overrides.handledRecIds !== undefined ? overrides.handledRecIds : cur.handled;
+        const nextArchive = overrides.cycleArchive !== undefined ? overrides.cycleArchive : cur.archive;
+        const nextOfferAccepted = Boolean(nextArchive && nextArchive.offerAccepted);
+        const nextPaused = Boolean(nextArchive && (nextArchive.offerAccepted || nextArchive.archived || nextArchive.recommendationsPaused));
+        const nowIso = new Date().toISOString();
+
+        const masterPayload = {
+          version: 6,
+          updatedAt: nowIso,
+          applications: nextApps,
+          recommendations: nextRecs,
+          handledRecIds: nextHandled,
+          cycleArchive: nextArchive || null,
+          offerAccepted: nextOfferAccepted,
+          recommendationsPaused: nextPaused
+        };
+
+        try {
+          localStorage.setItem(LOCAL_UPDATED_AT_KEY, nowIso);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextApps));
+          localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(nextRecs));
+          localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(nextHandled));
+        } catch {}
+
+        const activeToken = overrides._token !== undefined ? overrides._token : ghToken;
+        const activeCfg = overrides._config !== undefined ? overrides._config : ghConfig;
+        if (!activeToken) return;
+
+        setCloudSyncStatus("syncing");
+        setCloudSyncMsg("Pushing state.json & deadlines.ics to GitHub…");
+
+        cloudQueueRef.current = cloudQueueRef.current.then(async () => {
+          try {
+            const stateJsonStr = JSON.stringify(masterPayload, null, 2) + "\n";
+            await githubPutFile(activeToken, activeCfg, "state.json", stateJsonStr, commitMsg);
+            const icsStr = generateIcsFromState(nextApps, nextRecs, nextHandled, nextPaused);
+            await githubPutFile(activeToken, activeCfg, "deadlines.ics", icsStr, `${commitMsg} (deadlines.ics)`);
+            const tLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
+            setCloudSyncStatus("synced");
+            setLastCloudSyncAt(tLabel);
+            setCloudSyncMsg(`Synced to ${activeCfg.owner}/${activeCfg.repo} at ${tLabel}`);
+          } catch (err) {
+            setCloudSyncStatus("error");
+            setCloudSyncMsg(err && err.message ? err.message : "Cloud push failed — saved locally.");
+          }
+        });
+      };
+
+      // Fetch state.json on load (merging cleanly with localStorage for offline support)
+      const pullFromMasterState = async ({ forceRemote = false, silent = false } = {}) => {
+        try {
+          const { state: remote, source } = await fetchRemoteMasterState(ghToken, ghConfig);
+          if (!remote || !Array.isArray(remote.applications)) return null;
+
+          const localUpdatedAt = localStorage.getItem(LOCAL_UPDATED_AT_KEY) || "";
+          const remoteUpdatedAt = remote.updatedAt || "";
+          const localAppsNow = loadMergedApps();
+          const localArchiveNow = loadCycleArchive();
+          const hasLocalData = localAppsNow.length > 0 || Boolean(localArchiveNow);
+          const remoteIsNewer = forceRemote || !hasLocalData || (remoteUpdatedAt && (!localUpdatedAt || remoteUpdatedAt > localUpdatedAt));
+
+          // Always union handledRecIds so applied/dismissed roles never reappear
+          const mergedHandled = Array.from(new Set([...loadHandledRecs(), ...(remote.handledRecIds || [])]));
+          setHandledRecs(mergedHandled);
+
+          if (Array.isArray(remote.recommendations)) {
+            setRawRecs(remote.recommendations);
+          }
+
+          if (remoteIsNewer) {
+            if (remote.cycleArchive && (remote.cycleArchive.offerAccepted || remote.cycleArchive.archived)) {
+              const archJson = JSON.stringify(remote.cycleArchive);
+              try {
+                localStorage.setItem(CYCLE_ARCHIVE_KEY, archJson);
+                localStorage.setItem(CYCLE_ARCHIVE_HUMAN_KEY, archJson);
+                if (remote.cycleArchive.offerAccepted) localStorage.setItem(OFFER_ACCEPTED_FLAG_KEY, "true");
+                localStorage.setItem(TRACKR_PAUSED_FLAG_KEY, "true");
+              } catch {}
+              setCycleArchive(remote.cycleArchive);
+              setApps(remote.applications);
+            } else {
+              if (forceRemote && !remote.cycleArchive) {
+                try {
+                  localStorage.removeItem(CYCLE_ARCHIVE_KEY);
+                  localStorage.removeItem(CYCLE_ARCHIVE_HUMAN_KEY);
+                  localStorage.removeItem(OFFER_ACCEPTED_FLAG_KEY);
+                  localStorage.removeItem(TRACKR_PAUSED_FLAG_KEY);
+                } catch {}
+                setCycleArchive(null);
+              }
+              const nextApps = forceRemote || !hasLocalData
+                ? remote.applications
+                : smartMergeApps(remote.applications, localAppsNow);
+              setApps(nextApps);
+            }
+            if (remoteUpdatedAt) {
+              try { localStorage.setItem(LOCAL_UPDATED_AT_KEY, remoteUpdatedAt); } catch {}
+            }
+          }
+
+          if (ghToken) {
+            setCloudSyncStatus("synced");
+            const tLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
+            setLastCloudSyncAt(tLabel);
+            setCloudSyncMsg(`Loaded from ${source === "github-api" ? "GitHub API" : "state.json"} at ${tLabel}`);
+          }
+          return { remote, source };
+        } catch (err) {
+          if (!silent) {
+            setCloudSyncStatus("offline");
+            setCloudSyncMsg("Offline — using localStorage cache.");
+          }
+          return null;
+        } finally {
+          setIsStateLoading(false);
+        }
+      };
+
+      useEffect(() => {
+        pullFromMasterState({ silent: true });
+      }, []);
+
+      const handleTestAndSaveToken = async (e) => {
+        e.preventDefault();
+        const trimmedToken = tokenDraft.trim();
+        const nextCfg = {
+          owner: (configDraft.owner || DEFAULT_GITHUB_CONFIG.owner).trim(),
+          repo: (configDraft.repo || DEFAULT_GITHUB_CONFIG.repo).trim(),
+          branch: (configDraft.branch || DEFAULT_GITHUB_CONFIG.branch).trim()
+        };
+        if (!trimmedToken) {
+          setCloudSyncMsg("Please paste a GitHub Personal Access Token first.");
+          return;
+        }
+        setIsTestingToken(true);
+        setCloudSyncMsg("Verifying token against GitHub API…");
+        try {
+          const check = await githubGetFile(trimmedToken, nextCfg, "state.json");
+          if (!check) throw new Error("Could not find state.json in that repository/branch.");
+          localStorage.setItem(GITHUB_TOKEN_KEY, trimmedToken);
+          localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(nextCfg));
+          setGhToken(trimmedToken);
+          setGhConfig(nextCfg);
+          setCloudSyncStatus("synced");
+          const tLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
+          setLastCloudSyncAt(tLabel);
+          setCloudSyncMsg(`Connected to ${nextCfg.owner}/${nextCfg.repo} (${nextCfg.branch}) ✓`);
+          setSyncStatus({
+            ok: true,
+            time: tLabel,
+            message: `Cloud Sync Token verified & saved locally. All edits will now auto-push state.json & deadlines.ics to ${nextCfg.owner}/${nextCfg.repo}.`,
+            emails: []
+          });
+        } catch (err) {
+          setCloudSyncStatus("error");
+          setCloudSyncMsg(err && err.message ? err.message : "Token verification failed.");
+        } finally {
+          setIsTestingToken(false);
+        }
+      };
+
+      const handleRemoveGithubToken = () => {
+        try { localStorage.removeItem(GITHUB_TOKEN_KEY); } catch {}
+        setGhToken("");
+        setTokenDraft("");
+        setCloudSyncStatus("unconfigured");
+        setCloudSyncMsg("Token removed from this device.");
+      };
+
       // Active recommendations: excludes any role already applied/dismissed in handledRecs or already present in apps
       const activeRecommendations = useMemo(() => {
         const handledSet = new Set(handledRecs);
@@ -1047,8 +1335,14 @@
           _gmailDeadline: null
         };
 
-        setApps(prev => [newAppEntry, ...prev]);
-        setHandledRecs(prev => Array.from(new Set([...prev, rec.id, slug])));
+        const nextApps = [newAppEntry, ...rawApps];
+        const nextHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
+        setApps(nextApps);
+        setHandledRecs(nextHandled);
+        pushSnapshotToCloud(
+          { applications: nextApps, handledRecIds: nextHandled },
+          `Applied: ${rec.company} — ${rec.role}`
+        );
         setSyncStatus({
           ok: true,
           time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
@@ -1059,7 +1353,12 @@
 
       const handleDismissRecommendation = (rec) => {
         const slug = makeRecSlug(rec.company, rec.role);
-        setHandledRecs(prev => Array.from(new Set([...prev, rec.id, slug])));
+        const nextHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
+        setHandledRecs(nextHandled);
+        pushSnapshotToCloud(
+          { handledRecIds: nextHandled },
+          `Dismissed recommendation: ${rec.company}`
+        );
       };
 
       const handleBackupJson = () => {
@@ -1113,12 +1412,16 @@
             if (parsed && parsed.theme && THEME_PRESETS.some(t => t.id === parsed.theme)) {
               setTheme(parsed.theme);
             }
-            if (parsed && Array.isArray(parsed.handledRecommendations)) {
-              setHandledRecs(prev => Array.from(new Set([...prev, ...parsed.handledRecommendations])));
-            }
-            const merged = smartMergeApps(INITIAL_APPLICATIONS, restoredApps);
+            const nextHandled = parsed && Array.isArray(parsed.handledRecommendations)
+              ? Array.from(new Set([...handledRecs, ...parsed.handledRecommendations]))
+              : handledRecs;
+            if (nextHandled !== handledRecs) setHandledRecs(nextHandled);
+            const merged = smartMergeApps(rawApps, restoredApps);
             setApps(merged);
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(merged)); } catch {}
+            pushSnapshotToCloud(
+              { applications: merged, handledRecIds: nextHandled },
+              `Restored backup from ${file.name}`
+            );
             setSyncStatus({
               ok: true,
               time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
@@ -1155,58 +1458,23 @@
       const handleRefreshEmail = async () => {
         setIsRefreshing(true);
         try {
-          let apiResult = null;
-          try {
-            const res = await fetch("/api/refresh", { method: "POST" });
-            if (res.ok) {
-              apiResult = await res.json();
-            }
-          } catch {}
-
-          try {
-            const htmlRes = await fetch(`/index.html?t=${Date.now()}`, { cache: "no-store" });
-            if (htmlRes.ok) {
-              const htmlText = await htmlRes.text();
-              const match = htmlText.match(/\/\/ __INITIAL_APPLICATIONS_START__[\s\S]*?const INITIAL_APPLICATIONS = (\[[\s\S]*?\]);[\s\S]*?\/\/ __INITIAL_APPLICATIONS_END__/);
-              if (match && match[1]) {
-                const latestInitial = new Function(`return ${match[1]}`)();
-                if (Array.isArray(latestInitial) && latestInitial.length > 0) {
-                  if (!loadCycleArchive()) setApps(prev => smartMergeApps(latestInitial, prev));
-                }
-              }
-              const recMatch = htmlText.match(/\/\/ __INITIAL_RECOMMENDATIONS_START__[\s\S]*?const INITIAL_RECOMMENDATIONS = (\[[\s\S]*?\]);[\s\S]*?\/\/ __INITIAL_RECOMMENDATIONS_END__/);
-              if (recMatch && recMatch[1]) {
-                const latestRecs = new Function(`return ${recMatch[1]}`)();
-                if (Array.isArray(latestRecs)) {
-                  setRawRecs(latestRecs);
-                }
-              }
-            }
-          } catch {}
-
+          const pulled = await pullFromMasterState({ forceRemote: false, silent: false });
           const timeLabel = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
-          if (apiResult && apiResult.ok) {
+          if (pulled && pulled.remote) {
             setSyncStatus({
               ok: true,
               time: timeLabel,
-              message: apiResult.message || `Synced with ramis.ahmad04@gmail.com (${apiResult.checkedCount || 0} recent emails checked, LinkedIn excluded).`,
-              emails: apiResult.recentRelevantEmails || []
+              message: `Synced latest state.json (${pulled.remote.applications.length} applications, ${(pulled.remote.recommendations || []).length} recommendations) from ${pulled.source === "github-api" ? "GitHub Cloud API" : "GitHub Pages"}.`,
+              emails: []
             });
           } else {
             setSyncStatus({
-              ok: true,
+              ok: false,
               time: timeLabel,
-              message: "Refreshed applications & recommendations from latest Trackr + Gmail sync.",
+              message: "Offline or unreachable — showing your locally cached applications.",
               emails: []
             });
           }
-        } catch {
-          setSyncStatus({
-            ok: false,
-            time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
-            message: "Could not reach local Gmail refresh API; reloaded local tracker data.",
-            emails: []
-          });
         } finally {
           setIsRefreshing(false);
         }
@@ -1284,13 +1552,19 @@
       }, [apps]);
 
       const updateAppStage = (id, newStage) => {
-        setApps(prev => prev.map(a => {
+        let movedName = "";
+        const nextApps = rawApps.map(a => {
           if (a.id !== id) return a;
+          movedName = a.company;
           const nextRejected = newStage === "Closed / Unsuccessful"
             ? inferRejectedAfterStage(a.stage, a.rejectedAfterStage)
             : a.rejectedAfterStage;
           return { ...a, stage: newStage, rejectedAfterStage: nextRejected };
-        }));
+        });
+        setApps(nextApps);
+        if (movedName) {
+          pushSnapshotToCloud({ applications: nextApps }, `Move ${movedName} to ${newStage}`);
+        }
         if (selectedApp && selectedApp.id === id) {
           setSelectedApp(prev => ({
             ...prev,
@@ -1329,8 +1603,10 @@
         const target = rawApps.find(a => a.id === id);
         if (!target) return;
         if (!confirm(`Delete "${target.company} — ${target.role}" from your tracker?`)) return;
-        setApps(prev => prev.filter(a => a.id !== id));
+        const nextApps = rawApps.filter(a => a.id !== id);
+        setApps(nextApps);
         setSelectedApp(null);
+        pushSnapshotToCloud({ applications: nextApps }, `Delete ${target.company}`);
       };
 
       useEffect(() => {
@@ -1341,14 +1617,17 @@
           setShowAcceptOfferModal(false);
           setShowForceArchiveModal(false);
           setShowExternalOfferModal(false);
+          setShowCloudSyncModal(false);
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
       }, []);
 
       const handleSaveEdit = (updated) => {
-        setApps(prev => prev.map(a => a.id === updated.id ? updated : a));
+        const nextApps = rawApps.map(a => a.id === updated.id ? updated : a);
+        setApps(nextApps);
         setSelectedApp(null);
+        pushSnapshotToCloud({ applications: nextApps }, `Update ${updated.company}`);
       };
 
       const handleAddApp = (e) => {
@@ -1361,8 +1640,10 @@
           calendarSynced: Boolean(newApp.deadline),
           rejectedAfterStage: newApp.stage === "Closed / Unsuccessful" ? (newApp.rejectedAfterStage || "CV / Application Screen") : null
         };
-        setApps(prev => [item, ...prev]);
+        const nextApps = [item, ...rawApps];
+        setApps(nextApps);
         setShowAddModal(false);
+        pushSnapshotToCloud({ applications: nextApps }, `Add role: ${item.company}`);
         setNewApp({
           company: "", role: "", sector: "Investment Management",
           appliedDate: new Date().toISOString().slice(0, 10),
@@ -1437,12 +1718,17 @@
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         } catch {}
+        const remainingApps = rawApps.filter(a => a.category !== "internship");
         setCycleArchive(payload);
-        setApps(prev => prev.filter(a => a.category !== "internship"));
+        setApps(remainingApps);
         setViewArchiveMode(false);
         setSelectedApp(null);
         setStageFilter("All");
         setShowAcceptOfferModal(false);
+        pushSnapshotToCloud(
+          { applications: remainingApps, cycleArchive: payload },
+          `Accepted offer & archived cycle: ${chosen.company}`
+        );
         setSyncStatus({
           ok: true,
           time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
@@ -1507,6 +1793,10 @@
         setSelectedApp(null);
         setStageFilter("All");
         setShowForceArchiveModal(false);
+        pushSnapshotToCloud(
+          { applications: remainingApps, cycleArchive: payload },
+          `Force-archived cycle: ${label}`
+        );
         setSyncStatus({
           ok: true,
           time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
@@ -1530,6 +1820,10 @@
         setCycleArchive(null);
         setViewArchiveMode(false);
         setApps(restored);
+        pushSnapshotToCloud(
+          { applications: restored, cycleArchive: null },
+          "Reopened archived cycle"
+        );
       };
 
       const handleAddExternalOffer = (e) => {
@@ -1553,9 +1847,11 @@
           startDate: externalOffer.startDate || null,
           notes: externalOffer.notes
         };
-        setApps(prev => [item, ...prev]);
+        const nextApps = [item, ...rawApps];
+        setApps(nextApps);
         setShowExternalOfferModal(false);
         setExternalOffer(blankExternalOffer());
+        pushSnapshotToCloud({ applications: nextApps }, `Add external offer: ${item.company}`);
         setSyncStatus({
           ok: true,
           time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
@@ -1564,12 +1860,12 @@
         });
       };
 
-      const resetData = () => {
-        if (confirm("Reset dashboard back to the synced Gmail applications & Trackr recommendations in index.html?")) {
-          setApps(smartMergeApps(INITIAL_APPLICATIONS, []));
-          setHandledRecs([]);
+      const resetData = async () => {
+        if (confirm("Reload dashboard from the master state.json in the cloud (discarding unsynced local edits)?")) {
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem(HANDLED_RECS_KEY);
+          localStorage.removeItem(LOCAL_UPDATED_AT_KEY);
+          await pullFromMasterState({ forceRemote: true, silent: false });
         }
       };
 
@@ -1618,12 +1914,12 @@
                       isHeaderCompact ? "text-xs sm:text-sm" : "text-base md:text-lg"
                     }`}
                   >
-                    Application Tracker
+                    Rags to Riches
                   </h1>
                   {!isHeaderCompact && (
                     <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
-                      Trackr (8AM) + Gmail (Hourly) + GCal Synced
+                      24/7 Cloud • Trackr (8AM UTC) + Live Sync
                     </span>
                   )}
                 </div>
@@ -1708,16 +2004,42 @@
                   )
                 )}
 
-                {/* Refresh Email — hidden when header is collapsed */}
+                {/* Cloud Sync Token & Refresh — hidden when header is collapsed */}
                 {!isHeaderCompact && (
-                  <button
-                    onClick={handleRefreshEmail}
-                    disabled={isRefreshing}
-                    className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 text-white font-semibold text-xs px-3.5 py-2 rounded-xl transition-all"
-                  >
-                    <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                    {isRefreshing ? "Checking Gmail..." : "Refresh & Check Email"}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        setTokenDraft(ghToken);
+                        setConfigDraft(ghConfig);
+                        setShowCloudSyncModal(true);
+                      }}
+                      title={ghToken ? `Cloud Sync Active (${ghConfig.owner}/${ghConfig.repo})` : "Configure GitHub Personal Access Token for direct iPhone-to-GitHub save"}
+                      className={`flex items-center gap-1.5 glass-surface hover:border-current font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0 ${
+                        cloudSyncStatus === "error" ? "text-rose-300 border-rose-500/40" : "text-white"
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${
+                        cloudSyncStatus === "syncing"
+                          ? "bg-amber-400 animate-ping"
+                          : cloudSyncStatus === "synced" || cloudSyncStatus === "ready"
+                          ? "bg-emerald-400 shadow-[0_0_6px_#34d399]"
+                          : cloudSyncStatus === "error"
+                          ? "bg-rose-400 shadow-[0_0_6px_#fb7185]"
+                          : "bg-slate-500"
+                      }`} />
+                      <Icon name="Cloud" className="w-3.5 h-3.5" />
+                      {cloudSyncStatus === "syncing" ? "Syncing…" : ghToken ? "Cloud Sync" : "Cloud Sync Token"}
+                    </button>
+
+                    <button
+                      onClick={handleRefreshEmail}
+                      disabled={isRefreshing}
+                      className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0"
+                    >
+                      <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                      {isRefreshing ? "Syncing…" : "Sync Cloud"}
+                    </button>
+                  </>
                 )}
 
                 <input
@@ -3334,6 +3656,136 @@
             </div>
           )}
 
+          {/* Cloud Sync Token Settings Modal (Direct iPhone-to-GitHub Save) */}
+          {showCloudSyncModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowCloudSyncModal(false)}>
+              <form onSubmit={handleTestAndSaveToken} className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <Icon name="Cloud" className="w-4 h-4 text-emerald-400" /> Cloud Sync Token (Direct iPhone Save)
+                  </h3>
+                  <button type="button" onClick={() => setShowCloudSyncModal(false)} className="text-slate-400 hover:text-white">
+                    <Icon name="X" className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Save a fine-grained GitHub Personal Access Token locally on this device so every edit (clicking <strong>Applied</strong>, changing stages, adding roles/offers, or archiving) automatically pushes <code className="font-mono-num text-emerald-300">state.json</code> and <code className="font-mono-num text-emerald-300">deadlines.ics</code> straight to GitHub — zero Mac required.
+                </p>
+
+                <div className="rounded-xl p-3 bg-white/[0.03] border border-white/[0.08] text-[11px] text-slate-300 space-y-1">
+                  <div className="font-bold text-white">How to create your token (30 seconds):</div>
+                  <div>1. Go to <strong>GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token</strong>.</div>
+                  <div>2. Under <strong>Repository access</strong>, select <strong>Only select repositories → grad-tracker-2027</strong>.</div>
+                  <div>3. Under <strong>Repository permissions → Contents</strong>, set <strong>Read and write</strong>, then paste the token below.</div>
+                </div>
+
+                <div className="text-xs">
+                  <label className="block text-slate-400 mb-1">GitHub Personal Access Token (stored only in this device&apos;s localStorage)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type={showTokenText ? "text" : "password"}
+                      value={tokenDraft}
+                      onChange={e => setTokenDraft(e.target.value)}
+                      placeholder="github_pat_..."
+                      autoComplete="off"
+                      className="flex-1 theme-input rounded-xl px-3 py-2 font-mono-num"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowTokenText(v => !v)}
+                      className="px-3 py-2 rounded-xl theme-input text-slate-300 hover:text-white text-xs font-semibold"
+                    >
+                      {showTokenText ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Owner</label>
+                    <input
+                      type="text"
+                      value={configDraft.owner}
+                      onChange={e => setConfigDraft({ ...configDraft, owner: e.target.value })}
+                      className="w-full theme-input rounded-xl px-2.5 py-1.5 font-mono-num"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Repository</label>
+                    <input
+                      type="text"
+                      value={configDraft.repo}
+                      onChange={e => setConfigDraft({ ...configDraft, repo: e.target.value })}
+                      className="w-full theme-input rounded-xl px-2.5 py-1.5 font-mono-num"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Branch</label>
+                    <input
+                      type="text"
+                      value={configDraft.branch}
+                      onChange={e => setConfigDraft({ ...configDraft, branch: e.target.value })}
+                      className="w-full theme-input rounded-xl px-2.5 py-1.5 font-mono-num"
+                    />
+                  </div>
+                </div>
+
+                {cloudSyncMsg && (
+                  <div className={`text-xs rounded-xl px-3 py-2 border ${
+                    cloudSyncStatus === "error"
+                      ? "bg-rose-500/10 border-rose-500/30 text-rose-300"
+                      : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                  }`}>
+                    {cloudSyncMsg}
+                  </div>
+                )}
+
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                  <div className="flex items-center gap-2">
+                    {ghToken && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => pushSnapshotToCloud({}, "Manual cloud sync from Rags to Riches")}
+                          className="px-3 py-2 rounded-xl text-xs font-semibold theme-input text-emerald-300 hover:text-emerald-200"
+                        >
+                          Push Now
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => pullFromMasterState({ forceRemote: true, silent: false })}
+                          className="px-3 py-2 rounded-xl text-xs font-semibold theme-input text-sky-300 hover:text-sky-200"
+                        >
+                          Pull Latest
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleRemoveGithubToken}
+                          className="px-3 py-2 rounded-xl text-xs text-rose-400 hover:text-rose-300"
+                        >
+                          Remove
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setShowCloudSyncModal(false)} className="px-3.5 py-2 rounded-xl text-xs text-slate-400 hover:text-white">
+                      Close
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isTestingToken}
+                      className="px-4 py-2 rounded-xl text-xs font-bold theme-accent-btn disabled:opacity-50"
+                    >
+                      {isTestingToken ? "Testing…" : "Test & Save Token"}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          )}
+
           {/* Add New Role Modal */}
           {showAddModal && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
@@ -3412,6 +3864,13 @@
 
     const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(<App />);
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./service-worker.js").catch(function () {});
+      });
+    }
   </script>
 </body>
 </html>
