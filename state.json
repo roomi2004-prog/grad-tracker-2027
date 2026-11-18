@@ -9,7 +9,7 @@
   ],
   "dismissedIds": [],
   "version": 6,
-  "updatedAt": "2026-11-18T22:09:05.872Z",
+  "updatedAt": "2026-11-18T22:09:15.022Z",
   "applications": [
     {
       "id": "app-1a1efbecac2d1388",
@@ -84,20 +84,6 @@
       "portalLink": "https://apply.skyearlycareers.targetconnect.com/",
       "calendarSynced": true,
       "notes": "Invited Nov 18. 5-day deadline. 50% extra time adjustment confirmed for timed questions (~65-75 mins total). Prep hub: https://sky.preparationplus.com"
-    },
-    {
-      "id": 6,
-      "category": "internship",
-      "company": "Mishcon de Reya",
-      "role": "Vacation Scheme: Spring 2027",
-      "sector": "Commercial & Law",
-      "appliedDate": "2026-11-13",
-      "stage": "Action Required",
-      "subStatus": "Application Started on cvMail Portal",
-      "deadline": "2026-11-24T23:59:00",
-      "portalLink": "https://fsr.cvmailuk.com/mishcon/applying.cfm?job_id=79061&goto_page=1",
-      "calendarSynced": true,
-      "notes": "Started on Talent Acquisition Portal on Nov 13; log in and click 'Send App' to finalize submission."
     },
     {
       "id": 7,
