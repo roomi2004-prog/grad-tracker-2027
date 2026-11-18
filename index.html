@@ -246,6 +246,9 @@
     .theme-header {
       background-color: var(--bg-header);
       border-bottom: 1px solid var(--border-color);
+      transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
     .glass-surface {
       background-color: var(--bg-surface);
@@ -1446,18 +1449,56 @@
         return () => clearInterval(timer);
       }, []);
 
+      const headerRef = React.useRef(null);
+      const [headerSpacerHeight, setHeaderSpacerHeight] = useState(74);
+
       useEffect(() => {
-        const handleScroll = () => {
-          const y = window.scrollY || window.pageYOffset || 0;
+        const measureExpanded = () => {
+          if (headerRef.current && headerRef.current.getAttribute("data-compact") === "false") {
+            const h = Math.ceil(headerRef.current.getBoundingClientRect().height);
+            if (h > 40) setHeaderSpacerHeight(h);
+          }
+        };
+        measureExpanded();
+        const t = setTimeout(measureExpanded, 250);
+        window.addEventListener("resize", measureExpanded, { passive: true });
+        return () => {
+          clearTimeout(t);
+          window.removeEventListener("resize", measureExpanded);
+        };
+      }, [isCycleArchived, ghToken]);
+
+      useEffect(() => {
+        let rafId = null;
+        let lastToggleAt = 0;
+        const updateCompact = () => {
+          rafId = null;
+          const nowTs = performance.now();
+          if (nowTs - lastToggleAt < 180) return;
+          const y = Math.max(0, window.scrollY || window.pageYOffset || 0);
           setIsHeaderCompact(prev => {
-            if (y > 40 && !prev) return true;
-            if (y <= 10 && prev) return false;
+            if (y > 80 && !prev) {
+              lastToggleAt = nowTs;
+              return true;
+            }
+            if (y <= 12 && prev) {
+              lastToggleAt = nowTs;
+              return false;
+            }
             return prev;
           });
         };
+        const handleScroll = () => {
+          if (rafId === null) {
+            rafId = window.requestAnimationFrame(updateCompact);
+          }
+        };
         window.addEventListener("scroll", handleScroll, { passive: true });
-        handleScroll();
-        return () => window.removeEventListener("scroll", handleScroll);
+        updateCompact();
+        return () => {
+          window.removeEventListener("scroll", handleScroll);
+          if (rafId !== null) window.cancelAnimationFrame(rafId);
+        };
       }, []);
 
       useEffect(() => {
@@ -2296,10 +2337,11 @@
 
       return (
         <div className="min-h-screen pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
-          {/* Top Command Header (Collapses smoothly when scrollY > 40px, expands when scrollY <= 10px) */}
+          {/* Fixed Top Command Header (Out of document flow so expanding/collapsing never causes layout-shift flash!) */}
           <header
+            ref={headerRef}
             data-compact={isHeaderCompact ? "true" : "false"}
-            className={`sticky top-0 z-30 theme-header backdrop-blur-2xl px-4 md:px-8 transition-all duration-200 ease-out shadow-lg ${
+            className={`fixed top-0 inset-x-0 z-30 theme-header backdrop-blur-2xl px-4 md:px-8 transition-[padding] duration-150 ease-out shadow-lg ${
               isHeaderCompact ? "py-1.5" : "py-3.5"
             }`}
           >
@@ -2483,6 +2525,7 @@
               </div>
             </div>
           </header>
+          <div style={{ height: `${headerSpacerHeight}px` }} aria-hidden="true" />
 
           <main className="max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-5">
             {cycleArchive && cycleArchive.offerAccepted && cycleArchive.acceptedOffer && (
