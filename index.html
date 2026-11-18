@@ -246,7 +246,7 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
   </style>
 </head>
-<body data-theme="carbon-gold">
+<body data-theme="neon-orchid">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -312,7 +312,7 @@
       }
     ];
 
-    const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v1";
+    const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v2";
 
     const CAL_MONTHS = Array.from({ length: 10 }, (_, i) => {
       const d = new Date(2026, 8 + i, 1);
@@ -893,9 +893,9 @@
       const [theme, setTheme] = useState(() => {
         try {
           const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-          return THEME_PRESETS.some(t => t.id === savedTheme) ? savedTheme : "carbon-gold";
+          return THEME_PRESETS.some(t => t.id === savedTheme) ? savedTheme : "neon-orchid";
         } catch {
-          return "carbon-gold";
+          return "neon-orchid";
         }
       });
       const [now, setNow] = useState(Date.now());
@@ -1148,7 +1148,7 @@
       });
 
       const currentThemeObj = useMemo(
-        () => THEME_PRESETS.find(t => t.id === theme) || THEME_PRESETS[1],
+        () => THEME_PRESETS.find(t => t.id === theme) || THEME_PRESETS[3],
         [theme]
       );
 
