@@ -1708,36 +1708,16 @@
                   )
                 )}
 
-                {/* Backup / Restore JSON & Refresh Email — hidden when header is collapsed */}
+                {/* Refresh Email — hidden when header is collapsed */}
                 {!isHeaderCompact && (
-                  <>
-                    <button
-                      onClick={handleBackupJson}
-                      title="Export all applications and edits as a JSON backup file"
-                      className="flex items-center gap-1.5 glass-surface hover:border-current text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all"
-                    >
-                      <Icon name="Download" className="w-3.5 h-3.5" />
-                      Backup JSON
-                    </button>
-
-                    <button
-                      onClick={() => restoreInputRef.current && restoreInputRef.current.click()}
-                      title="Restore and smart-merge applications from a JSON backup file"
-                      className="flex items-center gap-1.5 glass-surface hover:border-current text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all"
-                    >
-                      <Icon name="Upload" className="w-3.5 h-3.5" />
-                      Restore JSON
-                    </button>
-
-                    <button
-                      onClick={handleRefreshEmail}
-                      disabled={isRefreshing}
-                      className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 text-white font-semibold text-xs px-3.5 py-2 rounded-xl transition-all"
-                    >
-                      <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                      {isRefreshing ? "Checking Gmail..." : "Refresh & Check Email"}
-                    </button>
-                  </>
+                  <button
+                    onClick={handleRefreshEmail}
+                    disabled={isRefreshing}
+                    className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 text-white font-semibold text-xs px-3.5 py-2 rounded-xl transition-all"
+                  >
+                    <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                    {isRefreshing ? "Checking Gmail..." : "Refresh & Check Email"}
+                  </button>
                 )}
 
                 <input
@@ -2983,6 +2963,31 @@
               </div>
             )}
           </main>
+
+          {/* Subtle Bottom Data Utility Footer (Backup / Restore JSON) */}
+          <footer className="max-w-[1640px] mx-auto px-4 md:px-8 mt-10 pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
+            <span>Data & Backup Utilities</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleBackupJson}
+                title="Export all applications and edits as a JSON backup file"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg theme-input text-slate-400 hover:text-white transition"
+              >
+                <Icon name="Download" className="w-3 h-3" />
+                Backup JSON
+              </button>
+              <button
+                type="button"
+                onClick={() => restoreInputRef.current && restoreInputRef.current.click()}
+                title="Restore and smart-merge applications from a JSON backup file"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg theme-input text-slate-400 hover:text-white transition"
+              >
+                <Icon name="Upload" className="w-3 h-3" />
+                Restore JSON
+              </button>
+            </div>
+          </footer>
 
           {/* Edit / Detail Modal */}
           {selectedApp && (
