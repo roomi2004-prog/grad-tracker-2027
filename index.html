@@ -2115,11 +2115,40 @@
         return STAGES.filter(s => s.id !== "Closed / Unsuccessful" && s.id !== "On Hold / Waitlist");
       }, [hideArchivedCols, stageFilter]);
 
+      const isPendingAssessment = (app) => {
+        if (!app) return false;
+        if (app.stage === "Closed / Unsuccessful" || app.stage === "Offer / Successful") return false;
+        if (app.stage === "Action Required") return true;
+        if (app.deadline) return true;
+        const sub = String(app.subStatus || app.status || "").toLowerCase();
+        if (/\b(completed|submitted|under review|awaiting|on hold|received)\b/.test(sub)) return false;
+        return /\b(due|invited|invitation|pending|action required|to complete|reapply|book|schedule)\b/.test(sub);
+      };
+
       const urgentItems = useMemo(() => {
         return apps
-          .filter(a => a.stage === "Action Required")
-          .sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
+          .filter(isPendingAssessment)
+          .sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999") || String(b.appliedDate || "").localeCompare(String(a.appliedDate || "")));
       }, [apps]);
+
+      const handleMarkAssessmentDone = (item) => {
+        if (viewArchiveMode) return;
+        const todayShort = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+        const nextStage = item.stage === "Action Required" ? "Stage 1 - Online Assessment" : item.stage;
+        const cleanedSub = String(item.subStatus || "Assessment")
+          .replace(/\b(due|pending|invited|invitation|action required)\b/gi, "")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+        const nextSub = `${cleanedSub || "Assessment"} Completed (${todayShort})`;
+        const nextApps = rawApps.map(a => a.id === item.id ? {
+          ...a,
+          stage: nextStage,
+          subStatus: nextSub,
+          deadline: null
+        } : a);
+        setApps(nextApps);
+        pushSnapshotToCloud({ applications: nextApps }, `Completed assessment: ${item.company}`);
+      };
 
       const stats = useMemo(() => {
         const internships = apps.filter(a => a.category === "internship");
@@ -2931,7 +2960,7 @@
                 </div>
 
                 {!radarCollapsed && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mt-3.5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3.5">
                     {urgentItems.map(item => {
                       const cd = formatCountdown(item.deadline, item.appliedDate, now);
                       return (
@@ -2942,11 +2971,18 @@
                                 <CompanyMonogram company={item.company} />
                                 <span className="font-bold text-xs text-white group-hover:text-amber-300 transition truncate">{item.company}</span>
                               </div>
-                              {item.calendarSynced && (
-                                <span title="Synced to Google Calendar" className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 shrink-0">
-                                  GCal
-                                </span>
-                              )}
+                              <div className="flex items-center gap-1 shrink-0">
+                                {item.stage !== "Action Required" && (
+                                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                                    {item.stage.replace(" - Online Assessment", "").replace(" - Video Interview", "").replace(" - Assessment Centre", "")}
+                                  </span>
+                                )}
+                                {item.calendarSynced && (
+                                  <span title="Synced to Google Calendar" className="text-[10px] font-mono-num px-1.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                                    GCal
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <p className="text-[11px] text-slate-400 line-clamp-1 mt-1.5">{item.role}</p>
                             <p className="text-[11px] text-amber-200/90 mt-1 font-medium line-clamp-2">{item.subStatus}</p>
@@ -2979,6 +3015,16 @@
                                 <span className="text-[10px] text-slate-400 font-mono-num">Action pending</span>
                               )}
                               <div className="flex items-center gap-1">
+                                {!viewArchiveMode && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMarkAssessmentDone(item)}
+                                    title="Mark assessment completed and clear from Action Radar"
+                                    className="text-[11px] text-emerald-300 hover:text-emerald-200 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 px-2 py-1 rounded-md font-semibold transition"
+                                  >
+                                    Done ✓
+                                  </button>
+                                )}
                                 <button onClick={() => setSelectedApp(item)} className="text-[11px] text-slate-300 hover:text-white px-2 py-1 rounded-md theme-input transition">
                                   Edit
                                 </button>
