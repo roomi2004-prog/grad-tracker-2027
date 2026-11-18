@@ -29,11 +29,29 @@
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
-    "roland berger::2027 consulting summer internship ? london office"
+    "roland berger::2027 consulting summer internship ? london office",
+    "rec-trackr-bank-of-england-2027-summer-internsh-2027",
+    "bank of england::2027 summer internship programme"
   ],
   "version": 6,
-  "updatedAt": "2026-11-18T23:22:15.509Z",
+  "updatedAt": "2026-11-18T23:24:17.639Z",
   "applications": [
+    {
+      "id": 1795044257639,
+      "category": "internship",
+      "company": "Bank of England",
+      "role": "2027 Summer Internship Programme",
+      "sector": "Corporate & Investment Banking",
+      "appliedDate": "2026-11-18",
+      "stage": "Application Submitted",
+      "subStatus": "Applied via The Trackr (11-18)",
+      "deadline": null,
+      "portalLink": "https://eoff.fa.em1.ukg.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_3001/jobs?keyword=%222027+summer+internship%22&mode=location&utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027&iis=Trackr&sType=Trackr",
+      "calendarSynced": false,
+      "notes": "Applied on 2026-11-18 from Recommended to Apply (The Trackr • UK Finance). Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-16).",
+      "_gmailSubStatus": "Applied via The Trackr (11-18)",
+      "_gmailDeadline": null
+    },
     {
       "id": "app-1a1efbecac2d1388",
       "firm": "Workday Notifications",
@@ -1354,7 +1372,9 @@
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
-    "roland berger::2027 consulting summer internship ? london office"
+    "roland berger::2027 consulting summer internship ? london office",
+    "rec-trackr-bank-of-england-2027-summer-internsh-2027",
+    "bank of england::2027 summer internship programme"
   ],
   "cycleArchive": null,
   "offerAccepted": false,
