@@ -443,7 +443,7 @@
       }
     ];
 
-    const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v2";
+    const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v3";
 
     const CAL_MONTHS = Array.from({ length: 10 }, (_, i) => {
       const d = new Date(2026, 8 + i, 1);
@@ -1307,7 +1307,7 @@
       });
       const [barbieAudioPlaying, setBarbieAudioPlaying] = useState(false);
       const [barbieAudioMuted, setBarbieAudioMuted] = useState(false);
-      const prevThemeBeforeBarbieRef = React.useRef("carbon-gold");
+      const prevThemeBeforeBarbieRef = React.useRef("neon-orchid");
       const barbieSynthRef = React.useRef(null);
       const barbiePhraseActiveRef = React.useRef(false);
 
@@ -1513,7 +1513,11 @@
           barbieSynthRef.current.stop();
           setBarbieAudioPlaying(false);
         }
-        try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
+        try {
+          if (theme !== "barbie-dreamhouse") {
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
+          }
+        } catch {}
       }, [theme]);
 
       useEffect(() => {
@@ -3794,7 +3798,7 @@
                 type="button"
                 onClick={() => {
                   stopBarbieSoundtrack();
-                  setTheme(prevThemeBeforeBarbieRef.current || "carbon-gold");
+                  setTheme(prevThemeBeforeBarbieRef.current || "neon-orchid");
                 }}
                 title="Stop music and exit Barbie Mode"
                 className="barbie-keep-white text-white bg-black/20 hover:bg-black/35 p-1 rounded-full transition"
