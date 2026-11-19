@@ -2417,20 +2417,30 @@
       const [headerSpacerHeight, setHeaderSpacerHeight] = useState(74);
 
       useEffect(() => {
+        const el = headerRef.current;
+        if (!el) return;
         const measureExpanded = () => {
           if (headerRef.current && headerRef.current.getAttribute("data-compact") === "false") {
             const h = Math.ceil(headerRef.current.getBoundingClientRect().height);
-            if (h > 40) setHeaderSpacerHeight(h);
+            if (h > 40) setHeaderSpacerHeight(prev => (prev === h ? prev : h));
           }
         };
         measureExpanded();
-        const t = setTimeout(measureExpanded, 250);
+        const t = setTimeout(measureExpanded, 180);
+        let ro = null;
+        if (typeof ResizeObserver !== "undefined") {
+          ro = new ResizeObserver(() => {
+            measureExpanded();
+          });
+          ro.observe(el);
+        }
         window.addEventListener("resize", measureExpanded, { passive: true });
         return () => {
           clearTimeout(t);
+          if (ro) ro.disconnect();
           window.removeEventListener("resize", measureExpanded);
         };
-      }, [isCycleArchived, ghToken]);
+      }, [isCycleArchived, ghToken, Boolean(liveSyncStage), headerSearchOpen]);
 
       useEffect(() => {
         let rafId = null;
