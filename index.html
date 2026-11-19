@@ -15,7 +15,7 @@
   <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Satisfy&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -418,6 +418,14 @@
     .font-mono-num {
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-variant-numeric: tabular-nums;
+    }
+    .apple-script-sig {
+      font-family: "Satisfy", "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
+      color: var(--text-secondary);
+      letter-spacing: 0.025em;
+      line-height: 1.05;
+      font-weight: 400;
+      text-shadow: 0 1px 10px var(--spotlight-1);
     }
     .theme-header {
       background-color: var(--bg-header);
@@ -4625,13 +4633,22 @@
                   <Icon name="Briefcase" className={isHeaderCompact ? "w-3.5 h-3.5" : "w-4 h-4"} />
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <h1
-                    className={`font-extrabold tracking-tight text-white whitespace-nowrap transition-all duration-200 ${
-                      isHeaderCompact ? "text-xs sm:text-sm" : "text-base md:text-lg"
-                    }`}
-                  >
-                    Rags to Riches
-                  </h1>
+                  <div className="flex flex-col leading-none">
+                    <h1
+                      className={`font-extrabold tracking-tight text-white whitespace-nowrap leading-tight transition-all duration-200 ${
+                        isHeaderCompact ? "text-xs sm:text-sm" : "text-base md:text-lg"
+                      }`}
+                    >
+                      Rags to Riches
+                    </h1>
+                    <span
+                      className={`apple-script-sig whitespace-nowrap opacity-90 transition-all duration-200 ${
+                        isHeaderCompact ? "text-[10px] -mt-0.5" : "text-[13px] md:text-[14px] mt-0.5"
+                      }`}
+                    >
+                      by Moose
+                    </span>
+                  </div>
                   {!isHeaderCompact && (
                     <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
