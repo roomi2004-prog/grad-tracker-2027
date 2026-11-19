@@ -2529,7 +2529,8 @@
       const handleSearchInputChange = (val) => {
         setSearch(val);
         const normalized = val.trim().toLowerCase();
-        if (normalized === BARBIE_TRIGGER_PHRASE) {
+        const squashed = normalized.replace(/\s+/g, "");
+        if (squashed === BARBIE_TRIGGER_PHRASE) {
           if (!barbiePhraseActiveRef.current) {
             barbiePhraseActiveRef.current = true;
             activateBarbieMode();
@@ -2558,7 +2559,8 @@
       const handleSearchKeyDown = (e, fromHeader = false) => {
         if (e.key === "Enter") {
           const normalized = e.currentTarget.value.trim().toLowerCase();
-          if (normalized === BARBIE_TRIGGER_PHRASE) {
+          const squashed = normalized.replace(/\s+/g, "");
+          if (squashed === BARBIE_TRIGGER_PHRASE) {
             e.preventDefault();
             activateBarbieMode();
           } else if (/^hell\s+nah{2,}$/.test(normalized)) {
