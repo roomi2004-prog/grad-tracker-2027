@@ -79,7 +79,7 @@
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-19T01:09:09.316Z",
+  "updatedAt": "2026-11-19T01:09:24.451Z",
   "applications": [
     {
       "id": 1795049885047,
@@ -316,23 +316,6 @@
       "notes": "Applied Sep 21; granted extra time & 5-day extension by Wenjie Salas on Sep 30; evergreen internship application confirmed active Oct 7.",
       "rejectedAfterStage": null,
       "_gmailSubStatus": "SHL Assessments Completed with Extra Time (Oct 7)",
-      "_gmailDeadline": null
-    },
-    {
-      "id": 49,
-      "category": "internship",
-      "company": "Tesco Group",
-      "role": "Technology - Product Management Internship (2027)",
-      "sector": "Strategy & Commercial",
-      "appliedDate": "2026-09-29",
-      "stage": "Stage 1 - Online Assessment",
-      "subStatus": "Win Together Online Assessments Stage (Oct 1)",
-      "deadline": null,
-      "portalLink": "https://tescoearlycareers.groupgti.com/",
-      "calendarSynced": false,
-      "notes": "Applied Sep 29; invited to Win Together Online Assessments on Oct 1 (15:18 GMT).",
-      "rejectedAfterStage": null,
-      "_gmailSubStatus": "Win Together Online Assessments Stage (Oct 1)",
       "_gmailDeadline": null
     },
     {
@@ -1402,7 +1385,8 @@
     "app_c8d844d7",
     "app_e7ca42a4",
     "app_f5a22011",
-    "1795044257639"
+    "1795044257639",
+    "49"
   ],
   "cycleArchive": null,
   "offerAccepted": false,
