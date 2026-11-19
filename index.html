@@ -330,6 +330,21 @@
     .guy-groove { transform-origin: 84px 160px; animation: guy-groove 0.34s ease-in-out infinite; }
     .twerk-shadow { transform-origin: 130px 198px; animation: twerk-shadow 0.34s ease-in-out infinite; }
     .twerk-wave { transform-origin: 118px 134px; animation: twerk-shockwave 0.68s ease-out infinite; }
+    @keyframes trophy-float {
+      0%, 100% { transform: translateY(0px) rotate(-1.5deg) scale(1); }
+      50% { transform: translateY(-7px) rotate(1.5deg) scale(1.04); }
+    }
+    @keyframes trophy-glow {
+      0%, 100% { opacity: 0.55; transform: scale(0.95); }
+      50% { opacity: 0.95; transform: scale(1.1); }
+    }
+    @keyframes trophy-sparkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.7) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1.25) rotate(22deg); }
+    }
+    .trophy-float { transform-origin: 70px 72px; animation: trophy-float 2.2s ease-in-out infinite; }
+    .trophy-glow { transform-origin: 70px 66px; animation: trophy-glow 1.8s ease-in-out infinite; }
+    .trophy-sparkle { animation: trophy-sparkle 1.4s ease-in-out infinite; }
 
     body {
       background-color: var(--bg-canvas, #0A0A0A);
@@ -1452,14 +1467,32 @@
       };
     }
 
-    // Full-screen multi-volley Confetti Cannon (100% offline HTML5 Canvas)
-    function launchOfferConfetti() {
+    // Full-screen Continuous Confetti Engine (100% offline HTML5 Canvas)
+    // Runs constantly with tumbling rain + periodic twin side cannons until stopOfferConfetti() is called.
+    let activeConfettiController = null;
+
+    function stopOfferConfetti() {
       try {
+        if (activeConfettiController) {
+          activeConfettiController.stop();
+          activeConfettiController = null;
+        }
         const existing = document.getElementById("offer-confetti-canvas");
         if (existing) existing.remove();
+      } catch {}
+    }
+
+    function launchOfferConfetti(continuous = true) {
+      try {
+        if (activeConfettiController && continuous) {
+          activeConfettiController.fireBurst();
+          return;
+        }
+        stopOfferConfetti();
+
         const canvas = document.createElement("canvas");
         canvas.id = "offer-confetti-canvas";
-        canvas.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:100;";
+        canvas.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:45;";
         document.body.appendChild(canvas);
 
         const ctx = canvas.getContext("2d");
@@ -1472,14 +1505,22 @@
         resize();
         window.addEventListener("resize", resize);
 
-        const colors = ["#D4AF37", "#F72585", "#FFD600", "#34D399", "#38BDF8", "#A855F7", "#FFFFFF", "#FF6B00"];
+        const colors = ["#D4AF37", "#F72585", "#FFD600", "#34D399", "#38BDF8", "#A855F7", "#FFFFFF", "#FF6B00", "#FDE047"];
         const particles = [];
+        const MAX_PARTICLES = 340;
+
+        const pushParticle = (p) => {
+          if (particles.length >= MAX_PARTICLES) {
+            particles.shift();
+          }
+          particles.push(p);
+        };
 
         const spawnCannon = (originX, originY, angleMinDeg, angleMaxDeg, count, speedMin, speedMax) => {
           for (let i = 0; i < count; i++) {
             const angle = (angleMinDeg + Math.random() * (angleMaxDeg - angleMinDeg)) * (Math.PI / 180);
             const speed = speedMin + Math.random() * (speedMax - speedMin);
-            particles.push({
+            pushParticle({
               x: originX,
               y: originY,
               vx: Math.cos(angle) * speed,
@@ -1489,96 +1530,136 @@
               color: colors[Math.floor(Math.random() * colors.length)],
               shape: Math.random() < 0.25 ? "circle" : "rect",
               rot: Math.random() * Math.PI * 2,
-              vRot: (Math.random() - 0.5) * 0.26,
+              vRot: (Math.random() - 0.5) * 0.24,
               tilt: Math.random() * Math.PI * 2,
               vTilt: 0.08 + Math.random() * 0.14,
-              drag: 0.985 + Math.random() * 0.008,
-              gravity: 0.22 + Math.random() * 0.14,
+              swayPhase: Math.random() * Math.PI * 2,
+              swaySpeed: 0.03 + Math.random() * 0.04,
+              drag: 0.986 + Math.random() * 0.007,
+              gravity: 0.20 + Math.random() * 0.12,
               alpha: 1
             });
           }
         };
 
-        const fireVolley = () => {
+        const spawnTopRain = (count) => {
           const W = window.innerWidth;
-          const H = window.innerHeight;
-          spawnCannon(W * 0.04, H * 0.92, -78, -32, 95, 12, 24);
-          spawnCannon(W * 0.96, H * 0.92, -148, -102, 95, 12, 24);
-        };
-
-        // Volley 1: Immediate twin side cannons
-        fireVolley();
-        // Volley 2: Top shower rain
-        const t2 = setTimeout(() => {
-          const W = window.innerWidth;
-          for (let i = 0; i < 110; i++) {
-            particles.push({
+          for (let i = 0; i < count; i++) {
+            pushParticle({
               x: Math.random() * W,
-              y: -20 - Math.random() * 140,
-              vx: (Math.random() - 0.5) * 5,
-              vy: 2 + Math.random() * 6,
+              y: -14 - Math.random() * 40,
+              vx: (Math.random() - 0.5) * 2.4,
+              vy: 1.8 + Math.random() * 3.2,
               w: 6 + Math.random() * 7,
               h: 4 + Math.random() * 5,
               color: colors[Math.floor(Math.random() * colors.length)],
-              shape: Math.random() < 0.3 ? "circle" : "rect",
+              shape: Math.random() < 0.28 ? "circle" : "rect",
               rot: Math.random() * Math.PI * 2,
-              vRot: (Math.random() - 0.5) * 0.22,
+              vRot: (Math.random() - 0.5) * 0.18,
               tilt: Math.random() * Math.PI * 2,
-              vTilt: 0.07 + Math.random() * 0.12,
-              drag: 0.992,
-              gravity: 0.16 + Math.random() * 0.1,
+              vTilt: 0.06 + Math.random() * 0.11,
+              swayPhase: Math.random() * Math.PI * 2,
+              swaySpeed: 0.035 + Math.random() * 0.035,
+              drag: 0.995,
+              gravity: 0.045 + Math.random() * 0.045,
               alpha: 1
             });
           }
-        }, 650);
-        // Volley 3: Encore twin cannons
-        const t3 = setTimeout(fireVolley, 1450);
+        };
 
-        const startedAt = performance.now();
+        const fireVolley = (perSide = 75) => {
+          const W = window.innerWidth;
+          const H = window.innerHeight;
+          spawnCannon(W * 0.03, H * 0.92, -78, -32, perSide, 12, 23);
+          spawnCannon(W * 0.97, H * 0.92, -148, -102, perSide, 12, 23);
+        };
+
+        // Opening celebration blast: twin cannons + initial rain
+        fireVolley(90);
+        spawnTopRain(65);
+
+        let rainIntervalId = null;
+        let cannonIntervalId = null;
+        if (continuous) {
+          rainIntervalId = setInterval(() => {
+            if (!document.hidden) spawnTopRain(4);
+          }, 110);
+          cannonIntervalId = setInterval(() => {
+            if (!document.hidden) fireVolley(36);
+          }, 2600);
+        }
+
+        let stopped = false;
         let rafId = null;
+        const startedAt = performance.now();
+
+        const stop = () => {
+          if (stopped) return;
+          stopped = true;
+          if (rainIntervalId) clearInterval(rainIntervalId);
+          if (cannonIntervalId) clearInterval(cannonIntervalId);
+          if (rafId) cancelAnimationFrame(rafId);
+          window.removeEventListener("resize", resize);
+          canvas.remove();
+        };
+
         const animate = (nowTs) => {
+          if (stopped) return;
           const W = window.innerWidth;
           const H = window.innerHeight;
           ctx.clearRect(0, 0, W, H);
           const elapsed = nowTs - startedAt;
-          let alive = 0;
 
-          for (const p of particles) {
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.swayPhase += p.swaySpeed;
             p.vx *= p.drag;
-            p.vy = p.vy * p.drag + p.gravity;
-            p.x += p.vx;
+            p.vy = Math.min(p.vy * p.drag + p.gravity, 9.5);
+            p.x += p.vx + Math.sin(p.swayPhase) * 0.75;
             p.y += p.vy;
             p.rot += p.vRot;
             p.tilt += p.vTilt;
-            if (elapsed > 4200) p.alpha = Math.max(0, p.alpha - 0.025);
-            if (p.y < H + 60 && p.alpha > 0.01) {
-              alive++;
-              ctx.save();
-              ctx.globalAlpha = p.alpha;
-              ctx.translate(p.x, p.y);
-              ctx.rotate(p.rot);
-              ctx.scale(1, Math.cos(p.tilt));
-              ctx.fillStyle = p.color;
-              if (p.shape === "circle") {
-                ctx.beginPath();
-                ctx.arc(0, 0, p.w * 0.45, 0, Math.PI * 2);
-                ctx.fill();
-              } else {
-                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-              }
-              ctx.restore();
+            if (!continuous && elapsed > 4200) {
+              p.alpha = Math.max(0, p.alpha - 0.025);
             }
+            if (p.y > H + 50 || p.alpha <= 0.01) {
+              particles.splice(i, 1);
+              continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.scale(1, Math.cos(p.tilt));
+            ctx.fillStyle = p.color;
+            if (p.shape === "circle") {
+              ctx.beginPath();
+              ctx.arc(0, 0, p.w * 0.45, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            }
+            ctx.restore();
           }
 
-          if (alive > 0 || elapsed < 1800) {
+          if (continuous || particles.length > 0 || elapsed < 1800) {
             rafId = requestAnimationFrame(animate);
           } else {
-            clearTimeout(t2);
-            clearTimeout(t3);
-            window.removeEventListener("resize", resize);
-            canvas.remove();
+            stop();
+            if (activeConfettiController && activeConfettiController.stop === stop) {
+              activeConfettiController = null;
+            }
           }
         };
+
+        activeConfettiController = {
+          stop,
+          fireBurst: () => {
+            fireVolley(70);
+            spawnTopRain(45);
+          }
+        };
+
         rafId = requestAnimationFrame(animate);
       } catch {}
     }
@@ -2127,7 +2208,7 @@
           barbieSynthRef.current.stop();
           setBarbieAudioPlaying(false);
         }
-        launchOfferConfetti();
+        launchOfferConfetti(true);
         const synth = getVivaSynth();
         synth.setMuted(false);
         const started = synth.start();
@@ -2137,6 +2218,7 @@
       };
 
       const stopVivaSoundtrack = () => {
+        stopOfferConfetti();
         if (vivaSynthRef.current) {
           vivaSynthRef.current.stop();
         }
@@ -5088,55 +5170,132 @@
             </div>
           )}
 
-          {/* Floating Offer Celebration Pill ("Viva La Vida" Soundtrack + Replay Confetti) */}
+          {/* Offer Celebration Trophy Showcase + Constant Confetti + "Viva La Vida" Controls */}
           {showVivaPill && (
             <div
-              role="region"
+              role="dialog"
               aria-label="Viva La Vida Celebration Controls"
-              className="fixed bottom-4 left-4 z-40 flex items-center gap-2 px-3.5 py-2 rounded-full shadow-2xl border border-amber-300/70"
+              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,330px)] rounded-3xl p-4 border-2 border-amber-300/80 flex flex-col items-center gap-2.5 text-center backdrop-blur-xl"
               style={{
-                background: "linear-gradient(135deg, #B45309 0%, #D4AF37 55%, #F59E0B 100%)",
-                boxShadow: "0 10px 28px -4px rgba(212, 175, 55, 0.55), inset 0 1px 0 rgba(255,255,255,0.45)"
+                background: "linear-gradient(160deg, rgba(24, 16, 4, 0.94) 0%, rgba(48, 30, 6, 0.92) 55%, rgba(28, 17, 4, 0.95) 100%)",
+                boxShadow: "0 20px 55px -8px rgba(212, 175, 55, 0.65), 0 0 0 1px rgba(253, 224, 71, 0.25), inset 0 1px 0 rgba(255,255,255,0.35)"
               }}
             >
-              <span className="barbie-keep-white text-white text-xs font-extrabold tracking-tight flex items-center gap-1.5">
-                <Icon name="Trophy" className={`w-3.5 h-3.5 ${vivaAudioPlaying && !vivaAudioMuted ? "animate-bounce" : ""}`} />
-                <span>Viva La Vida</span>
-              </span>
-              <button
-                type="button"
-                onClick={toggleVivaPlayPause}
-                title={vivaAudioPlaying ? "Pause Viva La Vida" : "Play Viva La Vida"}
-                className="barbie-keep-white text-white bg-black/20 hover:bg-black/30 px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition"
-              >
-                <Icon name={vivaAudioPlaying ? "Pause" : "Play"} className="w-3 h-3" />
-                {vivaAudioPlaying ? "Pause" : "Play"}
-              </button>
-              <button
-                type="button"
-                onClick={toggleVivaMute}
-                title={vivaAudioMuted ? "Unmute Viva La Vida" : "Mute Viva La Vida"}
-                className="barbie-keep-white text-white bg-black/20 hover:bg-black/30 px-2 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 transition"
-              >
-                <Icon name={vivaAudioMuted ? "VolumeX" : "Volume2"} className="w-3 h-3" />
-                {vivaAudioMuted ? "Muted" : "Mute"}
-              </button>
-              <button
-                type="button"
-                onClick={launchOfferConfetti}
-                title="Shoot more confetti!"
-                className="barbie-keep-white text-white bg-black/20 hover:bg-black/30 px-2 py-1 rounded-full text-[11px] font-bold transition"
-              >
-                🎉
-              </button>
-              <button
-                type="button"
-                onClick={stopVivaSoundtrack}
-                title="Stop Viva La Vida and close player"
-                className="barbie-keep-white text-white bg-black/25 hover:bg-black/40 p-1 rounded-full transition"
-              >
-                <Icon name="X" className="w-3 h-3" />
-              </button>
+              <div className="w-full flex items-center justify-between">
+                <span className="barbie-keep-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-black shadow">
+                  🏆 Viva La Vida • Live
+                </span>
+                <button
+                  type="button"
+                  onClick={stopVivaSoundtrack}
+                  aria-label="Turn off celebration animation"
+                  title="Turn off confetti, trophy & Viva La Vida"
+                  className="barbie-keep-white text-amber-200 hover:text-white p-1 rounded-lg hover:bg-white/10 transition"
+                >
+                  <Icon name="X" className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Gleaming Animated Gold Championship Trophy SVG */}
+              <svg viewBox="0 0 140 130" className="w-32 h-28 overflow-visible select-none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="trophyGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FEF08A" />
+                    <stop offset="40%" stopColor="#F59E0B" />
+                    <stop offset="75%" stopColor="#D97706" />
+                    <stop offset="100%" stopColor="#FDE047" />
+                  </linearGradient>
+                  <linearGradient id="trophyShine" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                  </linearGradient>
+                  <radialGradient id="trophyAura" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#FACC15" stopOpacity="0.55" />
+                    <stop offset="100%" stopColor="#FACC15" stopOpacity="0" />
+                  </radialGradient>
+                </defs>
+
+                {/* Radiant golden halo */}
+                <circle cx="70" cy="60" r="54" fill="url(#trophyAura)" className="trophy-glow" />
+
+                <g className="trophy-float">
+                  {/* Left & Right ornate trophy handles */}
+                  <path d="M40 30 C16 30, 16 64, 43 66" fill="none" stroke="url(#trophyGold)" strokeWidth="7" strokeLinecap="round" />
+                  <path d="M100 30 C124 30, 124 64, 97 66" fill="none" stroke="url(#trophyGold)" strokeWidth="7" strokeLinecap="round" />
+                  {/* Trophy cup body */}
+                  <path d="M36 22 H104 L97 64 C94 82, 82 90, 70 90 C58 90, 46 82, 43 64 Z" fill="url(#trophyGold)" stroke="#FEF9C3" strokeWidth="2" />
+                  {/* Top rim highlight */}
+                  <rect x="33" y="18" width="74" height="7" rx="3.5" fill="#FEF08A" stroke="#D97706" strokeWidth="1.2" />
+                  {/* Glossy specular streak */}
+                  <path d="M45 28 L53 28 L57 74 L48 68 Z" fill="url(#trophyShine)" opacity="0.7" />
+                  {/* Star emblem on cup */}
+                  <polygon points="70,38 73.5,46 82,47 75.5,52.5 77.5,61 70,56.5 62.5,61 64.5,52.5 58,47 66.5,46" fill="#FFFBEB" stroke="#B45309" strokeWidth="1.2" />
+                  {/* Stem */}
+                  <rect x="63" y="88" width="14" height="15" rx="3" fill="url(#trophyGold)" stroke="#FEF08A" strokeWidth="1.2" />
+                  <ellipse cx="70" cy="102" rx="18" ry="5" fill="#F59E0B" stroke="#FEF08A" strokeWidth="1.2" />
+                  {/* Pedestal base */}
+                  <path d="M44 105 H96 L102 122 H38 Z" fill="#1C1917" stroke="#D4AF37" strokeWidth="2" />
+                  <rect x="52" y="109" width="36" height="9" rx="2" fill="url(#trophyGold)" />
+                  <text x="70" y="116" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="#1C1917" fontFamily="monospace">2027</text>
+                </g>
+
+                {/* Twinkling sparkles */}
+                <text x="12" y="24" fontSize="15" className="trophy-sparkle">✨</text>
+                <text x="112" y="24" fontSize="14" className="trophy-sparkle" style={{ animationDelay: "0.45s" }}>✨</text>
+                <text x="115" y="90" fontSize="13" className="trophy-sparkle" style={{ animationDelay: "0.9s" }}>⭐</text>
+                <text x="12" y="92" fontSize="13" className="trophy-sparkle" style={{ animationDelay: "0.25s" }}>🎉</text>
+              </svg>
+
+              {/* Championship Banner Headline */}
+              <div className="px-3 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-400/25 to-amber-500/20 border border-amber-300/60 w-full">
+                <div
+                  className="text-lg sm:text-xl font-black tracking-tight leading-tight"
+                  style={{
+                    background: "linear-gradient(90deg, #FEF08A 0%, #FACC15 45%, #FFFFFF 70%, #F59E0B 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent"
+                  }}
+                >
+                  N*gga We Made It!
+                </div>
+              </div>
+
+              {/* Controls: Play/Pause, Mute, Extra Burst, Turn Off */}
+              <div className="w-full flex items-center justify-between gap-1.5 pt-0.5">
+                <button
+                  type="button"
+                  onClick={toggleVivaPlayPause}
+                  title={vivaAudioPlaying ? "Pause Viva La Vida" : "Play Viva La Vida"}
+                  className="barbie-keep-white flex-1 text-white bg-white/10 hover:bg-white/20 px-2 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition"
+                >
+                  <Icon name={vivaAudioPlaying ? "Pause" : "Play"} className="w-3 h-3" />
+                  {vivaAudioPlaying ? "Pause" : "Play"}
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleVivaMute}
+                  title={vivaAudioMuted ? "Unmute Viva La Vida" : "Mute Viva La Vida"}
+                  className="barbie-keep-white text-white bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition"
+                >
+                  <Icon name={vivaAudioMuted ? "VolumeX" : "Volume2"} className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => launchOfferConfetti(true)}
+                  title="Fire extra confetti cannon burst!"
+                  className="barbie-keep-white text-white bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition"
+                >
+                  🎉
+                </button>
+                <button
+                  type="button"
+                  onClick={stopVivaSoundtrack}
+                  title="Turn off confetti, trophy & Viva La Vida"
+                  className="barbie-keep-white text-rose-200 bg-rose-500/30 hover:bg-rose-500/50 border border-rose-400/50 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition"
+                >
+                  Turn Off
+                </button>
+              </div>
             </div>
           )}
 
