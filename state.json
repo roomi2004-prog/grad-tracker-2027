@@ -75,12 +75,30 @@
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
     "st james's place::2027 investment internship programme",
     "rec-trackr-partners-group-2027",
-    "partners group::2027 private markets summer analyst ? client solutions & investment management (london)"
+    "partners group::2027 private markets summer analyst ? client solutions & investment management (london)",
+    "rec-trackr-pimco-2027",
+    "pimco::2027 summer intern ? account management & institutional client coverage (london)"
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-19T01:13:27.503Z",
+  "updatedAt": "2026-11-19T01:23:14.980Z",
   "applications": [
+    {
+      "id": 1795051394979,
+      "category": "internship",
+      "company": "PIMCO",
+      "role": "2027 Summer Intern ? Account Management & Institutional Client Coverage (London)",
+      "sector": "Investment Management",
+      "appliedDate": "2026-11-19",
+      "stage": "Application Submitted",
+      "subStatus": "Applied via The Trackr (11-19)",
+      "deadline": null,
+      "portalLink": "https://www.pimco.com/gb/en/careers",
+      "calendarSynced": false,
+      "notes": "Applied on 2026-11-19 from Recommended to Apply (The Trackr ? UK Finance (Investment Management)). Opened Nov 15 on The Trackr UK Finance tracker under Investment Management.",
+      "_gmailSubStatus": "Applied via The Trackr (11-19)",
+      "_gmailDeadline": null
+    },
     {
       "id": 1795049885047,
       "category": "internship",
@@ -1348,7 +1366,9 @@
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
     "st james's place::2027 investment internship programme",
     "rec-trackr-partners-group-2027",
-    "partners group::2027 private markets summer analyst ? client solutions & investment management (london)"
+    "partners group::2027 private markets summer analyst ? client solutions & investment management (london)",
+    "rec-trackr-pimco-2027",
+    "pimco::2027 summer intern ? account management & institutional client coverage (london)"
   ],
   "shortlistedRecIds": [
     "rec-trackr-oliver-wyman-2027",
