@@ -64,8 +64,6 @@
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
-    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
-    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
@@ -77,7 +75,7 @@
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-18T23:44:35.048Z",
+  "updatedAt": "2026-11-19T00:55:36.467Z",
   "applications": [
     {
       "id": 1795044264522,
@@ -1353,8 +1351,6 @@
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
-    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
-    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
@@ -1363,6 +1359,10 @@
     "bank of england::2027 summer internship programme",
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
     "st james's place::2027 investment internship programme"
+  ],
+  "shortlistedRecIds": [
+    "rec-trackr-pimco-2027",
+    "pimco::2027 summer intern ? account management & institutional client coverage (london)"
   ],
   "deletedAppIds": [
     "app-1a1ea06550873c5b",
