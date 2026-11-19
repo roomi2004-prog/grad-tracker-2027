@@ -612,12 +612,199 @@
       return MONOGRAM_PALETTES[Math.abs(hash) % MONOGRAM_PALETTES.length];
     }
 
-    const CompanyMonogram = ({ company }) => {
+    const FIRM_DOMAIN_MAP = {
+      "goldman sachs": "goldmansachs.com",
+      "j.p. morgan": "jpmorgan.com",
+      "jp morgan": "jpmorgan.com",
+      "jpmorgan": "jpmorgan.com",
+      "morgan stanley": "morganstanley.com",
+      "bank of america": "bankofamerica.com",
+      "bofa": "bankofamerica.com",
+      "barclays": "barclays.co.uk",
+      "hsbc": "hsbc.com",
+      "ubs": "ubs.com",
+      "citigroup": "citigroup.com",
+      "citibank": "citigroup.com",
+      "citi": "citigroup.com",
+      "deutsche bank": "db.com",
+      "blackrock": "blackrock.com",
+      "m&g investments": "mandg.com",
+      "m&g": "mandg.com",
+      "fidelity international": "fidelity.co.uk",
+      "fidelity": "fidelity.co.uk",
+      "schroders": "schroders.com",
+      "natwest group": "natwest.com",
+      "natwest": "natwest.com",
+      "royal bank of canada": "rbc.com",
+      "rbc": "rbc.com",
+      "macquarie group": "macquarie.com",
+      "macquarie": "macquarie.com",
+      "nomura": "nomura.com",
+      "jefferies": "jefferies.com",
+      "lazard": "lazard.com",
+      "rothschild & co": "rothschildandco.com",
+      "rothschild": "rothschildandco.com",
+      "evercore": "evercore.com",
+      "pjt partners": "pjtpartners.com",
+      "moelis & company": "moelis.com",
+      "moelis": "moelis.com",
+      "centerview partners": "centerviewpartners.com",
+      "st james's place": "sjp.co.uk",
+      "st jamess place": "sjp.co.uk",
+      "bank of england": "bankofengland.co.uk",
+      "sky": "sky.com",
+      "mfs investment management": "mfs.com",
+      "mfs": "mfs.com",
+      "deloitte": "deloitte.com",
+      "pwc uk": "pwc.com",
+      "pwc": "pwc.com",
+      "ey": "ey.com",
+      "kpmg": "kpmg.com",
+      "bdo uk": "bdo.co.uk",
+      "bdo": "bdo.co.uk",
+      "mckinsey": "mckinsey.com",
+      "boston consulting group": "bcg.com",
+      "bcg": "bcg.com",
+      "bain & company": "bain.com",
+      "bain": "bain.com",
+      "oliver wyman": "oliverwyman.com",
+      "roland berger": "rolandberger.com",
+      "oc&c strategy consultants": "occstrategy.com",
+      "oc&c": "occstrategy.com",
+      "fti consulting": "fticonsulting.com",
+      "charles river associates": "crai.com",
+      "alphasights": "alphasights.com",
+      "cgi": "cgi.com",
+      "stantec uk": "stantec.com",
+      "stantec": "stantec.com",
+      "bny": "bny.com",
+      "bny mellon": "bny.com",
+      "bnp paribas": "bnpparibas.com",
+      "mufg": "mufg.jp",
+      "credit agricole": "ca-cib.com",
+      "crdit agricole": "ca-cib.com",
+      "berenberg": "berenberg.de",
+      "panmure liberum": "panmureliberum.com",
+      "stj advisors": "stjadvisors.com",
+      "lloyds banking group": "lloydsbankinggroup.com",
+      "lloyds": "lloydsbankinggroup.com",
+      "santander group": "santander.co.uk",
+      "santander": "santander.co.uk",
+      "standard bank": "standardbank.com",
+      "standard chartered": "sc.com",
+      "allianz group": "allianz.com",
+      "allianz": "allianz.com",
+      "aig": "aig.com",
+      "aon": "aon.com",
+      "howden group": "howdengroup.com",
+      "howden": "howdengroup.com",
+      "american express": "americanexpress.com",
+      "capital group": "capitalgroup.com",
+      "capital one": "capitalone.co.uk",
+      "castleton commodities": "cci.com",
+      "cls holdings": "clsholdings.com",
+      "corient uk": "corient.com",
+      "corient": "corient.com",
+      "london stock exchange group": "lseg.com",
+      "lseg": "lseg.com",
+      "marex": "marex.com",
+      "partners group": "partnersgroup.com",
+      "pimco": "pimco.com",
+      "revolut": "revolut.com",
+      "evelyn partners": "evelyn.com",
+      "s&w": "evelyn.com",
+      "stepstone group": "stepstonegroup.com",
+      "stepstone": "stepstonegroup.com",
+      "susquehanna": "sig.com",
+      "shell": "shell.com",
+      "bp": "bp.com",
+      "tesco group": "tesco.com",
+      "tesco": "tesco.com",
+      "tiktok": "tiktok.com",
+      "bending spoons": "bendingspoons.com",
+      "hasbro": "hasbro.com",
+      "civil service fast stream": "faststream.gov.uk",
+      "examberry tuition": "examberry.com"
+    };
+
+    const FIRM_DOMAIN_MATCHERS = Object.keys(FIRM_DOMAIN_MAP)
+      .sort((a, b) => b.length - a.length)
+      .map(key => ({
+        key,
+        domain: FIRM_DOMAIN_MAP[key],
+        re: new RegExp(`(^|[^a-z0-9])${key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z0-9]|$)`, "i")
+      }));
+
+    function getFirmDomain(firmName) {
+      if (!firmName) return null;
+      const raw = String(firmName).toLowerCase().trim();
+      const withoutParens = raw.replace(/\(.*?\)/g, " ").replace(/\?/g, "").replace(/\s+/g, " ").trim();
+      if (FIRM_DOMAIN_MAP[raw]) return FIRM_DOMAIN_MAP[raw];
+      if (FIRM_DOMAIN_MAP[withoutParens]) return FIRM_DOMAIN_MAP[withoutParens];
+      for (const entry of FIRM_DOMAIN_MATCHERS) {
+        if (entry.re.test(withoutParens) || entry.re.test(raw)) {
+          return entry.domain;
+        }
+      }
+      // Smart fallback: strip legal/region suffixes, spaces & punctuation, append .com
+      const stem = withoutParens
+        .replace(/\b(limited|ltd|plc|llp|inc|corp|corporation|holdings?|group|uk|london|international)\b/g, " ")
+        .replace(/[^a-z0-9]/g, "")
+        .trim();
+      if (stem.length >= 2) return `${stem}.com`;
+      return null;
+    }
+
+    function getFirmLogo(firmName) {
+      const domain = getFirmDomain(firmName);
+      if (!domain) return null;
+      return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
+    }
+
+    const CompanyMonogram = ({ company, size = "sm" }) => {
       const initials = getCompanyInitials(company);
       const gradientClass = getMonogramStyle(company);
+      const logoUrl = getFirmLogo(company);
+      const [imgFailed, setImgFailed] = useState(false);
+
+      useEffect(() => {
+        setImgFailed(false);
+      }, [company, logoUrl]);
+
+      const sizeClasses =
+        size === "xs"
+          ? { box: "w-4 h-4 rounded-[4px]", pad: "p-[1.5px]", text: "text-[7px]" }
+          : size === "lg"
+          ? { box: "w-10 h-10 rounded-xl", pad: "p-1.5", text: "text-xs" }
+          : { box: "w-7 h-7 rounded-lg", pad: "p-1", text: "text-[10px]" };
+
+      if (logoUrl && !imgFailed) {
+        return (
+          <div
+            className={`${sizeClasses.box} ${sizeClasses.pad} bg-white/95 border border-white/25 flex items-center justify-center shrink-0 shadow-md select-none overflow-hidden`}
+            title={company}
+          >
+            <img
+              src={logoUrl}
+              alt={`${company} logo`}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-contain"
+              onError={() => setImgFailed(true)}
+              onLoad={(e) => {
+                // Google s2/favicons returns a 16x16 default grey globe when no real favicon exists
+                if (e.currentTarget.naturalWidth <= 16 && e.currentTarget.naturalHeight <= 16) {
+                  setImgFailed(true);
+                }
+              }}
+            />
+          </div>
+        );
+      }
+
       return (
         <div
-          className={`monogram-avatar w-7 h-7 rounded-lg bg-gradient-to-br ${gradientClass} border flex items-center justify-center text-[10px] font-extrabold tracking-tighter shrink-0 shadow-md select-none font-mono-num`}
+          className={`monogram-avatar ${sizeClasses.box} bg-gradient-to-br ${gradientClass} border flex items-center justify-center ${sizeClasses.text} font-extrabold tracking-tighter shrink-0 shadow-md select-none font-mono-num`}
           title={company}
         >
           {initials}
@@ -1072,13 +1259,60 @@
       }
     }
 
+    const FIRM_CANONICAL_ALIASES = {
+      "jpmorgan": "jpmorgan",
+      "jpmorganchase": "jpmorgan",
+      "jp": "jpmorgan",
+      "citi": "citigroup",
+      "citibank": "citigroup",
+      "citigroup": "citigroup",
+      "bofa": "bankofamerica",
+      "bofasecurities": "bankofamerica",
+      "bankofamerica": "bankofamerica",
+      "ey": "ey",
+      "ernstyoung": "ey",
+      "ernstandyoung": "ey",
+      "pwc": "pwc",
+      "pricewaterhousecoopers": "pwc",
+      "lloyds": "lloydsbanking",
+      "lloydsbank": "lloydsbanking",
+      "lloydsbanking": "lloydsbanking",
+      "mg": "mg",
+      "mandg": "mg",
+      "lseg": "londonstockexchange",
+      "londonstockexchange": "londonstockexchange",
+      "natwest": "natwest",
+      "natwestmarkets": "natwest",
+      "hsbc": "hsbc",
+      "hsbcbank": "hsbc",
+      "barclays": "barclays",
+      "barclaysbank": "barclays",
+      "macquarie": "macquarie",
+      "goldmansachs": "goldmansachs",
+      "morganstanley": "morganstanley",
+      "ubs": "ubs",
+      "deutschebank": "deutschebank",
+      "bnp": "bnpparibas",
+      "bnpparibas": "bnpparibas",
+      "rbc": "rbccapitalmarkets",
+      "rbccapitalmarkets": "rbccapitalmarkets",
+      "royalbankofcanada": "rbccapitalmarkets",
+      "bny": "bnymellon",
+      "bnymellon": "bnymellon",
+      "fmr": "fidelity",
+      "fidelity": "fidelity",
+      "fidelityinternational": "fidelity"
+    };
+
     function canonicalFirmKey(name) {
-      return String(name || "")
+      const cleaned = String(name || "")
         .toLowerCase()
         .replace(/\(.*?\)/g, " ")
-        .replace(/\b(workday|workdayhr|notifications?|do not reply|noreply|no-reply|international|investment management|investments?|group|holdings?|limited|ltd|llp|plc|inc|uk|london|careers?|early\s*careers?|recruitment|talent|hiring)\b/g, " ")
+        .replace(/&/g, "and")
+        .replace(/\b(workday|workdayhr|notifications?|do not reply|noreply|no-reply|international|investment management|investments?|asset management|capital markets|securities|banking group|bank|group|holdings?|limited|ltd|llp|plc|inc|uk|london|careers?|early\s*careers?|recruitment|talent|hiring)\b/g, " ")
         .replace(/[^a-z0-9]/g, "")
         .trim();
+      return FIRM_CANONICAL_ALIASES[cleaned] || cleaned;
     }
 
     const JUNK_AUTO_SENDERS = new Set([
@@ -2735,14 +2969,31 @@
         setCloudSyncMsg("Token removed from this device.");
       };
 
-      // Active recommendations: excludes any role already applied/dismissed in handledRecs or already present in apps
+      // Active recommendations: excludes any role already applied/dismissed in handledRecs,
+      // already present in apps, OR from ANY company the user has already applied to (active or archived).
+      const appliedFirmKeys = useMemo(() => {
+        const keys = new Set();
+        const archivedApps = Array.isArray(cycleArchive?.archivedApplications) ? cycleArchive.archivedApplications : [];
+        for (const a of [...apps, ...archivedApps]) {
+          const fk = canonicalFirmKey(a.company || a.firm);
+          if (fk) keys.add(fk);
+        }
+        return keys;
+      }, [apps, cycleArchive]);
+
       const activeRecommendations = useMemo(() => {
         const handledSet = new Set(handledRecs);
         const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
         if (recsPaused) return [];
         return rawRecs.filter(rec => {
           const slug = makeRecSlug(rec.company, rec.role);
-          if (handledSet.has(rec.id) || handledSet.has(slug) || existingAppSlugs.has(slug)) {
+          const firmKey = canonicalFirmKey(rec.company);
+          if (
+            handledSet.has(rec.id) ||
+            handledSet.has(slug) ||
+            existingAppSlugs.has(slug) ||
+            (firmKey && appliedFirmKeys.has(firmKey))
+          ) {
             return false;
           }
           if (recSourceFilter !== "All" && rec.source !== recSourceFilter) {
@@ -2750,7 +3001,7 @@
           }
           return true;
         });
-      }, [rawRecs, handledRecs, apps, recSourceFilter, recsPaused]);
+      }, [rawRecs, handledRecs, apps, appliedFirmKeys, recSourceFilter, recsPaused]);
 
       const totalUnhandledRecsCount = useMemo(() => {
         const handledSet = new Set(handledRecs);
@@ -2758,9 +3009,15 @@
         if (recsPaused) return 0;
         return rawRecs.filter(rec => {
           const slug = makeRecSlug(rec.company, rec.role);
-          return !handledSet.has(rec.id) && !handledSet.has(slug) && !existingAppSlugs.has(slug);
+          const firmKey = canonicalFirmKey(rec.company);
+          return (
+            !handledSet.has(rec.id) &&
+            !handledSet.has(slug) &&
+            !existingAppSlugs.has(slug) &&
+            !(firmKey && appliedFirmKeys.has(firmKey))
+          );
         }).length;
-      }, [rawRecs, handledRecs, apps, recsPaused]);
+      }, [rawRecs, handledRecs, apps, appliedFirmKeys, recsPaused]);
 
       // One-Click "Applied" on a Recommended Role:
       // Moves role out of "Recommended to Apply", adds into main tracker under "Application Submitted" with today's date,
@@ -2776,7 +3033,7 @@
           sector: rec.sector || "Corporate & Investment Banking",
           appliedDate: today,
           stage: "Application Submitted",
-          subStatus: `Applied via ${rec.source === "Trackr" ? "The Trackr" : (rec.sourceDetail || "Email Alert")} (${today.slice(5)})`,
+          subStatus: `Applied via ${rec.source === "Trackr" ? "The Trackr" : rec.source === "Gradcracker" ? "Gradcracker" : (rec.sourceDetail || "Email Alert")} (${today.slice(5)})`,
           deadline: null,
           portalLink: rec.applyLink || "",
           calendarSynced: false,
@@ -3713,7 +3970,7 @@
               <section className="glass-surface offer-column-glow rounded-2xl p-4 md:p-5 border border-lime-400/40">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <CompanyMonogram company={cycleArchive.acceptedOffer.company} />
+                    <CompanyMonogram company={cycleArchive.acceptedOffer.company} size="lg" />
                     <div className="min-w-0">
                       <div className="text-[11px] font-bold uppercase tracking-wider text-lime-300 flex items-center gap-1.5">
                         <Icon name="Trophy" className="w-3.5 h-3.5 text-lime-400" /> Accepted Offer
@@ -4945,10 +5202,11 @@
                             <div className={`h-full ${row.bar} rounded-full`} style={{ width: `${pct}%` }} />
                           </div>
                           {matchingFirms.length > 0 && (
-                            <div className="flex flex-wrap gap-1 pt-0.5">
-                              {matchingFirms.map(firm => (
-                                <span key={firm} className="text-[10px] px-2 py-0.5 rounded-md theme-input text-slate-300">
-                                  {firm}
+                            <div className="flex flex-wrap gap-1.5 pt-0.5">
+                              {matchingFirms.map((firm, fi) => (
+                                <span key={`${firm}-${fi}`} className="inline-flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-md theme-input text-slate-300">
+                                  <CompanyMonogram company={firm} size="xs" />
+                                  <span>{firm}</span>
                                 </span>
                               ))}
                             </div>
@@ -5397,7 +5655,7 @@
               <div className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <CompanyMonogram company={selectedApp.company} />
+                    <CompanyMonogram company={selectedApp.company} size="lg" />
                     <div>
                       <span className="text-[11px] font-semibold uppercase tracking-wider theme-accent-text">{selectedApp.sector}</span>
                       <h3 className="text-lg font-bold text-white mt-0.5">{selectedApp.company}</h3>
@@ -5948,7 +6206,13 @@
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("./service-worker.js").catch(function () {});
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (r) { r.unregister(); });
+          }).catch(function () {});
+        } else {
+          navigator.serviceWorker.register("./service-worker.js").catch(function () {});
+        }
       });
     }
   </script>

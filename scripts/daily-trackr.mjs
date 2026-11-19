@@ -113,6 +113,61 @@ const TARGET_KEYWORDS = [
   "2027"
 ];
 
+const FIRM_CANONICAL_ALIASES = {
+  "jpmorgan": "jpmorgan",
+  "jpmorganchase": "jpmorgan",
+  "citi": "citigroup",
+  "citibank": "citigroup",
+  "citigroup": "citigroup",
+  "bofa": "bankofamerica",
+  "bofasecurities": "bankofamerica",
+  "bankofamerica": "bankofamerica",
+  "ey": "ey",
+  "ernstyoung": "ey",
+  "ernstandyoung": "ey",
+  "pwc": "pwc",
+  "pricewaterhousecoopers": "pwc",
+  "lloyds": "lloydsbanking",
+  "lloydsbank": "lloydsbanking",
+  "lloydsbanking": "lloydsbanking",
+  "mg": "mg",
+  "mandg": "mg",
+  "lseg": "londonstockexchange",
+  "londonstockexchange": "londonstockexchange",
+  "natwest": "natwest",
+  "natwestmarkets": "natwest",
+  "hsbc": "hsbc",
+  "hsbcbank": "hsbc",
+  "barclays": "barclays",
+  "barclaysbank": "barclays",
+  "macquarie": "macquarie",
+  "goldmansachs": "goldmansachs",
+  "morganstanley": "morganstanley",
+  "ubs": "ubs",
+  "deutschebank": "deutschebank",
+  "bnp": "bnpparibas",
+  "bnpparibas": "bnpparibas",
+  "rbc": "rbccapitalmarkets",
+  "rbccapitalmarkets": "rbccapitalmarkets",
+  "royalbankofcanada": "rbccapitalmarkets",
+  "bny": "bnymellon",
+  "bnymellon": "bnymellon",
+  "fmr": "fidelity",
+  "fidelity": "fidelity",
+  "fidelityinternational": "fidelity"
+};
+
+function canonicalFirmKey(name) {
+  const cleaned = String(name || "")
+    .toLowerCase()
+    .replace(/\(.*?\)/g, " ")
+    .replace(/&/g, "and")
+    .replace(/\b(workday|workdayhr|notifications?|do not reply|noreply|no-reply|international|investment management|investments?|asset management|capital markets|securities|banking group|bank|group|holdings?|limited|ltd|llp|plc|inc|uk|london|careers?|early\s*careers?|recruitment|talent|hiring)\b/g, " ")
+    .replace(/[^a-z0-9]/g, "")
+    .trim();
+  return FIRM_CANONICAL_ALIASES[cleaned] || cleaned;
+}
+
 function makeRecSlug(company, role) {
   return `${String(company || "").toLowerCase().trim()}::${String(role || "").toLowerCase().trim()}`;
 }
@@ -559,6 +614,12 @@ async function main() {
     console.log("Recommendations paused (offer accepted or cycle archived). Skipping Trackr scrape.");
   } else {
     const handledSet = new Set([...(state.handledRecIds || []), ...(state.dismissedIds || [])]);
+    const archivedApps = Array.isArray(state.cycleArchive?.archivedApplications) ? state.cycleArchive.archivedApplications : [];
+    const existingFirmKeys = new Set(
+      [...state.applications, ...archivedApps]
+        .map((a) => canonicalFirmKey(a.company || a.firm))
+        .filter(Boolean)
+    );
     const existingSlugs = new Set([
       ...state.applications.map((a) => makeRecSlug(a.company || a.firm, a.role)),
       ...state.recommendations.map((r) => makeRecSlug(r.company || r.firm, r.role))
@@ -584,8 +645,15 @@ async function main() {
       for (const item of scraped) {
         if (!isWithinLastDays(item.openedDate, 4)) continue;
         const slug = makeRecSlug(item.company, item.role);
+        const firmKey = canonicalFirmKey(item.company);
         const recId = `rec-trackr-${slugify(item.company)}-${slugify(item.role).slice(0, 20)}-2027`;
-        if (handledSet.has(recId) || handledSet.has(slug) || existingSlugs.has(slug) || existingRecIds.has(recId)) {
+        if (
+          handledSet.has(recId) ||
+          handledSet.has(slug) ||
+          existingSlugs.has(slug) ||
+          existingRecIds.has(recId) ||
+          (firmKey && existingFirmKeys.has(firmKey))
+        ) {
           continue;
         }
         existingSlugs.add(slug);
@@ -618,8 +686,15 @@ async function main() {
       for (const item of gcScraped) {
         if (gcAdded >= MAX_NEW_GRADCRACKER_PER_RUN) break;
         const slug = makeRecSlug(item.company, item.role);
+        const firmKey = canonicalFirmKey(item.company);
         const recId = `rec-gc-${slugify(item.company)}-${slugify(item.role).slice(0, 22)}-2027`;
-        if (handledSet.has(recId) || handledSet.has(slug) || existingSlugs.has(slug) || existingRecIds.has(recId)) {
+        if (
+          handledSet.has(recId) ||
+          handledSet.has(slug) ||
+          existingSlugs.has(slug) ||
+          existingRecIds.has(recId) ||
+          (firmKey && existingFirmKeys.has(firmKey))
+        ) {
           continue;
         }
         existingSlugs.add(slug);

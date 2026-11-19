@@ -31,12 +31,17 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
 
-  // Never intercept GitHub REST API calls or local refresh endpoints
-  if (url.hostname === "api.github.com" || url.pathname.startsWith("/api/")) {
+  // Never intercept localhost dev preview, GitHub REST API calls, or local refresh endpoints
+  if (
+    url.hostname === "localhost" ||
+    url.hostname === "127.0.0.1" ||
+    url.hostname === "api.github.com" ||
+    url.pathname.startsWith("/api/")
+  ) {
     return;
   }
 
-  // Network-first for HTML, state.json, and deadlines.ics so cloud updates show immediately
+  // Network-first (no-store) for HTML, state.json, and deadlines.ics so cloud updates show immediately
   const isDynamic =
     request.mode === "navigate" ||
     url.pathname.endsWith("/") ||
@@ -46,7 +51,7 @@ self.addEventListener("fetch", (event) => {
 
   if (isDynamic) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: "no-store" })
         .then((response) => {
           if (response && response.ok) {
             const copy = response.clone();
