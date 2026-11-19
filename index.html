@@ -1492,7 +1492,7 @@
 
         const canvas = document.createElement("canvas");
         canvas.id = "offer-confetti-canvas";
-        canvas.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:45;";
+        canvas.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60;";
         document.body.appendChild(canvas);
 
         const ctx = canvas.getContext("2d");
@@ -5180,131 +5180,137 @@
             </div>
           )}
 
-          {/* Offer Celebration Trophy Showcase + Constant Confetti + "Viva La Vida" Controls */}
+          {/* Offer Celebration Trophy Showcase — Huge Centered Championship Display + Constant Confetti + "Viva La Vida" */}
           {showVivaPill && (
             <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-[2px]"
               role="dialog"
+              aria-modal="true"
               aria-label="Viva La Vida Celebration Controls"
-              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,330px)] rounded-3xl p-4 border-2 border-amber-300/80 flex flex-col items-center gap-2.5 text-center backdrop-blur-xl"
-              style={{
-                background: "linear-gradient(160deg, rgba(24, 16, 4, 0.94) 0%, rgba(48, 30, 6, 0.92) 55%, rgba(28, 17, 4, 0.95) 100%)",
-                boxShadow: "0 20px 55px -8px rgba(212, 175, 55, 0.65), 0 0 0 1px rgba(253, 224, 71, 0.25), inset 0 1px 0 rgba(255,255,255,0.35)"
-              }}
             >
-              <div className="w-full flex items-center justify-between">
-                <span className="barbie-keep-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-black shadow">
-                  🏆 Viva La Vida • Live
-                </span>
-                <button
-                  type="button"
-                  onClick={stopVivaSoundtrack}
-                  aria-label="Turn off celebration animation"
-                  title="Turn off confetti, trophy & Viva La Vida"
-                  className="barbie-keep-white text-amber-200 hover:text-white p-1 rounded-lg hover:bg-white/10 transition"
-                >
-                  <Icon name="X" className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Gleaming Animated Gold Championship Trophy SVG */}
-              <svg viewBox="0 0 140 130" className="w-32 h-28 overflow-visible select-none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="trophyGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FEF08A" />
-                    <stop offset="40%" stopColor="#F59E0B" />
-                    <stop offset="75%" stopColor="#D97706" />
-                    <stop offset="100%" stopColor="#FDE047" />
-                  </linearGradient>
-                  <linearGradient id="trophyShine" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                  </linearGradient>
-                  <radialGradient id="trophyAura" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#FACC15" stopOpacity="0.55" />
-                    <stop offset="100%" stopColor="#FACC15" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-
-                {/* Radiant golden halo */}
-                <circle cx="70" cy="60" r="54" fill="url(#trophyAura)" className="trophy-glow" />
-
-                <g className="trophy-float">
-                  {/* Left & Right ornate trophy handles */}
-                  <path d="M40 30 C16 30, 16 64, 43 66" fill="none" stroke="url(#trophyGold)" strokeWidth="7" strokeLinecap="round" />
-                  <path d="M100 30 C124 30, 124 64, 97 66" fill="none" stroke="url(#trophyGold)" strokeWidth="7" strokeLinecap="round" />
-                  {/* Trophy cup body */}
-                  <path d="M36 22 H104 L97 64 C94 82, 82 90, 70 90 C58 90, 46 82, 43 64 Z" fill="url(#trophyGold)" stroke="#FEF9C3" strokeWidth="2" />
-                  {/* Top rim highlight */}
-                  <rect x="33" y="18" width="74" height="7" rx="3.5" fill="#FEF08A" stroke="#D97706" strokeWidth="1.2" />
-                  {/* Glossy specular streak */}
-                  <path d="M45 28 L53 28 L57 74 L48 68 Z" fill="url(#trophyShine)" opacity="0.7" />
-                  {/* Star emblem on cup */}
-                  <polygon points="70,38 73.5,46 82,47 75.5,52.5 77.5,61 70,56.5 62.5,61 64.5,52.5 58,47 66.5,46" fill="#FFFBEB" stroke="#B45309" strokeWidth="1.2" />
-                  {/* Stem */}
-                  <rect x="63" y="88" width="14" height="15" rx="3" fill="url(#trophyGold)" stroke="#FEF08A" strokeWidth="1.2" />
-                  <ellipse cx="70" cy="102" rx="18" ry="5" fill="#F59E0B" stroke="#FEF08A" strokeWidth="1.2" />
-                  {/* Pedestal base */}
-                  <path d="M44 105 H96 L102 122 H38 Z" fill="#1C1917" stroke="#D4AF37" strokeWidth="2" />
-                  <rect x="52" y="109" width="36" height="9" rx="2" fill="url(#trophyGold)" />
-                  <text x="70" y="116" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="#1C1917" fontFamily="monospace">2027</text>
-                </g>
-
-                {/* Twinkling sparkles */}
-                <text x="12" y="24" fontSize="15" className="trophy-sparkle">✨</text>
-                <text x="112" y="24" fontSize="14" className="trophy-sparkle" style={{ animationDelay: "0.45s" }}>✨</text>
-                <text x="115" y="90" fontSize="13" className="trophy-sparkle" style={{ animationDelay: "0.9s" }}>⭐</text>
-                <text x="12" y="92" fontSize="13" className="trophy-sparkle" style={{ animationDelay: "0.25s" }}>🎉</text>
-              </svg>
-
-              {/* Championship Banner Headline */}
-              <div className="px-3 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-400/25 to-amber-500/20 border border-amber-300/60 w-full">
-                <div
-                  className="text-lg sm:text-xl font-black tracking-tight leading-tight"
-                  style={{
-                    background: "linear-gradient(90deg, #FEF08A 0%, #FACC15 45%, #FFFFFF 70%, #F59E0B 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent"
-                  }}
-                >
-                  N*gga We Made It!
+              <div
+                className="relative w-[min(94vw,470px)] rounded-[2rem] p-6 sm:p-8 border-2 border-amber-300/90 flex flex-col items-center gap-4 text-center backdrop-blur-xl"
+                style={{
+                  background: "radial-gradient(circle at 50% 35%, rgba(78, 49, 8, 0.96) 0%, rgba(28, 17, 4, 0.96) 62%, rgba(16, 10, 2, 0.98) 100%)",
+                  boxShadow: "0 28px 80px -10px rgba(212, 175, 55, 0.78), 0 0 60px rgba(250, 204, 21, 0.28), inset 0 1px 0 rgba(255,255,255,0.4)"
+                }}
+              >
+                <div className="w-full flex items-center justify-between">
+                  <span className="barbie-keep-white text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500 text-black shadow-lg">
+                    🏆 Viva La Vida • Live
+                  </span>
+                  <button
+                    type="button"
+                    onClick={stopVivaSoundtrack}
+                    aria-label="Turn off celebration animation"
+                    title="Turn off confetti, trophy & Viva La Vida"
+                    className="barbie-keep-white text-amber-200 hover:text-white p-1.5 rounded-xl hover:bg-white/15 transition"
+                  >
+                    <Icon name="X" className="w-5 h-5" />
+                  </button>
                 </div>
-              </div>
 
-              {/* Controls: Play/Pause, Mute, Extra Burst, Turn Off */}
-              <div className="w-full flex items-center justify-between gap-1.5 pt-0.5">
-                <button
-                  type="button"
-                  onClick={toggleVivaPlayPause}
-                  title={vivaAudioPlaying ? "Pause Viva La Vida" : "Play Viva La Vida"}
-                  className="barbie-keep-white flex-1 text-white bg-white/10 hover:bg-white/20 px-2 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition"
-                >
-                  <Icon name={vivaAudioPlaying ? "Pause" : "Play"} className="w-3 h-3" />
-                  {vivaAudioPlaying ? "Pause" : "Play"}
-                </button>
-                <button
-                  type="button"
-                  onClick={toggleVivaMute}
-                  title={vivaAudioMuted ? "Unmute Viva La Vida" : "Mute Viva La Vida"}
-                  className="barbie-keep-white text-white bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition"
-                >
-                  <Icon name={vivaAudioMuted ? "VolumeX" : "Volume2"} className="w-3 h-3" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => launchOfferConfetti(true)}
-                  title="Fire extra confetti cannon burst!"
-                  className="barbie-keep-white text-white bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition"
-                >
-                  🎉
-                </button>
-                <button
-                  type="button"
-                  onClick={stopVivaSoundtrack}
-                  title="Turn off confetti, trophy & Viva La Vida"
-                  className="barbie-keep-white text-rose-200 bg-rose-500/30 hover:bg-rose-500/50 border border-rose-400/50 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition"
-                >
-                  Turn Off
-                </button>
+                {/* Massive Gleaming Animated Gold Championship Trophy SVG */}
+                <svg viewBox="0 0 140 130" className="w-64 h-60 sm:w-72 sm:h-64 overflow-visible select-none my-1" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="trophyGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FEF08A" />
+                      <stop offset="38%" stopColor="#F59E0B" />
+                      <stop offset="72%" stopColor="#D97706" />
+                      <stop offset="100%" stopColor="#FDE047" />
+                    </linearGradient>
+                    <linearGradient id="trophyShine" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                      <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                    </linearGradient>
+                    <radialGradient id="trophyAura" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#FACC15" stopOpacity="0.65" />
+                      <stop offset="55%" stopColor="#F59E0B" stopOpacity="0.22" />
+                      <stop offset="100%" stopColor="#FACC15" stopOpacity="0" />
+                    </radialGradient>
+                  </defs>
+
+                  {/* Radiant golden halo */}
+                  <circle cx="70" cy="60" r="64" fill="url(#trophyAura)" className="trophy-glow" />
+
+                  <g className="trophy-float">
+                    {/* Left & Right ornate trophy handles */}
+                    <path d="M40 30 C14 30, 14 66, 43 67" fill="none" stroke="url(#trophyGold)" strokeWidth="7.5" strokeLinecap="round" />
+                    <path d="M100 30 C126 30, 126 66, 97 67" fill="none" stroke="url(#trophyGold)" strokeWidth="7.5" strokeLinecap="round" />
+                    {/* Trophy cup body */}
+                    <path d="M35 22 H105 L97 64 C94 82, 82 90, 70 90 C58 90, 46 82, 43 64 Z" fill="url(#trophyGold)" stroke="#FEF9C3" strokeWidth="2.2" />
+                    {/* Top rim highlight */}
+                    <rect x="32" y="17" width="76" height="7.5" rx="3.75" fill="#FEF08A" stroke="#D97706" strokeWidth="1.2" />
+                    {/* Glossy specular streak */}
+                    <path d="M45 28 L54 28 L58 75 L48 68 Z" fill="url(#trophyShine)" opacity="0.78" />
+                    {/* Star emblem on cup */}
+                    <polygon points="70,37 73.8,45.5 83,46.6 76,52.6 78,61.5 70,56.8 62,61.5 64,52.6 57,46.6 66.2,45.5" fill="#FFFBEB" stroke="#B45309" strokeWidth="1.2" />
+                    {/* Stem */}
+                    <rect x="62.5" y="88" width="15" height="15" rx="3" fill="url(#trophyGold)" stroke="#FEF08A" strokeWidth="1.2" />
+                    <ellipse cx="70" cy="102" rx="19" ry="5.5" fill="#F59E0B" stroke="#FEF08A" strokeWidth="1.2" />
+                    {/* Pedestal base */}
+                    <path d="M42 105 H98 L104 123 H36 Z" fill="#1C1917" stroke="#D4AF37" strokeWidth="2.2" />
+                    <rect x="51" y="109.5" width="38" height="9.5" rx="2" fill="url(#trophyGold)" />
+                    <text x="70" y="116.5" textAnchor="middle" fontSize="6.8" fontWeight="900" fill="#1C1917" fontFamily="monospace">2027</text>
+                  </g>
+
+                  {/* Twinkling sparkles */}
+                  <text x="6" y="22" fontSize="16" className="trophy-sparkle">✨</text>
+                  <text x="116" y="22" fontSize="15" className="trophy-sparkle" style={{ animationDelay: "0.45s" }}>✨</text>
+                  <text x="118" y="92" fontSize="14" className="trophy-sparkle" style={{ animationDelay: "0.9s" }}>⭐</text>
+                  <text x="6" y="94" fontSize="14" className="trophy-sparkle" style={{ animationDelay: "0.25s" }}>🎉</text>
+                </svg>
+
+                {/* Huge Championship Banner Headline */}
+                <div className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-400/25 to-amber-500/20 border border-amber-300/70 w-full shadow-inner">
+                  <div
+                    className="text-2xl sm:text-3xl font-black tracking-tight leading-tight"
+                    style={{
+                      background: "linear-gradient(90deg, #FEF08A 0%, #FACC15 45%, #FFFFFF 70%, #F59E0B 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent"
+                    }}
+                  >
+                    N*gga We Made It!
+                  </div>
+                </div>
+
+                {/* Controls: Play/Pause, Mute, Extra Burst, Turn Off */}
+                <div className="w-full flex items-center justify-between gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={toggleVivaPlayPause}
+                    title={vivaAudioPlaying ? "Pause Viva La Vida" : "Play Viva La Vida"}
+                    className="barbie-keep-white flex-1 text-white bg-white/10 hover:bg-white/20 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition"
+                  >
+                    <Icon name={vivaAudioPlaying ? "Pause" : "Play"} className="w-3.5 h-3.5" />
+                    {vivaAudioPlaying ? "Pause" : "Play"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleVivaMute}
+                    title={vivaAudioMuted ? "Unmute Viva La Vida" : "Mute Viva La Vida"}
+                    className="barbie-keep-white text-white bg-white/10 hover:bg-white/20 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition"
+                  >
+                    <Icon name={vivaAudioMuted ? "VolumeX" : "Volume2"} className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => launchOfferConfetti(true)}
+                    title="Fire extra confetti cannon burst!"
+                    className="barbie-keep-white text-white bg-white/10 hover:bg-white/20 px-3 py-2 rounded-xl text-xs font-bold transition"
+                  >
+                    🎉
+                  </button>
+                  <button
+                    type="button"
+                    onClick={stopVivaSoundtrack}
+                    title="Turn off confetti, trophy & Viva La Vida"
+                    className="barbie-keep-white text-rose-100 bg-rose-500/40 hover:bg-rose-500/60 border border-rose-400/60 px-4 py-2 rounded-xl text-xs font-extrabold transition"
+                  >
+                    Turn Off
+                  </button>
+                </div>
               </div>
             </div>
           )}
