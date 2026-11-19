@@ -71,12 +71,30 @@
     "rec-trackr-bank-of-england-2027-summer-internsh-2027",
     "bank of england::2027 summer internship programme",
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
-    "st james's place::2027 investment internship programme"
+    "st james's place::2027 investment internship programme",
+    "rec-trackr-partners-group-2027",
+    "partners group::2027 private markets summer analyst ? client solutions & investment management (london)"
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-19T00:55:57.399Z",
+  "updatedAt": "2026-11-19T00:58:05.047Z",
   "applications": [
+    {
+      "id": 1795049885047,
+      "category": "internship",
+      "company": "Partners Group",
+      "role": "2027 Private Markets Summer Analyst ? Client Solutions & Investment Management (London)",
+      "sector": "Investment Management",
+      "appliedDate": "2026-11-19",
+      "stage": "Application Submitted",
+      "subStatus": "Applied via The Trackr (11-19)",
+      "deadline": null,
+      "portalLink": "https://www.partnersgroup.com/en/careers/",
+      "calendarSynced": false,
+      "notes": "Applied on 2026-11-19 from Recommended to Apply (The Trackr ? UK Finance (Investment Management)). Opened Nov 16 on The Trackr UK Finance tracker under Investment Management & Specialist Coverage.",
+      "_gmailSubStatus": "Applied via The Trackr (11-19)",
+      "_gmailDeadline": null
+    },
     {
       "id": 1795044264522,
       "category": "internship",
@@ -1358,7 +1376,9 @@
     "rec-trackr-bank-of-england-2027-summer-internsh-2027",
     "bank of england::2027 summer internship programme",
     "rec-trackr-st-james-s-place-2027-investment-inte-2027",
-    "st james's place::2027 investment internship programme"
+    "st james's place::2027 investment internship programme",
+    "rec-trackr-partners-group-2027",
+    "partners group::2027 private markets summer analyst ? client solutions & investment management (london)"
   ],
   "shortlistedRecIds": [],
   "deletedAppIds": [
