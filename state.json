@@ -132,7 +132,7 @@
   ],
   "lastGmailSync": "2026-11-19T22:33:01.484Z",
   "version": 6,
-  "updatedAt": "2026-11-19T22:24:39.663Z",
+  "updatedAt": "2026-11-19T22:52:13.684Z",
   "applications": [
     {
       "id": "app_4af24edd",
@@ -1384,6 +1384,66 @@
     }
   ],
   "recommendations": [
+    {
+      "id": "rec-trackr-tudor-group-summer-internship-20-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Tudor Group",
+      "role": "Summer Internship 2027",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-10-27",
+      "closingDate": "Rolling Deadline",
+      "applyLink": "https://job-boards.greenhouse.io/tudorgroup/jobs/8103095?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027&gh_src=Trackr",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-10-27)."
+    },
+    {
+      "id": "rec-trackr-institute-of-fiscal-studies-economic-research-su-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Institute of Fiscal Studies",
+      "role": "Economic Research Summer Intern",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-10-28",
+      "closingDate": "2027-01-17",
+      "applyLink": "https://app.beapplied.com/apply/modykqbj4m?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-10-28)."
+    },
+    {
+      "id": "rec-trackr-financial-conduct-authority-2027-summer-internsh-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Financial Conduct Authority",
+      "role": "2027 Summer Internship",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-11-03",
+      "closingDate": "2027-01-31",
+      "applyLink": "https://fca.wd3.myworkdayjobs.com/en-US/FCA_earlycareers?jobFamily=12d036035e131001aaafffc882ac0000&utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027&source=Trackr",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-03)."
+    },
+    {
+      "id": "rec-trackr-arch-insurance-international-actuarial-summer-int-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Arch Insurance International",
+      "role": "Actuarial Summer Internship - 2027",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-11-03",
+      "closingDate": "2026-12-01",
+      "applyLink": "https://archgroup.wd1.myworkdayjobs.com/en-US/Careers/job/Actuarial-Summer-Internship---2027_R26_1214?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027&source=Trackr",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-03)."
+    },
+    {
+      "id": "rec-trackr-aspect-capital-short-term-research--2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Aspect Capital",
+      "role": "Short Term Research Intern",
+      "sector": "Corporate & Investment Banking",
+      "openedDate": "2026-11-09",
+      "closingDate": "Rolling Deadline",
+      "applyLink": "https://aspectcapital-42aeea.careers.hibob.com/jobs/b91988a7-fc10-4fdd-b05c-7a4ef6f72d61",
+      "notes": "Auto-discovered via GitHub Actions Daily Trackr Scrape (opened 2026-11-09)."
+    },
     {
       "id": "rec-trackr-bank-of-england-2027-summer-internsh-2027",
       "source": "Trackr",

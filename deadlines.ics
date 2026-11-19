@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//Ramis Ahmad//2027 Application Tracker//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Rags to Riches — 2027 Deadlines
+X-WR-CALNAME:2027 Application Tracker Deadlines
 X-WR-TIMEZONE:Europe/London
 X-WR-CALDESC:Upcoming Online Assessments, HireVue/Video Interviews, Assessm
  ent Centres, and 2027 Summer Internship Closing Dates
@@ -26,8 +26,102 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
+UID:rec-closing-rec-trackr-institute-of-fiscal-studies-economic-research-su
+ -2027@grad-tracker-2027.github.io
+DTSTAMP:20261119T225213Z
+DTSTART;TZID=Europe/London:20270117T160000
+DTEND;TZID=Europe/London:20270117T170000
+SUMMARY:CLOSING DATE: Institute of Fiscal Studies — Economic Research Sum
+ mer Intern
+DESCRIPTION:Recommended Role (The Trackr • UK Finance)\nCompany: Institut
+ e of Fiscal Studies\nRole: Economic Research Summer Intern\nSector: Corpor
+ ate & Investment Banking\nOpened: 2026-10-28\nClosing Date: 2027-01-17\nAp
+ ply Link: https://app.beapplied.com/apply/modykqbj4m?utm_source=Trackr&utm
+ _medium=tracker&utm_campaign=UK_Finance_2027\nNotes: Auto-discovered via G
+ itHub Actions Daily Trackr Scrape (opened 2026-10-28).
+STATUS:CONFIRMED
+URL:https://app.beapplied.com/apply/modykqbj4m?utm_source=Trackr&utm_medium
+ =tracker&utm_campaign=UK_Finance_2027
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: CLOSING DATE: Institute of Fiscal Studies —
+  Economic Research Summer Intern
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: CLOSING DATE: Institute of Fiscal Studi
+ es — Economic Research Summer Intern
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rec-closing-rec-trackr-financial-conduct-authority-2027-summer-internsh
+ -2027@grad-tracker-2027.github.io
+DTSTAMP:20261119T225213Z
+DTSTART;TZID=Europe/London:20270131T160000
+DTEND;TZID=Europe/London:20270131T170000
+SUMMARY:CLOSING DATE: Financial Conduct Authority — 2027 Summer Internshi
+ p
+DESCRIPTION:Recommended Role (The Trackr • UK Finance)\nCompany: Financia
+ l Conduct Authority\nRole: 2027 Summer Internship\nSector: Corporate & Inv
+ estment Banking\nOpened: 2026-11-03\nClosing Date: 2027-01-31\nApply Link:
+  https://fca.wd3.myworkdayjobs.com/en-US/FCA_earlycareers?jobFamily=12d036
+ 035e131001aaafffc882ac0000&utm_source=Trackr&utm_medium=tracker&utm_campai
+ gn=UK_Finance_2027&source=Trackr\nNotes: Auto-discovered via GitHub Action
+ s Daily Trackr Scrape (opened 2026-11-03).
+STATUS:CONFIRMED
+URL:https://fca.wd3.myworkdayjobs.com/en-US/FCA_earlycareers?jobFamily=12d0
+ 36035e131001aaafffc882ac0000&utm_source=Trackr&utm_medium=tracker&utm_camp
+ aign=UK_Finance_2027&source=Trackr
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: CLOSING DATE: Financial Conduct Authority —
+  2027 Summer Internship
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: CLOSING DATE: Financial Conduct Authori
+ ty — 2027 Summer Internship
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:rec-closing-rec-trackr-arch-insurance-international-actuarial-summer-in
+ t-2027@grad-tracker-2027.github.io
+DTSTAMP:20261119T225213Z
+DTSTART;TZID=Europe/London:20261201T160000
+DTEND;TZID=Europe/London:20261201T170000
+SUMMARY:CLOSING DATE: Arch Insurance International — Actuarial Summer Int
+ ernship - 2027
+DESCRIPTION:Recommended Role (The Trackr • UK Finance)\nCompany: Arch Ins
+ urance International\nRole: Actuarial Summer Internship - 2027\nSector: Co
+ rporate & Investment Banking\nOpened: 2026-11-03\nClosing Date: 2026-12-01
+ \nApply Link: https://archgroup.wd1.myworkdayjobs.com/en-US/Careers/job/Ac
+ tuarial-Summer-Internship---2027_R26_1214?utm_source=Trackr&utm_medium=tra
+ cker&utm_campaign=UK_Finance_2027&source=Trackr\nNotes: Auto-discovered vi
+ a GitHub Actions Daily Trackr Scrape (opened 2026-11-03).
+STATUS:CONFIRMED
+URL:https://archgroup.wd1.myworkdayjobs.com/en-US/Careers/job/Actuarial-Sum
+ mer-Internship---2027_R26_1214?utm_source=Trackr&utm_medium=tracker&utm_ca
+ mpaign=UK_Finance_2027&source=Trackr
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: CLOSING DATE: Arch Insurance International 
+ — Actuarial Summer Internship - 2027
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: CLOSING DATE: Arch Insurance Internatio
+ nal — Actuarial Summer Internship - 2027
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261119T222441Z
+DTSTAMP:20261119T225213Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
