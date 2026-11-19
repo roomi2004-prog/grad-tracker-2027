@@ -79,7 +79,7 @@
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-19T01:09:54.219Z",
+  "updatedAt": "2026-11-19T01:13:17.720Z",
   "applications": [
     {
       "id": 1795049885047,
@@ -1350,7 +1350,10 @@
     "rec-trackr-partners-group-2027",
     "partners group::2027 private markets summer analyst ? client solutions & investment management (london)"
   ],
-  "shortlistedRecIds": [],
+  "shortlistedRecIds": [
+    "rec-trackr-oliver-wyman-2027",
+    "oliver wyman::2027 summer consultant internship ? financial services & strategy (london)"
+  ],
   "deletedAppIds": [
     "app-1a1ea06550873c5b",
     "app-1a1efbecac2d1388",
