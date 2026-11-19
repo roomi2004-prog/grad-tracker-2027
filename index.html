@@ -2311,7 +2311,7 @@
         } else {
           twerkPhraseActiveRef.current = false;
         }
-        if (/^hell\s+yeah{2,}$/.test(normalized)) {
+        if (/^hell\s+yeah{3,}$/.test(normalized)) {
           if (!vivaPhraseActiveRef.current) {
             vivaPhraseActiveRef.current = true;
             startOfferCelebration();
@@ -2330,7 +2330,7 @@
           } else if (/^hell\s+nah{2,}$/.test(normalized)) {
             e.preventDefault();
             activateTwerkEasterEgg();
-          } else if (/^hell\s+yeah{2,}$/.test(normalized)) {
+          } else if (/^hell\s+yeah{3,}$/.test(normalized)) {
             e.preventDefault();
             startOfferCelebration();
           } else if (fromHeader && normalized && pipelineSectionRef.current) {
@@ -5052,130 +5052,136 @@
             </div>
           </footer>
 
-          {/* "hell nahhh" Secret Twerking Character Easter Egg Overlay */}
+          {/* "hell nahhh" Secret Twerking Duo Easter Egg — Large Centered Showcase */}
           {showTwerkEgg && (
             <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-[2px]"
               role="dialog"
+              aria-modal="true"
               aria-label="Hell Nahhh Twerking Character Easter Egg"
-              className="fixed bottom-5 right-5 z-50 glass-surface rounded-3xl p-4 shadow-2xl border-2 border-fuchsia-400/70 flex flex-col items-center gap-2 w-[275px]"
-              style={{
-                boxShadow: "0 18px 45px -8px rgba(247, 37, 133, 0.55), inset 0 1px 0 rgba(255,255,255,0.2)"
-              }}
             >
-              <div className="w-full flex items-center justify-between">
-                <span className="text-xs font-extrabold tracking-wide px-2.5 py-0.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white shadow">
-                  HELL NAHHH 💀🔥
-                </span>
-                <button
-                  type="button"
-                  onClick={closeTwerkEasterEgg}
-                  aria-label="Close twerking character"
-                  className="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition"
-                >
-                  <Icon name="X" className="w-4 h-4" />
-                </button>
-              </div>
+              <div
+                className="relative w-[min(94vw,470px)] rounded-[2rem] p-6 sm:p-8 border-2 border-fuchsia-400/85 flex flex-col items-center gap-4 text-center backdrop-blur-xl"
+                style={{
+                  background: "radial-gradient(circle at 50% 35%, rgba(74, 14, 78, 0.96) 0%, rgba(28, 10, 38, 0.96) 62%, rgba(14, 6, 22, 0.98) 100%)",
+                  boxShadow: "0 28px 80px -10px rgba(247, 37, 133, 0.72), 0 0 60px rgba(168, 85, 247, 0.28), inset 0 1px 0 rgba(255,255,255,0.35)"
+                }}
+              >
+                <div className="w-full flex items-center justify-between">
+                  <span className="barbie-keep-white text-xs font-extrabold tracking-wide px-3 py-1 rounded-full bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white shadow-lg">
+                    HELL NAHHH 💀🔥
+                  </span>
+                  <button
+                    type="button"
+                    onClick={closeTwerkEasterEgg}
+                    aria-label="Close twerking character"
+                    className="barbie-keep-white text-fuchsia-200 hover:text-white p-1.5 rounded-xl hover:bg-white/15 transition"
+                  >
+                    <Icon name="X" className="w-5 h-5" />
+                  </button>
+                </div>
 
-              <svg viewBox="0 0 260 215" className="w-60 h-48 overflow-visible select-none" aria-hidden="true">
-                {/* Club floor shadow */}
-                <ellipse cx="130" cy="198" rx="84" ry="10" fill="#000000" className="twerk-shadow" />
-                {/* Rhythm shockwaves */}
-                <circle cx="118" cy="134" r="18" fill="none" stroke="#F72585" strokeWidth="3" className="twerk-wave" />
-                <circle cx="118" cy="134" r="28" fill="none" stroke="#FFD600" strokeWidth="2" className="twerk-wave" style={{ animationDelay: "0.22s" }} />
+                <svg viewBox="0 0 260 215" className="w-72 h-60 sm:w-80 sm:h-64 overflow-visible select-none my-1" aria-hidden="true">
+                  {/* Club floor shadow */}
+                  <ellipse cx="130" cy="198" rx="84" ry="10" fill="#000000" className="twerk-shadow" />
+                  {/* Rhythm shockwaves */}
+                  <circle cx="118" cy="134" r="18" fill="none" stroke="#F72585" strokeWidth="3" className="twerk-wave" />
+                  <circle cx="118" cy="134" r="28" fill="none" stroke="#FFD600" strokeWidth="2" className="twerk-wave" style={{ animationDelay: "0.22s" }} />
 
-                {/* GUY DANCING BEHIND HER */}
-                <g transform="translate(12, 0)">
-                <g className="guy-groove">
-                  {/* Legs */}
-                  <path d="M74 134 L72 190" fill="none" stroke="#1E293B" strokeWidth="14" strokeLinecap="round" />
-                  <path d="M96 134 L102 190" fill="none" stroke="#334155" strokeWidth="14" strokeLinecap="round" />
-                  {/* Fresh sneakers */}
-                  <rect x="64" y="186" width="22" height="10" rx="5" fill="#F8FAFC" />
-                  <rect x="94" y="186" width="22" height="10" rx="5" fill="#F8FAFC" />
-                  {/* Torso: sleek dark club jacket + gold chain */}
-                  <rect x="63" y="78" width="44" height="60" rx="16" fill="#0F172A" stroke="#6366F1" strokeWidth="2.5" />
-                  <path d="M76 82 Q86 102 96 82" fill="none" stroke="#FFD600" strokeWidth="3" strokeLinecap="round" />
-                  {/* Hands grooving / hyping on her waist & up */}
-                  <path d="M68 88 L46 72 L52 54" fill="none" stroke="#C68642" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M104 92 L120 116 L128 124" fill="none" stroke="#C68642" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-                  {/* Guy Head + fresh fade + shades + hype grin */}
-                  <circle cx="86" cy="54" r="22" fill="#C68642" stroke="#E0A96D" strokeWidth="2" />
-                  <path d="M64 49 Q86 24 108 49 Q96 38 74 42 Z" fill="#18181B" />
-                  {/* Sunglasses */}
-                  <rect x="74" y="48" width="14" height="8" rx="2" fill="#09090B" />
-                  <rect x="91" y="48" width="14" height="8" rx="2" fill="#09090B" />
-                  <line x1="88" y1="51" x2="91" y2="51" stroke="#09090B" strokeWidth="2.5" />
-                  <line x1="77" y1="51" x2="83" y2="51" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
-                  <line x1="94" y1="51" x2="100" y2="51" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
-                  <path d="M80 63 Q90 70 98 63" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" />
-                </g>
-                </g>
-
-                {/* GIRL WHINING / TWERKING IN FRONT */}
-                {/* Legs in squat dance stance */}
-                <path d="M150 146 L172 168 L160 193" fill="none" stroke="#F1C27D" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M174 146 L196 168 L186 193" fill="none" stroke="#E0AC69" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-                {/* Hot pink boots/heels */}
-                <rect x="150" y="187" width="22" height="10" rx="5" fill="#FF1493" />
-                <rect x="176" y="187" width="22" height="10" rx="5" fill="#FF1493" />
-
-                {/* Bouncing Hips / Whining Motion */}
-                <g className="twerk-hips">
-                  <ellipse cx="140" cy="134" rx="28" ry="22" fill="#FF1493" stroke="#FBCFE8" strokeWidth="2.5" />
-                  <ellipse cx="155" cy="136" rx="22" ry="18" fill="#DB2777" />
-                  <text x="108" y="114" fontSize="15">💥</text>
-                  <text x="208" y="92" fontSize="15">✨</text>
-                </g>
-
-                {/* Girl Torso: sparkly crop top + arms on knees */}
-                <g className="twerk-torso">
-                  <path d="M142 126 Q162 96 184 90 L198 106 Q178 122 164 136 Z" fill="#EC4899" stroke="#F9A8D4" strokeWidth="2.5" />
-                  {/* Arms braced on knees */}
-                  <path d="M184 102 L190 138 L182 164" fill="none" stroke="#F1C27D" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M174 106 L170 138 L164 164" fill="none" stroke="#E0AC69" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-                </g>
-
-                {/* Girl Head: long swishing ponytail + gold hoop earring + glam shades + lipstick smile */}
-                <g className="twerk-head">
-                  {/* Flowing swishing ponytail */}
-                  <g className="twerk-hair">
-                    <path d="M196 52 Q232 46 240 88 Q224 102 212 80 Q216 66 196 64 Z" fill="#3B2314" stroke="#6B3F23" strokeWidth="1.5" />
-                    <path d="M200 57 Q224 58 230 80" fill="none" stroke="#A16207" strokeWidth="2.2" strokeLinecap="round" opacity="0.8" />
-                    <circle cx="201" cy="56" r="4.5" fill="#FF1493" stroke="#FBCFE8" strokeWidth="1.2" />
+                  {/* GUY DANCING BEHIND HER */}
+                  <g transform="translate(12, 0)">
+                  <g className="guy-groove">
+                    {/* Legs */}
+                    <path d="M74 134 L72 190" fill="none" stroke="#1E293B" strokeWidth="14" strokeLinecap="round" />
+                    <path d="M96 134 L102 190" fill="none" stroke="#334155" strokeWidth="14" strokeLinecap="round" />
+                    {/* Fresh sneakers */}
+                    <rect x="64" y="186" width="22" height="10" rx="5" fill="#F8FAFC" />
+                    <rect x="94" y="186" width="22" height="10" rx="5" fill="#F8FAFC" />
+                    {/* Torso: sleek dark club jacket + gold chain */}
+                    <rect x="63" y="78" width="44" height="60" rx="16" fill="#0F172A" stroke="#6366F1" strokeWidth="2.5" />
+                    <path d="M76 82 Q86 102 96 82" fill="none" stroke="#FFD600" strokeWidth="3" strokeLinecap="round" />
+                    {/* Hands grooving / hyping on her waist & up */}
+                    <path d="M68 88 L46 72 L52 54" fill="none" stroke="#C68642" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M104 92 L120 116 L128 124" fill="none" stroke="#C68642" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                    {/* Guy Head + fresh fade + shades + hype grin */}
+                    <circle cx="86" cy="54" r="22" fill="#C68642" stroke="#E0A96D" strokeWidth="2" />
+                    <path d="M64 49 Q86 24 108 49 Q96 38 74 42 Z" fill="#18181B" />
+                    {/* Sunglasses */}
+                    <rect x="74" y="48" width="14" height="8" rx="2" fill="#09090B" />
+                    <rect x="91" y="48" width="14" height="8" rx="2" fill="#09090B" />
+                    <line x1="88" y1="51" x2="91" y2="51" stroke="#09090B" strokeWidth="2.5" />
+                    <line x1="77" y1="51" x2="83" y2="51" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
+                    <line x1="94" y1="51" x2="100" y2="51" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.7" />
+                    <path d="M80 63 Q90 70 98 63" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" />
                   </g>
-                  <circle cx="188" cy="68" r="22" fill="#F1C27D" stroke="#FDE68A" strokeWidth="2" />
-                  {/* Sleek hair bangs & crown */}
-                  <path d="M166 64 Q188 38 210 64 Q196 52 174 56 Z" fill="#3B2314" stroke="#6B3F23" strokeWidth="1" />
-                  {/* Gold hoop earring */}
-                  <circle cx="182" cy="76" r="5" fill="none" stroke="#FFD600" strokeWidth="2.2" />
-                  {/* Glam cat-eye pink shades */}
-                  <path d="M168 62 L184 64 L182 72 L169 70 Z" fill="#FF1493" stroke="#FFFFFF" strokeWidth="1.2" />
-                  <path d="M187 64 L204 62 L202 70 L189 72 Z" fill="#FF1493" stroke="#FFFFFF" strokeWidth="1.2" />
-                  {/* Glossy smile */}
-                  <path d="M176 79 Q186 86 195 79" fill="none" stroke="#E11D48" strokeWidth="2.8" strokeLinecap="round" />
-                </g>
+                  </g>
 
-                {/* Floating club music notes */}
-                <text x="26" y="42" fontSize="16">🎵</text>
-                <text x="226" y="42" fontSize="16">🔥</text>
-              </svg>
+                  {/* GIRL WHINING / TWERKING IN FRONT */}
+                  {/* Legs in squat dance stance */}
+                  <path d="M150 146 L172 168 L160 193" fill="none" stroke="#F1C27D" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M174 146 L196 168 L186 193" fill="none" stroke="#E0AC69" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* Hot pink boots/heels */}
+                  <rect x="150" y="187" width="22" height="10" rx="5" fill="#FF1493" />
+                  <rect x="176" y="187" width="22" height="10" rx="5" fill="#FF1493" />
 
-              <div className="w-full flex items-center justify-between gap-1.5 pt-1">
-                <button
-                  type="button"
-                  onClick={toggleTwerkMute}
-                  className="flex-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl theme-input text-slate-200 hover:text-white flex items-center justify-center gap-1 transition"
-                >
-                  <Icon name={twerkMuted ? "VolumeX" : "Volume2"} className="w-3.5 h-3.5" />
-                  {twerkMuted ? "Muted" : "808 Beat"}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeTwerkEasterEgg}
-                  className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 transition"
-                >
-                  Dismiss
-                </button>
+                  {/* Bouncing Hips / Whining Motion */}
+                  <g className="twerk-hips">
+                    <ellipse cx="140" cy="134" rx="28" ry="22" fill="#FF1493" stroke="#FBCFE8" strokeWidth="2.5" />
+                    <ellipse cx="155" cy="136" rx="22" ry="18" fill="#DB2777" />
+                    <text x="108" y="114" fontSize="15">💥</text>
+                    <text x="208" y="92" fontSize="15">✨</text>
+                  </g>
+
+                  {/* Girl Torso: sparkly crop top + arms on knees */}
+                  <g className="twerk-torso">
+                    <path d="M142 126 Q162 96 184 90 L198 106 Q178 122 164 136 Z" fill="#EC4899" stroke="#F9A8D4" strokeWidth="2.5" />
+                    {/* Arms braced on knees */}
+                    <path d="M184 102 L190 138 L182 164" fill="none" stroke="#F1C27D" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M174 106 L170 138 L164 164" fill="none" stroke="#E0AC69" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+                  </g>
+
+                  {/* Girl Head: long swishing ponytail + gold hoop earring + glam shades + lipstick smile */}
+                  <g className="twerk-head">
+                    {/* Flowing swishing ponytail */}
+                    <g className="twerk-hair">
+                      <path d="M196 52 Q232 46 240 88 Q224 102 212 80 Q216 66 196 64 Z" fill="#3B2314" stroke="#6B3F23" strokeWidth="1.5" />
+                      <path d="M200 57 Q224 58 230 80" fill="none" stroke="#A16207" strokeWidth="2.2" strokeLinecap="round" opacity="0.8" />
+                      <circle cx="201" cy="56" r="4.5" fill="#FF1493" stroke="#FBCFE8" strokeWidth="1.2" />
+                    </g>
+                    <circle cx="188" cy="68" r="22" fill="#F1C27D" stroke="#FDE68A" strokeWidth="2" />
+                    {/* Sleek hair bangs & crown */}
+                    <path d="M166 64 Q188 38 210 64 Q196 52 174 56 Z" fill="#3B2314" stroke="#6B3F23" strokeWidth="1" />
+                    {/* Gold hoop earring */}
+                    <circle cx="182" cy="76" r="5" fill="none" stroke="#FFD600" strokeWidth="2.2" />
+                    {/* Glam cat-eye pink shades */}
+                    <path d="M168 62 L184 64 L182 72 L169 70 Z" fill="#FF1493" stroke="#FFFFFF" strokeWidth="1.2" />
+                    <path d="M187 64 L204 62 L202 70 L189 72 Z" fill="#FF1493" stroke="#FFFFFF" strokeWidth="1.2" />
+                    {/* Glossy smile */}
+                    <path d="M176 79 Q186 86 195 79" fill="none" stroke="#E11D48" strokeWidth="2.8" strokeLinecap="round" />
+                  </g>
+
+                  {/* Floating club music notes */}
+                  <text x="26" y="42" fontSize="16">🎵</text>
+                  <text x="226" y="42" fontSize="16">🔥</text>
+                </svg>
+
+                <div className="w-full flex items-center justify-between gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={toggleTwerkMute}
+                    className="barbie-keep-white flex-1 text-xs font-bold px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-1.5 transition"
+                  >
+                    <Icon name={twerkMuted ? "VolumeX" : "Volume2"} className="w-3.5 h-3.5" />
+                    {twerkMuted ? "Muted" : "808 Beat"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeTwerkEasterEgg}
+                    className="barbie-keep-white text-xs font-extrabold px-4 py-2 rounded-xl bg-rose-500/40 hover:bg-rose-500/60 text-rose-100 border border-rose-400/60 transition"
+                  >
+                    Turn Off
+                  </button>
+                </div>
               </div>
             </div>
           )}
