@@ -412,10 +412,13 @@ async function scrapeGradcrackerSource(sourceMeta) {
 
       const combined = `${company} ${role} ${startingRaw} ${locationRaw}`.toLowerCase();
       if (combined.includes("2025") || (combined.includes("2026") && !combined.includes("2027") && !combined.includes("2026/27"))) continue;
-      if (GRADCRACKER_NEGATIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
-      // Exclude law vacation schemes (keep consulting/finance vacation schemes like Deloitte/PwC/EY)
-      if (combined.includes("vacation scheme") && !/(deloitte|pwc|ey|kpmg|consult|finance|advisory|tax|audit|assurance)/i.test(combined)) continue;
-      if (!GRADCRACKER_POSITIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+      const hasGeminiKey = Boolean(String(process.env.GEMINI_API_KEY || "").trim());
+      if (!hasGeminiKey) {
+        if (GRADCRACKER_NEGATIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+        // Exclude law vacation schemes (keep consulting/finance vacation schemes like Deloitte/PwC/EY)
+        if (combined.includes("vacation scheme") && !/(deloitte|pwc|ey|kpmg|consult|finance|advisory|tax|audit|assurance)/i.test(combined)) continue;
+        if (!GRADCRACKER_POSITIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+      }
 
       const closingIso = parseDateToIso(deadlineRaw);
       const closingDate = closingIso || (/ongoing|rolling|asap/i.test(deadlineRaw) ? "Rolling Deadline" : deadlineRaw || "Rolling Deadline");
@@ -438,6 +441,88 @@ async function scrapeGradcrackerSource(sourceMeta) {
     console.warn(`Warning while scraping Gradcracker ${sourceMeta.url}: ${err.message}`);
   }
   return captured;
+}
+
+// ---------- Gemini 3.5 Flash-Lite Curated Filtering for Trackr & Gradcracker ----------
+const GEMINI_CURATION_SCHEMA = {
+  type: "object",
+  properties: {
+    decisions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          idx: { type: "integer", description: "Exact input candidate idx." },
+          keep: { type: "boolean", description: "True ONLY if this is a relevant, open UK 2027 Summer Internship or Placement in Finance, Banking, Markets/Trading, Asset/Investment Management, Private Markets, Consulting, Advisory, FinTech, Quant/Analytics, or Commercial Strategy (NOT civil/mechanical/electrical engineering, NOT law solicitor vacation schemes, NOT non-UK Ireland/US-only roles, NOT already-applied firms)." },
+          cleanRole: { type: "string", description: "Clean, readable role title (fix any encoding glitches like '?')." },
+          sector: { type: "string", enum: ["Corporate & Investment Banking", "Investment Management", "Sales & Trading", "Strategy & Consulting", "FinTech & Markets", "Technology & Quant"] },
+          whyMatch: { type: "string", description: "Concise 1-sentence reason why this fits a UK Physics/Quant student targeting Finance & Consulting." }
+        },
+        required: ["idx", "keep", "cleanRole", "sector", "whyMatch"]
+      }
+    }
+  },
+  required: ["decisions"]
+};
+
+async function curateCandidatesWithGemini(candidates, appliedCompanies) {
+  const apiKey = String(process.env.GEMINI_API_KEY || "").trim();
+  if (!apiKey || candidates.length === 0) return null;
+
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+  const batch = candidates.slice(0, 40);
+  const prompt = [
+    "You are curating 2027 UK Summer Internship recommendations for a UK BSc Physics student targeting Finance (IB, Corporate Banking, S&T, Markets, Asset/Investment Management, Private Equity/Markets), Management/Strategy Consulting, Advisory, FinTech, and Quant/Analytics.",
+    "Evaluate each candidate below. Reject irrelevant roles (pure civil/mechanical/chemical/electrical engineering, law vacation schemes, Ireland-only/non-UK roles, software-only dev roles unrelated to finance/quant, or firms already in the user's applied list including obvious subsidiaries).",
+    `Already applied companies (do NOT recommend these again): ${appliedCompanies.slice(0, 120).join(", ")}`,
+    "",
+    "Candidates JSON:",
+    JSON.stringify(batch.map((c, idx) => ({
+      idx,
+      source: c.source,
+      company: c.company,
+      role: c.role,
+      detail: c.sourceDetail,
+      opened: c.openedDate,
+      closes: c.closingDate
+    })))
+  ].join("\n");
+
+  try {
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+        "Api-Revision": "2026-05-20"
+      },
+      body: JSON.stringify({
+        model,
+        input: prompt,
+        generation_config: { thinking_level: "minimal" },
+        response_format: {
+          type: "text",
+          mime_type: "application/json",
+          schema: GEMINI_CURATION_SCHEMA
+        }
+      })
+    });
+    if (!res.ok) {
+      console.warn(`Gemini curation HTTP ${res.status}: ${(await res.text()).slice(0, 220)}`);
+      return null;
+    }
+    const json = await res.json();
+    const modelStep = (json.steps || []).find((s) => s.type === "model_output" && Array.isArray(s.content));
+    const textPart = modelStep ? modelStep.content.find((c) => c.type === "text" && c.text) : null;
+    if (!textPart?.text) return null;
+    const parsed = JSON.parse(textPart.text);
+    const byIdx = new Map();
+    for (const d of parsed.decisions || []) byIdx.set(d.idx, d);
+    return byIdx;
+  } catch (err) {
+    console.warn(`Gemini curation skipped (${err.message}); falling back to keyword filter.`);
+    return null;
+  }
 }
 
 // ---------- RFC 5545 iCalendar Generator (deadlines.ics) ----------
@@ -661,42 +746,6 @@ async function main() {
 
       // Sort newest-opened first so the freshest open Trackr roles appear at the top
       scraped.sort((a, b) => String(b.openedDate || "").localeCompare(String(a.openedDate || "")));
-      const MAX_NEW_TRACKR_PER_RUN = 15;
-      let trackrAdded = 0;
-
-      for (const item of scraped) {
-        if (trackrAdded >= MAX_NEW_TRACKR_PER_RUN) break;
-        if (!isWithinLastDays(item.openedDate, 30)) continue;
-        if (!isStillOpen(item.closingDate)) continue;
-        const slug = makeRecSlug(item.company, item.role);
-        const firmKey = canonicalFirmKey(item.company);
-        const recId = `rec-trackr-${slugify(item.company)}-${slugify(item.role).slice(0, 20)}-2027`;
-        if (
-          handledSet.has(recId) ||
-          handledSet.has(slug) ||
-          existingSlugs.has(slug) ||
-          existingRecIds.has(recId) ||
-          (firmKey && existingFirmKeys.has(firmKey))
-        ) {
-          continue;
-        }
-        existingSlugs.add(slug);
-        existingRecIds.add(recId);
-        state.recommendations.unshift({
-          id: recId,
-          source: "Trackr",
-          sourceDetail: item.sourceDetail,
-          company: item.company,
-          role: item.role,
-          sector: item.sector,
-          openedDate: item.openedDate,
-          closingDate: item.closingDate || "Rolling Deadline",
-          applyLink: item.applyLink,
-          notes: `Auto-discovered via GitHub Actions Daily Trackr Scrape (opened ${item.openedDate}).`
-        });
-        addedCount++;
-        trackrAdded++;
-      }
 
       // Also scrape Gradcracker UK Finance, Business & Economics Summer Internships (2027)
       const gcScraped = [];
@@ -704,41 +753,83 @@ async function main() {
         const items = await scrapeGradcrackerSource(gcSrc);
         gcScraped.push(...items);
       }
-      console.log(`Scraped ${gcScraped.length} target UK Finance & Consulting candidate(s) from Gradcracker.`);
+      console.log(`Scraped ${gcScraped.length} candidate(s) from Gradcracker.`);
 
-      const MAX_NEW_GRADCRACKER_PER_RUN = 8;
-      let gcAdded = 0;
-      for (const item of gcScraped) {
-        if (gcAdded >= MAX_NEW_GRADCRACKER_PER_RUN) break;
-        if (!isStillOpen(item.closingDate)) continue;
+      // Pre-dedupe Trackr + Gradcracker candidates before 1 batched Gemini curation call
+      const freshCandidates = [];
+      const seenBatchSlugs = new Set();
+      const pushCandidate = (item, sourceName) => {
+        if (sourceName === "Trackr" && !isWithinLastDays(item.openedDate, 30)) return;
+        if (!isStillOpen(item.closingDate)) return;
         const slug = makeRecSlug(item.company, item.role);
         const firmKey = canonicalFirmKey(item.company);
-        const recId = `rec-gc-${slugify(item.company)}-${slugify(item.role).slice(0, 22)}-2027`;
+        const recId = sourceName === "Trackr"
+          ? `rec-trackr-${slugify(item.company)}-${slugify(item.role).slice(0, 20)}-2027`
+          : `rec-gc-${slugify(item.company)}-${slugify(item.role).slice(0, 22)}-2027`;
         if (
           handledSet.has(recId) ||
           handledSet.has(slug) ||
           existingSlugs.has(slug) ||
           existingRecIds.has(recId) ||
+          seenBatchSlugs.has(slug) ||
           (firmKey && existingFirmKeys.has(firmKey))
         ) {
-          continue;
+          return;
         }
-        existingSlugs.add(slug);
-        existingRecIds.add(recId);
+        seenBatchSlugs.add(slug);
+        freshCandidates.push({ ...item, source: sourceName, recId, slug });
+      };
+
+      for (const item of scraped) pushCandidate(item, "Trackr");
+      for (const item of gcScraped) pushCandidate(item, "Gradcracker");
+
+      const appliedCompanyNames = Array.from(new Set(
+        [...state.applications, ...archivedApps].map((a) => a.company || a.firm).filter(Boolean)
+      ));
+      const aiDecisions = await curateCandidatesWithGemini(freshCandidates, appliedCompanyNames);
+      if (aiDecisions) {
+        console.log(`Gemini curated ${aiDecisions.size} candidate(s) across Trackr & Gradcracker.`);
+      }
+
+      const MAX_NEW_TRACKR_PER_RUN = 15;
+      const MAX_NEW_GRADCRACKER_PER_RUN = 8;
+      let trackrAdded = 0;
+      let gcAdded = 0;
+
+      for (let idx = 0; idx < freshCandidates.length; idx++) {
+        const item = freshCandidates[idx];
+        if (item.source === "Trackr" && trackrAdded >= MAX_NEW_TRACKR_PER_RUN) continue;
+        if (item.source === "Gradcracker" && gcAdded >= MAX_NEW_GRADCRACKER_PER_RUN) continue;
+
+        const ai = aiDecisions ? aiDecisions.get(idx) : null;
+        if (aiDecisions) {
+          if (!ai || !ai.keep) continue;
+        } else if (item.source === "Gradcracker") {
+          // Fallback keyword guard if Gemini wasn't configured or failed
+          const combined = `${item.company} ${item.role} ${item.sourceDetail}`.toLowerCase();
+          if (GRADCRACKER_NEGATIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+          if (!GRADCRACKER_POSITIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+        }
+
+        existingSlugs.add(item.slug);
+        existingRecIds.add(item.recId);
         state.recommendations.unshift({
-          id: recId,
-          source: "Gradcracker",
+          id: item.recId,
+          source: item.source,
           sourceDetail: item.sourceDetail,
           company: item.company,
-          role: item.role,
-          sector: item.sector,
+          role: (ai && ai.cleanRole) ? ai.cleanRole : item.role,
+          sector: (ai && ai.sector) ? ai.sector : item.sector,
           openedDate: item.openedDate,
           closingDate: item.closingDate || "Rolling Deadline",
           applyLink: item.applyLink,
-          notes: `Auto-discovered via Daily Gradcracker Scrape (${item.sourceDetail}).`
+          notes: (ai && ai.whyMatch)
+            ? `✨ AI Fit: ${ai.whyMatch} (via ${item.source}, opened ${item.openedDate})`
+            : `Auto-discovered via Daily ${item.source} Scrape (opened ${item.openedDate}).`
         });
         addedCount++;
-        gcAdded++;
+        if (item.source === "Trackr") trackrAdded++;
+        else gcAdded++;
       }
     } finally {
       await browser.close();
