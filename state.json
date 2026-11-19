@@ -59,7 +59,10 @@
     "1a1f1081ca8f4d67",
     "1a1f110342577b31",
     "1a1f37cd8819073c",
-    "1a1f39e528ec99af"
+    "1a1f39e528ec99af",
+    "1a1ccaf7d8d1e058",
+    "1a1cf77c127c5b93",
+    "1a1cf7bf9f20585b"
   ],
   "dismissedIds": [
     "rec-email-bny-trade-2027",
@@ -81,10 +84,46 @@
     "rec-trackr-pimco-2027",
     "pimco::2027 summer intern ? account management & institutional client coverage (london)"
   ],
-  "lastGmailSync": "2026-11-19T11:44:05.581Z",
+  "lastGmailSync": "2026-11-19T11:51:10.819Z",
   "version": 6,
   "updatedAt": "2026-11-19T11:49:58.000Z",
   "applications": [
+    {
+      "id": "app_5af5fd43",
+      "firm": "S&W",
+      "role": "2027 Summer Internship",
+      "track": "2027 Summer Internship",
+      "stage": "03 ? Stage 1 OA",
+      "status": "Online Assessment Due",
+      "appliedDate": "2026-11-12",
+      "lastUpdated": "2026-11-12T11:19:30.000Z",
+      "deadline": "2026-11-13T11:19:30",
+      "notes": "[2026-11-12] Auto-detected from Gmail: Your S&W application ? Invite to online assessments"
+    },
+    {
+      "id": "app_1cddcbf1",
+      "firm": "Spottedzebra",
+      "role": "2027 Summer Internship",
+      "track": "2027 Summer Internship",
+      "stage": "03 ? Stage 1 OA",
+      "status": "Online Assessment Due",
+      "appliedDate": "2026-11-12",
+      "lastUpdated": "2026-11-12T11:14:53.000Z",
+      "deadline": "",
+      "notes": "[2026-11-12] Auto-detected from Gmail: Ramis Ahmad, you've successfully completed an assessment by Aon for Consulting Intern."
+    },
+    {
+      "id": "app_110cfc0c",
+      "firm": "Allianz Group",
+      "role": "2027 Summer Internship",
+      "track": "2027 Summer Internship",
+      "stage": "01 ? Applied",
+      "status": "Application Submitted",
+      "appliedDate": "2026-11-11",
+      "lastUpdated": "2026-11-11T22:16:55.000Z",
+      "deadline": "",
+      "notes": "[2026-11-11] Auto-detected from Gmail: Allianz Group - Information - Your application is now with us"
+    },
     {
       "id": 1795051394979,
       "category": "internship",
