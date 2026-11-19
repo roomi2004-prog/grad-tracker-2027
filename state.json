@@ -89,26 +89,8 @@
   ],
   "lastGmailSync": "2026-11-19T11:52:26.570Z",
   "version": 6,
-  "updatedAt": "2026-11-19T12:25:29.875Z",
+  "updatedAt": "2026-11-19T12:25:42.659Z",
   "applications": [
-    {
-      "id": "app_1cddcbf1",
-      "firm": "Spottedzebra",
-      "role": "2027 Summer Internship",
-      "track": "2027 Summer Internship",
-      "stage": "Stage 1 - Online Assessment",
-      "status": "Online Assessment Due",
-      "appliedDate": "2026-11-12",
-      "lastUpdated": "2026-11-12T11:14:53.000Z",
-      "deadline": null,
-      "notes": "[2026-11-12] Auto-detected from Gmail: Ramis Ahmad, you've successfully completed an assessment by Aon for Consulting Intern.",
-      "category": "internship",
-      "company": "Spottedzebra",
-      "sector": "Corporate & Investment Banking",
-      "subStatus": "Online Assessment Completed (19 Nov)",
-      "portalLink": "",
-      "calendarSynced": false
-    },
     {
       "id": 1795051394979,
       "category": "internship",
@@ -1421,7 +1403,8 @@
     "app_c52b1663",
     "app_c8d844d7",
     "app_e7ca42a4",
-    "app_f5a22011"
+    "app_f5a22011",
+    "app_1cddcbf1"
   ],
   "cycleArchive": null,
   "offerAccepted": false,
