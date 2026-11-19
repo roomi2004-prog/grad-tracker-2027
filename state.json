@@ -62,7 +62,12 @@
     "1a1f39e528ec99af",
     "1a1ccaf7d8d1e058",
     "1a1cf77c127c5b93",
-    "1a1cf7bf9f20585b"
+    "1a1cf7bf9f20585b",
+    "1a1a1be53150a981",
+    "1a1b09e33b10ef99",
+    "1a1e5dbe22a36864",
+    "1a1f393989f97d32",
+    "1a1f39e2982e3b04"
   ],
   "dismissedIds": [
     "rec-email-bny-trade-2027",
@@ -84,10 +89,23 @@
     "rec-trackr-pimco-2027",
     "pimco::2027 summer intern ? account management & institutional client coverage (london)"
   ],
-  "lastGmailSync": "2026-11-19T11:51:10.819Z",
+  "lastGmailSync": "2026-11-19T11:52:26.570Z",
   "version": 6,
   "updatedAt": "2026-11-19T11:49:58.000Z",
   "applications": [
+    {
+      "id": "app_755ec82c",
+      "firm": "M&G Investments",
+      "role": "2027 Summer Internship",
+      "track": "2027 Summer Internship",
+      "stage": "04 ? Stage 2 Video",
+      "status": "Job Simulation / Video Interview Due",
+      "appliedDate": "2026-11-19",
+      "lastUpdated": "2026-11-19T11:31:38.000Z",
+      "deadline": "",
+      "notes": "[2026-11-19] Auto-detected from Gmail: Your M&G Application: Job Simulation Invitation",
+      "link": "https://apitake.cappassessments.com/Assessments/PackagedAssessment/ApiTake?a=81328d68-0a45-43b9-b613-2daa94f628a7&u=9a7d9bfd-e7e9-4e22-b48d-cbf27c3dbb6c"
+    },
     {
       "id": "app_5af5fd43",
       "firm": "S&W",
