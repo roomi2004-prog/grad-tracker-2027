@@ -21,6 +21,79 @@ const TRACKR_SOURCES = [
   }
 ];
 
+const GRADCRACKER_SOURCES = [
+  {
+    url: "https://www.gradcracker.com/search/maths-business/fintech-finance-work-placements-internships?duration=Summer",
+    detail: "Gradcracker • UK Finance & FinTech",
+    defaultSector: "Corporate & Investment Banking"
+  },
+  {
+    url: "https://www.gradcracker.com/search/maths-business/business-work-placements-internships?duration=Summer",
+    detail: "Gradcracker • UK Business & Consulting",
+    defaultSector: "Strategy & Consulting"
+  },
+  {
+    url: "https://www.gradcracker.com/search/maths-business/economics-work-placements-internships?duration=Summer",
+    detail: "Gradcracker • UK Economics & Advisory",
+    defaultSector: "Strategy & Consulting"
+  }
+];
+
+const GRADCRACKER_POSITIVE_KEYWORDS = [
+  "banking",
+  "corporate finance",
+  "investment banking",
+  "commercial banking",
+  "investment management",
+  "asset management",
+  "wealth management",
+  "private markets",
+  "sales & trading",
+  "sales and trading",
+  "capital markets",
+  "financial markets",
+  "equities",
+  "fixed income",
+  "financial consulting",
+  "business consulting",
+  "management consulting",
+  "strategy",
+  "advisory",
+  "restructuring",
+  "valuation",
+  "economic",
+  "actuarial",
+  "assurance",
+  "tax consulting",
+  "business transformation",
+  "finance internship",
+  "finance summer",
+  "markets",
+  "fintech"
+];
+
+const GRADCRACKER_NEGATIVE_KEYWORDS = [
+  "mechanical engineering",
+  "civil engineering",
+  "structural engineering",
+  "electrical engineering",
+  "aerospace",
+  "traffic engineering",
+  "subsurface",
+  "geology",
+  "chemistry",
+  "pharmacy",
+  "waste management",
+  "nuclear",
+  "software developer",
+  "software engineering",
+  "tesco ireland",
+  "law ",
+  "solicitor",
+  "legal",
+  "phd "
+];
+
 const TARGET_KEYWORDS = [
   "corporate banking",
   "specialist coverage",
@@ -218,6 +291,80 @@ async function scrapeTrackrSource(context, sourceMeta) {
     await page.close();
   }
 
+  return captured;
+}
+
+function decodeHtmlEntities(str) {
+  return String(str || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&ndash;/g, "–")
+    .replace(/&mdash;/g, "—")
+    .replace(/&nbsp;/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function scrapeGradcrackerSource(sourceMeta) {
+  const captured = [];
+  const todayIso = new Date().toISOString().slice(0, 10);
+  try {
+    console.log(`Fetching ${sourceMeta.url} ...`);
+    const res = await fetch(sourceMeta.url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml"
+      }
+    });
+    if (!res.ok) {
+      console.warn(`Gradcracker HTTP ${res.status} for ${sourceMeta.url}`);
+      return captured;
+    }
+    const html = await res.text();
+    const cardRegex = /<a[^>]+href="(https:\/\/www\.gradcracker\.com\/hub\/\d+\/[^"]+\/work-placement-internship\/\d+\/[^"]+)"[^>]*aria-label="Apply for the ([^"]+) opportunity with ([^"]+)"[^>]*>/gi;
+    let m;
+    while ((m = cardRegex.exec(html)) !== null) {
+      const applyLink = m[1];
+      const role = decodeHtmlEntities(m[2]);
+      const company = decodeHtmlEntities(m[3]);
+      const snippet = html.slice(m.index, m.index + 3200);
+      const deadlineMatch = snippet.match(/<dt>\s*Deadline\s*<\/dt>\s*<dd[^>]*>([\s\S]*?)<\/dd>/i);
+      const startingMatch = snippet.match(/<dt>\s*Starting\s*<\/dt>\s*<dd[^>]*>([\s\S]*?)<\/dd>/i);
+      const locationMatch = snippet.match(/<dt>\s*Location\s*<\/dt>\s*<dd[^>]*>([\s\S]*?)<\/dd>/i);
+
+      const deadlineRaw = deadlineMatch ? decodeHtmlEntities(deadlineMatch[1]) : "Ongoing";
+      const startingRaw = startingMatch ? decodeHtmlEntities(startingMatch[1]) : "";
+      const locationRaw = locationMatch ? decodeHtmlEntities(locationMatch[1]) : "";
+
+      const combined = `${company} ${role} ${startingRaw} ${locationRaw}`.toLowerCase();
+      if (combined.includes("2025") || combined.includes("2026")) continue;
+      if (GRADCRACKER_NEGATIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+      // Exclude law vacation schemes (keep consulting/finance vacation schemes like Deloitte/PwC/EY)
+      if (combined.includes("vacation scheme") && !/(deloitte|pwc|ey|kpmg|consult|finance|advisory|tax|audit|assurance)/i.test(combined)) continue;
+      if (!GRADCRACKER_POSITIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+
+      const closingIso = parseDateToIso(deadlineRaw);
+      const closingDate = closingIso || (/ongoing|rolling|asap/i.test(deadlineRaw) ? "Rolling Deadline" : deadlineRaw || "Rolling Deadline");
+      const detailParts = [sourceMeta.detail];
+      if (locationRaw) detailParts.push(locationRaw);
+      if (startingRaw) detailParts.push(startingRaw);
+
+      captured.push({
+        source: "Gradcracker",
+        company,
+        role,
+        openedDate: todayIso,
+        closingDate,
+        applyLink,
+        sourceDetail: detailParts.join(" • "),
+        sector: inferSector(`${company} ${role}`, sourceMeta.defaultSector)
+      });
+    }
+  } catch (err) {
+    console.warn(`Warning while scraping Gradcracker ${sourceMeta.url}: ${err.message}`);
+  }
   return captured;
 }
 
@@ -456,6 +603,41 @@ async function main() {
           notes: `Auto-discovered via GitHub Actions Daily Trackr Scrape (opened ${item.openedDate}).`
         });
         addedCount++;
+      }
+
+      // Also scrape Gradcracker UK Finance, Business & Economics Summer Internships (2027)
+      const gcScraped = [];
+      for (const gcSrc of GRADCRACKER_SOURCES) {
+        const items = await scrapeGradcrackerSource(gcSrc);
+        gcScraped.push(...items);
+      }
+      console.log(`Scraped ${gcScraped.length} target UK Finance & Consulting candidate(s) from Gradcracker.`);
+
+      const MAX_NEW_GRADCRACKER_PER_RUN = 8;
+      let gcAdded = 0;
+      for (const item of gcScraped) {
+        if (gcAdded >= MAX_NEW_GRADCRACKER_PER_RUN) break;
+        const slug = makeRecSlug(item.company, item.role);
+        const recId = `rec-gc-${slugify(item.company)}-${slugify(item.role).slice(0, 22)}-2027`;
+        if (handledSet.has(recId) || handledSet.has(slug) || existingSlugs.has(slug) || existingRecIds.has(recId)) {
+          continue;
+        }
+        existingSlugs.add(slug);
+        existingRecIds.add(recId);
+        state.recommendations.unshift({
+          id: recId,
+          source: "Gradcracker",
+          sourceDetail: item.sourceDetail,
+          company: item.company,
+          role: item.role,
+          sector: item.sector,
+          openedDate: item.openedDate,
+          closingDate: item.closingDate || "Rolling Deadline",
+          applyLink: item.applyLink,
+          notes: `Auto-discovered via Daily Gradcracker Scrape (${item.sourceDetail}).`
+        });
+        addedCount++;
+        gcAdded++;
       }
     } finally {
       await browser.close();

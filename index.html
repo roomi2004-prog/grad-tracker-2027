@@ -2413,34 +2413,42 @@
         return () => clearInterval(timer);
       }, []);
 
+      const headerInnerRef = React.useRef(null);
       const headerRef = React.useRef(null);
       const [headerSpacerHeight, setHeaderSpacerHeight] = useState(74);
 
-      useEffect(() => {
+      React.useLayoutEffect(() => {
         const el = headerRef.current;
         if (!el) return;
         const measureExpanded = () => {
-          if (headerRef.current && headerRef.current.getAttribute("data-compact") === "false") {
-            const h = Math.ceil(headerRef.current.getBoundingClientRect().height);
-            if (h > 40) setHeaderSpacerHeight(prev => (prev === h ? prev : h));
+          const node = headerRef.current;
+          if (!node || node.getAttribute("data-compact") !== "false") return;
+          const h = Math.ceil(node.getBoundingClientRect().height);
+          if (h > 40) {
+            setHeaderSpacerHeight(prev => (prev === h ? prev : h));
           }
         };
         measureExpanded();
-        const t = setTimeout(measureExpanded, 180);
+        const raf1 = window.requestAnimationFrame(measureExpanded);
+        const t1 = setTimeout(measureExpanded, 120);
+        const t2 = setTimeout(measureExpanded, 260);
         let ro = null;
         if (typeof ResizeObserver !== "undefined") {
           ro = new ResizeObserver(() => {
             measureExpanded();
           });
           ro.observe(el);
+          if (headerInnerRef.current) ro.observe(headerInnerRef.current);
         }
         window.addEventListener("resize", measureExpanded, { passive: true });
         return () => {
-          clearTimeout(t);
+          window.cancelAnimationFrame(raf1);
+          clearTimeout(t1);
+          clearTimeout(t2);
           if (ro) ro.disconnect();
           window.removeEventListener("resize", measureExpanded);
         };
-      }, [isCycleArchived, ghToken, Boolean(liveSyncStage), headerSearchOpen]);
+      }, [isCycleArchived, ghToken, isRefreshing, liveSyncStage, headerSearchOpen, Boolean(syncStatus)]);
 
       useEffect(() => {
         let rafId = null;
@@ -3512,6 +3520,7 @@
             }`}
           >
             <div
+              ref={headerInnerRef}
               className={`max-w-[1640px] mx-auto flex items-center justify-between transition-all duration-200 ${
                 isHeaderCompact ? "flex-nowrap gap-2 overflow-x-auto" : "flex-wrap gap-4"
               }`}
@@ -4091,15 +4100,16 @@
                     Recommended to Apply ({activeRecommendations.length})
                   </h2>
                   <span className="text-[11px] text-slate-400">
-                    • 2027 UK Finance & Consulting Summer Internships (Trackr Last 4 Days + Non-LinkedIn Email Alerts)
+                    • 2027 UK Finance & Consulting Summer Internships (Trackr, Gradcracker & Email Alerts)
                   </span>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1.5">
                   {[
                     { id: "All", label: `All (${totalUnhandledRecsCount})` },
-                    { id: "Trackr", label: "Trackr (8AM Scrape)" },
-                    { id: "Email", label: "Email Alerts (No LinkedIn)" }
+                    { id: "Trackr", label: "Trackr" },
+                    { id: "Gradcracker", label: "Gradcracker" },
+                    { id: "Email", label: "Email Alerts" }
                   ].map(tab => (
                     <button
                       key={tab.id}
@@ -4130,10 +4140,11 @@
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                       {activeRecommendations.map(rec => {
                         const isTrackr = rec.source === "Trackr";
+                        const isGradcracker = rec.source === "Gradcracker";
                         return (
                           <div key={rec.id} className="glass-card rounded-xl p-3.5 flex flex-col justify-between space-y-3">
                             <div className="space-y-2">
-                              {/* Top Row: Monogram + Firm + Source Badge (Trackr vs Email) */}
+                              {/* Top Row: Monogram + Firm + Source Badge (Trackr vs Gradcracker vs Email) */}
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-2 min-w-0">
                                   <CompanyMonogram company={rec.company} />
@@ -4148,11 +4159,13 @@
                                   className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border shrink-0 ${
                                     isTrackr
                                       ? "bg-cyan-500/15 text-cyan-300 border-cyan-400/35"
+                                      : isGradcracker
+                                      ? "bg-violet-500/15 text-violet-300 border-violet-400/35"
                                       : "bg-emerald-500/15 text-emerald-300 border-emerald-400/35"
                                   }`}
                                   title={rec.sourceDetail}
                                 >
-                                  <Icon name={isTrackr ? "Compass" : "Mail"} className="w-3 h-3" />
+                                  <Icon name={isTrackr ? "Compass" : isGradcracker ? "Sparkles" : "Mail"} className="w-3 h-3" />
                                   {rec.source}
                                 </span>
                               </div>
