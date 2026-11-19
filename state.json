@@ -125,11 +125,13 @@
     "rec-trackr-partners-group-2027",
     "partners group::2027 private markets summer analyst ? client solutions & investment management (london)",
     "rec-trackr-pimco-2027",
-    "pimco::2027 summer intern ? account management & institutional client coverage (london)"
+    "pimco::2027 summer intern ? account management & institutional client coverage (london)",
+    "rec-trackr-oliver-wyman-2027",
+    "oliver wyman::2027 summer consultant internship ? financial services & strategy (london)"
   ],
   "lastGmailSync": "2026-11-19T22:18:20.270Z",
   "version": 6,
-  "updatedAt": "2026-11-19T22:07:11.120Z",
+  "updatedAt": "2026-11-19T22:19:15.518Z",
   "applications": [
     {
       "id": "app_4af24edd",
@@ -204,6 +206,22 @@
       "subStatus": "Application Submitted (Nov 19)",
       "portalLink": "https://www.jobtrain.co.uk/ybscareers",
       "calendarSynced": false
+    },
+    {
+      "id": 1795126755517,
+      "category": "internship",
+      "company": "Oliver Wyman",
+      "role": "2027 Summer Consultant Internship ? Financial Services & Strategy (London)",
+      "sector": "Strategy & Consulting",
+      "appliedDate": "2026-11-19",
+      "stage": "Application Submitted",
+      "subStatus": "Applied via The Trackr (11-19)",
+      "deadline": null,
+      "portalLink": "https://www.oliverwyman.com/careers.html",
+      "calendarSynced": false,
+      "notes": "Applied on 2026-11-19 from Recommended to Apply (The Trackr ? UK Consulting). Opened Nov 16 on The Trackr UK Consulting tracker. Strong fit for quantitative/physics background in Financial Services practice.",
+      "_gmailSubStatus": "Applied via The Trackr (11-19)",
+      "_gmailDeadline": null
     },
     {
       "id": 1795089100003,
@@ -1544,11 +1562,11 @@
     "rec-trackr-partners-group-2027",
     "partners group::2027 private markets summer analyst ? client solutions & investment management (london)",
     "rec-trackr-pimco-2027",
-    "pimco::2027 summer intern ? account management & institutional client coverage (london)"
+    "pimco::2027 summer intern ? account management & institutional client coverage (london)",
+    "rec-trackr-oliver-wyman-2027",
+    "oliver wyman::2027 summer consultant internship ? financial services & strategy (london)"
   ],
   "shortlistedRecIds": [
-    "rec-trackr-oliver-wyman-2027",
-    "oliver wyman::2027 summer consultant internship ? financial services & strategy (london)",
     "rec-email-cgi-2027",
     "cgi::2027 business consulting & finance placement / summer internship (uk)"
   ],
