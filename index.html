@@ -1524,15 +1524,23 @@
         .filter(Boolean)
         .map(a => a.stage === "Closed / Unsuccessful" ? { ...a, deadline: null } : a);
 
-      // Collect canonical firm keys of all real (non-synthetic) tracker entries first
+      // Collect canonical firm keys of all real (non-synthetic) tracker entries scoped by category
       const realFirmKeys = new Set();
+      const realPartTimeRoleKeys = new Set();
       const realApps = [];
       for (const a of normalized) {
         if (deletedSet.has(String(a.id))) continue;
         if (!isSyntheticGmailCard(a)) {
           realApps.push(a);
           const fk = canonicalFirmKey(a.company);
-          if (fk) realFirmKeys.add(fk);
+          const cat = a.category || "internship";
+          if (fk) {
+            if (cat === "parttime") {
+              realPartTimeRoleKeys.add(`${fk}::${String(a.role || "").toLowerCase().trim()}`);
+            } else {
+              realFirmKeys.add(`${cat}::${fk}`);
+            }
+          }
         }
       }
 
@@ -1566,7 +1574,7 @@
         }
       }
 
-      // Only keep synthetic Gmail cards that are real firms, not deleted, and not duplicates of existing/closed firms
+      // Only keep synthetic Gmail cards that are real firms, not deleted, and not duplicates of existing/closed firms in the same category
       const seenSynthKeys = new Set();
       const keptSynth = [];
       for (const a of normalized) {
@@ -1576,17 +1584,28 @@
         if (isJunkEmailCard(a)) continue;
         const fk = canonicalFirmKey(a.company);
         if (!fk) continue;
-        if (realFirmKeys.has(fk) || seenSynthKeys.has(fk)) continue;
-        // Also catch concatenated names like "fidelityinternational" matching "fidelity"
+        const cat = a.category || "internship";
+        if (cat === "parttime") {
+          const ptKey = `${fk}::${String(a.role || "").toLowerCase().trim()}`;
+          if (realPartTimeRoleKeys.has(ptKey) || seenSynthKeys.has(ptKey)) continue;
+          seenSynthKeys.add(ptKey);
+          keptSynth.push(a);
+          continue;
+        }
+        const scopedKey = `${cat}::${fk}`;
+        if (realFirmKeys.has(scopedKey) || seenSynthKeys.has(scopedKey)) continue;
+        // Also catch concatenated names like "fidelityinternational" matching "fidelity" within the same category
         let overlapsExisting = false;
-        for (const existingKey of realFirmKeys) {
+        for (const existingScoped of realFirmKeys) {
+          if (!existingScoped.startsWith(`${cat}::`)) continue;
+          const existingKey = existingScoped.slice(cat.length + 2);
           if (existingKey.length >= 4 && (fk.startsWith(existingKey) || existingKey.startsWith(fk))) {
             overlapsExisting = true;
             break;
           }
         }
         if (overlapsExisting) continue;
-        seenSynthKeys.add(fk);
+        seenSynthKeys.add(scopedKey);
         keptSynth.push(a);
       }
 
