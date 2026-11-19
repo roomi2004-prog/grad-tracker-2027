@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//Ramis Ahmad//2027 Application Tracker//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Rags to Riches — 2027 Deadlines
+X-WR-CALNAME:2027 Application Tracker Deadlines
 X-WR-TIMEZONE:Europe/London
 X-WR-CALDESC:Upcoming Online Assessments, HireVue/Video Interviews, Assessm
  ent Centres, and 2027 Summer Internship Closing Dates
@@ -27,7 +27,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:app-deadline-3@grad-tracker-2027.github.io
-DTSTAMP:20261119T122544Z
+DTSTAMP:20261119T152535Z
 DTSTART;TZID=Europe/London:20261124T103100
 DTEND;TZID=Europe/London:20261124T113100
 SUMMARY:INTERVIEW: M&G Investments — Stage 2: Job Simulation / Video Inte
@@ -62,7 +62,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-oliver-wyman-2027@grad-tracker-2027.github.io
-DTSTAMP:20261119T122544Z
+DTSTAMP:20261119T152535Z
 DTSTART;TZID=Europe/London:20261127T160000
 DTEND;TZID=Europe/London:20261127T170000
 SUMMARY:CLOSING DATE: Oliver Wyman — 2027 Summer Consultant Internship ? 
@@ -90,7 +90,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261119T122544Z
+DTSTAMP:20261119T152535Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
