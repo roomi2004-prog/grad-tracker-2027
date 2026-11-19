@@ -32,8 +32,10 @@ jobs:
           npm install --no-audit --no-fund
           npx playwright install chromium --with-deps
 
-      - name: Run Daily Trackr Scraper & Regenerate deadlines.ics
+            - name: Run Daily Trackr Scraper & Regenerate deadlines.ics
         working-directory: scripts
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node daily-trackr.mjs
 
       - name: Commit and push updated state.json & deadlines.ics
