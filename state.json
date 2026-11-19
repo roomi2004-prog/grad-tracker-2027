@@ -97,7 +97,7 @@
   ],
   "lastGmailSync": "2026-11-19T15:30:54.728Z",
   "version": 6,
-  "updatedAt": "2026-11-19T15:32:10.000Z",
+  "updatedAt": "2026-11-19T15:36:46.000Z",
   "applications": [
     {
       "id": 1795089100003,
@@ -153,14 +153,19 @@
     {
       "id": "app_f6172944",
       "firm": "Yorkshire Building Society",
-      "role": "2027 Summer Internship",
-      "track": "2027 Summer Internship",
-      "stage": "01 ? Applied",
+      "role": "Customer Service Advisor - 12 Month Fixed Term",
+      "track": "Part-Time & Flex",
+      "stage": "Application Submitted",
       "status": "Application Submitted",
       "appliedDate": "2026-11-19",
       "lastUpdated": "2026-11-19T15:21:11.000Z",
       "deadline": "",
-      "notes": "[2026-11-19] Auto-detected from Gmail: Thanks for applying to Yorkshire Building Society"
+      "notes": "[2026-11-19] Applied for Customer Service Advisor - 12 Month Fixed Term at Yorkshire Building Society.",
+      "category": "parttime",
+      "company": "Yorkshire Building Society",
+      "sector": "Retail Banking / Flex",
+      "subStatus": "Application Submitted (Nov 19)",
+      "portalLink": "https://www.jobtrain.co.uk/ybscareers"
     },
     {
       "id": "app_8839d6f5",
