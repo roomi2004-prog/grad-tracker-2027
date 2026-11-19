@@ -3662,6 +3662,29 @@
       }, [apps, roleCategory]);
       const sectors = useMemo(() => ["All", ...new Set(categoryApps.map(a => a.sector))], [categoryApps]);
 
+      const getAppliedSortTuple = (app) => {
+        const rawDate = String((app && app.appliedDate) || "").trim();
+        const m = rawDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        const dayMs = m ? Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : 0;
+        let subMs = 0;
+        if (app && app.lastUpdated) {
+          const parsed = Date.parse(app.lastUpdated);
+          if (!Number.isNaN(parsed)) subMs = parsed;
+        }
+        if (!subMs && app && typeof app.id === "number" && app.id > 1e11) {
+          subMs = app.id;
+        }
+        return [dayMs, subMs];
+      };
+
+      const compareNewestApplied = (a, b) => {
+        const [dayA, subA] = getAppliedSortTuple(a);
+        const [dayB, subB] = getAppliedSortTuple(b);
+        if (dayB !== dayA) return dayB - dayA;
+        if (subB !== subA) return subB - subA;
+        return String(a.company || "").localeCompare(String(b.company || ""));
+      };
+
       const filteredApps = useMemo(() => {
         const list = categoryApps.filter(app => {
           const q = search.toLowerCase();
@@ -3676,14 +3699,14 @@
         });
 
         return [...list].sort((a, b) => {
-          if (sortBy === "company") return a.company.localeCompare(b.company);
+          if (sortBy === "company") return String(a.company || "").localeCompare(String(b.company || ""));
           if (sortBy === "deadline") {
             const da = a.deadline || "9999-12-31";
             const db = b.deadline || "9999-12-31";
-            return da.localeCompare(db) || b.appliedDate.localeCompare(a.appliedDate);
+            return da.localeCompare(db) || compareNewestApplied(a, b);
           }
-          if (sortBy === "sector") return a.sector.localeCompare(b.sector) || a.company.localeCompare(b.company);
-          return b.appliedDate.localeCompare(a.appliedDate) || a.company.localeCompare(b.company);
+          if (sortBy === "sector") return String(a.sector || "").localeCompare(String(b.sector || "")) || compareNewestApplied(a, b);
+          return compareNewestApplied(a, b);
         });
       }, [categoryApps, search, sectorFilter, stageFilter, rejectionFilter, activeTab, sortBy]);
 
