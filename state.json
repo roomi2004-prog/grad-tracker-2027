@@ -98,7 +98,7 @@
   ],
   "lastGmailSync": "2026-11-19T15:50:24.865Z",
   "version": 6,
-  "updatedAt": "2026-11-19T15:41:54.809Z",
+  "updatedAt": "2026-11-19T15:52:09.772Z",
   "applications": [
     {
       "id": "app_f40b2a25",
@@ -108,13 +108,15 @@
       "role": "Strategy Consultant Intern - Corporate Strategy - London",
       "sector": "Corporate & Investment Banking",
       "track": "2027 Summer Internship",
-      "stage": "01 ? Applied",
+      "stage": "Application Submitted",
       "status": "Application Submitted",
       "subStatus": "Application Submitted",
       "appliedDate": "2026-11-19",
       "lastUpdated": "2026-11-19T15:46:04.000Z",
-      "deadline": "",
-      "notes": "[2026-11-19] Auto-detected from Gmail: Thank you for your application to Indefi"
+      "deadline": null,
+      "notes": "[2026-11-19] Auto-detected from Gmail: Thank you for your application to Indefi",
+      "portalLink": "",
+      "calendarSynced": false
     },
     {
       "id": "app_f6172944",
