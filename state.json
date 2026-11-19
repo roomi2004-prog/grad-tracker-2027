@@ -79,7 +79,7 @@
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-19T01:09:39.567Z",
+  "updatedAt": "2026-11-19T01:09:54.219Z",
   "applications": [
     {
       "id": 1795049885047,
@@ -291,13 +291,13 @@
       "role": "Early Careers Programme 2027 (London)",
       "sector": "Insurance & Broking",
       "appliedDate": "2026-10-10",
-      "stage": "Stage 1 - Online Assessment",
+      "stage": "Closed / Unsuccessful",
       "subStatus": "Arctic Shores Assessment Completed (Oct 20)",
       "deadline": null,
       "portalLink": "https://www.howdengroupholdings.com/careers",
       "calendarSynced": false,
       "notes": "Granted deadline extension by Ava Emery on Oct 19 until Oct 20 midnight for Arctic Shores assessment.",
-      "rejectedAfterStage": null,
+      "rejectedAfterStage": "Stage 1 - Online Assessment",
       "_gmailSubStatus": "Arctic Shores Assessment Completed (Oct 20)",
       "_gmailDeadline": null
     },
