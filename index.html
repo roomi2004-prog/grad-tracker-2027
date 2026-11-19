@@ -3565,7 +3565,7 @@
                   </button>
                 </div>
 
-                {isCycleArchived ? (
+                {isCycleArchived && (
                   <button
                     onClick={() => setViewArchiveMode(v => !v)}
                     className={`flex items-center gap-1.5 font-semibold whitespace-nowrap rounded-xl transition-all shrink-0 ${isHeaderCompact ? "text-[11px] px-2.5 py-1.5" : "text-xs px-3 py-2"} ${viewArchiveMode ? "bg-lime-500/25 text-lime-200 border border-lime-400/40" : "glass-surface text-white"}`}
@@ -3573,17 +3573,6 @@
                     <Icon name="Archive" className="w-3.5 h-3.5" />
                     {viewArchiveMode ? "Exit 2027 Archive" : "View 2027 Archive"}
                   </button>
-                ) : (
-                  !isHeaderCompact && (
-                    <button
-                      onClick={openForceArchiveModal}
-                      title="Force archive the current internship cycle (2-step confirmation)"
-                      className="flex items-center gap-1.5 glass-surface hover:border-amber-400/60 text-amber-200 hover:text-amber-100 font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0"
-                    >
-                      <Icon name="Archive" className="w-3.5 h-3.5" />
-                      Archive Cycle
-                    </button>
-                  )
                 )}
 
                 {/* Live Full-Stack Sync Now Button + Real-Time Step Progress Pill */}
@@ -5039,6 +5028,27 @@
                 <Icon name="Upload" className="w-3 h-3" />
                 Restore JSON
               </button>
+              {isCycleArchived ? (
+                <button
+                  type="button"
+                  onClick={() => setViewArchiveMode(v => !v)}
+                  title="Toggle 2027 Archived Cycle view"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg theme-input text-lime-300 hover:text-lime-200 font-semibold transition"
+                >
+                  <Icon name="Archive" className="w-3 h-3" />
+                  {viewArchiveMode ? "Exit 2027 Archive" : "View 2027 Archive"}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={openForceArchiveModal}
+                  title="Force archive the current internship cycle (2-step confirmation)"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg theme-input text-amber-300/90 hover:text-amber-200 font-semibold transition"
+                >
+                  <Icon name="Archive" className="w-3 h-3" />
+                  Archive Cycle
+                </button>
+              )}
             </div>
           </footer>
 
