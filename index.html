@@ -6,7 +6,7 @@
   <title>Rags to Riches</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="Rags to Riches" />
   <meta name="theme-color" content="#12061F" />
   <link rel="manifest" href="./manifest.json" />
@@ -364,9 +364,6 @@
     .theme-header {
       background-color: var(--bg-header);
       border-bottom: 1px solid var(--border-color);
-      transform: translateZ(0);
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
     }
     .glass-surface {
       background-color: var(--bg-surface);
@@ -473,10 +470,11 @@
       color: #0369A1 !important;
     }
 
-    @media (display-mode: standalone) {
-      header.theme-header {
-        padding-top: max(env(safe-area-inset-top), 0.75rem);
-      }
+    header.theme-header {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 0.875rem) !important;
+    }
+    header.theme-header[data-compact="true"] {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem) !important;
     }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -808,6 +806,125 @@
           title={company}
         >
           {initials}
+        </div>
+      );
+    };
+
+    // Custom Glassmorphic Dropdown (replaces plain OS <select> menus with themed frosted glass + stage dots + counts)
+    const GlassDropdown = ({ value, options, onChange, ariaLabel, title, align = "left", minWidth = "min-w-[220px]", highlightWhenActive = false }) => {
+      const [open, setOpen] = useState(false);
+      const wrapRef = React.useRef(null);
+
+      useEffect(() => {
+        if (!open) return;
+        const onOutside = (e) => {
+          if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+            setOpen(false);
+          }
+        };
+        const onKey = (e) => {
+          if (e.key === "Escape") setOpen(false);
+        };
+        document.addEventListener("mousedown", onOutside);
+        document.addEventListener("touchstart", onOutside, { passive: true });
+        document.addEventListener("keydown", onKey);
+        return () => {
+          document.removeEventListener("mousedown", onOutside);
+          document.removeEventListener("touchstart", onOutside);
+          document.removeEventListener("keydown", onKey);
+        };
+      }, [open]);
+
+      const selected = options.find(o => o.value === value) || options[0] || { value: "", label: "" };
+      const isFiltered = highlightWhenActive && selected.value !== "All";
+
+      return (
+        <div ref={wrapRef} className="relative inline-block">
+          <button
+            type="button"
+            aria-label={ariaLabel}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            title={title || ariaLabel}
+            onClick={() => setOpen(o => !o)}
+            className={`inline-flex items-center justify-between gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              open
+                ? "theme-input ring-2 ring-fuchsia-400/60 border-fuchsia-400/60 shadow-lg"
+                : isFiltered
+                ? "theme-accent-btn shadow-sm"
+                : "theme-input hover:border-white/30"
+            }`}
+          >
+            <span className="inline-flex items-center gap-1.5 min-w-0">
+              {selected.dot && (
+                <span className={`w-2 h-2 rounded-full shrink-0 ${selected.dot}`}></span>
+              )}
+              <span className="truncate max-w-[180px]">{selected.buttonLabel || selected.label}</span>
+              {selected.count !== undefined && selected.count !== null && (
+                <span className={`text-[10px] font-mono-num px-1.5 py-0.2 rounded-md ${isFiltered ? "bg-black/20" : "bg-white/10 opacity-80"}`}>
+                  {selected.count}
+                </span>
+              )}
+            </span>
+            <Icon
+              name="ChevronDown"
+              className={`w-3.5 h-3.5 shrink-0 opacity-75 transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {open && (
+            <div
+              role="listbox"
+              aria-label={ariaLabel}
+              className={`absolute ${align === "right" ? "right-0" : "left-0"} mt-2 ${minWidth} max-w-[88vw] max-h-72 overflow-y-auto rounded-2xl p-1.5 z-50 backdrop-blur-2xl border shadow-2xl`}
+              style={{
+                backgroundColor: "var(--bg-header)",
+                borderColor: "var(--border-hover)",
+                boxShadow: "0 20px 50px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255,255,255,0.08)"
+              }}
+            >
+              {options.map(opt => {
+                const isSelected = opt.value === value;
+                return (
+                  <button
+                    key={String(opt.value)}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      onChange(opt.value);
+                      setOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? "theme-accent-btn font-bold shadow-sm"
+                        : "hover:bg-white/[0.08]"
+                    }`}
+                    style={isSelected ? undefined : { color: "var(--text-primary)" }}
+                  >
+                    <span className="inline-flex items-center gap-2 min-w-0">
+                      {opt.dot ? (
+                        <span className={`w-2 h-2 rounded-full shrink-0 ${opt.dot}`}></span>
+                      ) : (
+                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isSelected ? "bg-current" : "opacity-30 bg-current"}`}></span>
+                      )}
+                      <span className="truncate">{opt.label}</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 shrink-0">
+                      {opt.count !== undefined && opt.count !== null && (
+                        <span className={`text-[10px] font-mono-num px-1.5 py-0.5 rounded-md ${
+                          isSelected ? "bg-black/20" : "bg-white/[0.08] opacity-75"
+                        }`}>
+                          {opt.count}
+                        </span>
+                      )}
+                      {isSelected && <Icon name="Check" className="w-3.5 h-3.5 shrink-0" />}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       );
     };
@@ -2392,6 +2509,8 @@
       latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, archive: cycleArchive, deletedIds: deletedAppIds };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
       const [recsCollapsed, setRecsCollapsed] = useState(false);
+      const [navFilterExpanded, setNavFilterExpanded] = useState(false);
+      const [flowOrderExpanded, setFlowOrderExpanded] = useState(false);
 
       const [theme, setTheme] = useState(() => {
         try {
@@ -2739,6 +2858,7 @@
         const preset = THEME_PRESETS.find(t => t.id === theme);
         if (metaTheme && preset) {
           metaTheme.setAttribute("content", preset.bg);
+          document.documentElement.style.backgroundColor = preset.bg;
         }
         if (theme !== "barbie-dreamhouse" && barbieSynthRef.current && barbieSynthRef.current.isPlaying()) {
           barbieSynthRef.current.stop();
@@ -3399,7 +3519,7 @@
           const matchesStage = stageFilter === "All" || app.stage === stageFilter;
           const matchesRejection = rejectionFilter === "All" ||
             (app.stage === "Closed / Unsuccessful" && (app.rejectedAfterStage || "CV / Application Screen") === rejectionFilter);
-          return matchesSearch && matchesSector && matchesStage && (activeTab !== "table" || rejectionFilter === "All" || matchesRejection);
+          return matchesSearch && matchesSector && matchesStage && ((activeTab !== "table" && activeTab !== "calendar") || rejectionFilter === "All" || matchesRejection);
         });
 
         return [...list].sort((a, b) => {
@@ -3805,7 +3925,7 @@
         }
       };
 
-      // Calendar Grid Builder
+      // Calendar Grid Builder — respects all active filters (Stage, Sector, Search, Category & Unsuccessful Stage)
       const calendarDays = useMemo(() => {
         const [year, month] = calMonth.split("-").map(Number);
         const firstDay = new Date(year, month - 1, 1).getDay();
@@ -3815,12 +3935,12 @@
         for (let i = 0; i < startOffset; i++) cells.push(null);
         for (let d = 1; d <= daysInMonth; d++) {
           const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-          const deadlines = apps.filter(a => a.deadline && a.deadline.startsWith(dateStr));
-          const applied = apps.filter(a => a.appliedDate === dateStr);
+          const deadlines = filteredApps.filter(a => a.deadline && a.deadline.startsWith(dateStr));
+          const applied = filteredApps.filter(a => a.appliedDate === dateStr);
           cells.push({ day: d, dateStr, deadlines, applied });
         }
         return cells;
-      }, [calMonth, apps]);
+      }, [calMonth, filteredApps]);
 
       return (
         <div className="min-h-screen pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
@@ -3828,7 +3948,7 @@
           <header
             ref={headerRef}
             data-compact={isHeaderCompact ? "true" : "false"}
-            className={`fixed top-0 inset-x-0 z-30 theme-header backdrop-blur-2xl px-4 md:px-8 transition-[padding] duration-150 ease-out shadow-lg ${
+            className={`fixed top-0 inset-x-0 z-30 theme-header backdrop-blur-md px-4 md:px-8 transition-[padding] duration-150 ease-out shadow-lg ${
               isHeaderCompact ? "py-1.5" : "py-3.5"
             }`}
           >
@@ -4587,196 +4707,285 @@
             </section>
             )}
 
-            {/* Navigation, Layout Controls & Filter Bar (Scroll Target for KPI Summary Cards) */}
+            {/* Navigation, Layout Controls & Filter Bar (Minimized by default — click to expand) */}
             <div
               id="pipeline-board-section"
               ref={pipelineSectionRef}
-              className="scroll-mt-16 flex flex-col xl:flex-row xl:items-center justify-between gap-3 glass-surface rounded-2xl p-3"
+              className="scroll-mt-16 relative z-20 glass-surface rounded-2xl overflow-visible transition-all"
             >
-              <div className="flex flex-wrap items-center gap-1.5">
-                {[
+              {(() => {
+                const navTabs = [
                   { id: "kanban", label: "Pipeline Board", icon: "Columns" },
                   { id: "table", label: "Master Table", icon: "ListFilter" },
                   { id: "calendar", label: "Deadlines Calendar", icon: "Calendar" },
                   { id: "analytics", label: "Funnel & Stage Drop-off", icon: "BarChart3" }
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-                      activeTab === tab.id
-                        ? "theme-accent-btn shadow-sm"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    <Icon name={tab.icon} className="w-3.5 h-3.5" />
-                    {tab.label}
-                  </button>
-                ))}
+                ];
+                const currentNavTab = navTabs.find(t => t.id === activeTab) || navTabs[0];
+                const activeFilterCount =
+                  (search.trim() ? 1 : 0) +
+                  (stageFilter !== "All" ? 1 : 0) +
+                  (sectorFilter !== "All" ? 1 : 0) +
+                  (rejectionFilter !== "All" ? 1 : 0) +
+                  (sortBy !== "newest" ? 1 : 0);
 
-                {activeTab === "kanban" && (
-                  <div className="hidden sm:flex items-center gap-1 pl-2 ml-1 border-l border-white/[0.08]">
-                    <button
-                      onClick={() => setBoardLayout(prev => prev === "bento" ? "swimlane" : "bento")}
-                      title="Switch between 4x2 Organized Bento Grid and Horizontal Swimlanes"
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium theme-input text-slate-300 hover:text-white transition"
-                    >
-                      <Icon name={boardLayout === "bento" ? "LayoutGrid" : "Columns"} className="w-3.5 h-3.5" />
-                      {boardLayout === "bento" ? "4×2 Bento Grid" : "Swimlane Row"}
-                    </button>
-                    <button
-                      onClick={() => setCompactCards(prev => !prev)}
-                      title="Toggle compact card density"
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
-                        compactCards ? "theme-accent-btn" : "theme-input text-slate-300 hover:text-white"
-                      }`}
-                    >
-                      {compactCards ? "Compact Cards" : "Detailed Cards"}
-                    </button>
-                    <button
-                      onClick={() => setHideArchivedCols(prev => !prev)}
-                      title="Hide On Hold and Closed columns to focus only on active pipeline & offers"
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
-                        hideArchivedCols ? "theme-accent-btn" : "theme-input text-slate-300 hover:text-white"
-                      }`}
-                    >
-                      {hideArchivedCols ? "Showing Active + Offers Only" : "Hide Hold/Closed"}
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="relative flex-1 sm:w-52">
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={e => handleSearchInputChange(e.target.value)}
-                    onKeyDown={handleSearchKeyDown}
-                    placeholder="Search firm, role, stage..."
-                    className="w-full theme-input rounded-xl pl-3 pr-8 py-1.5 text-xs placeholder-slate-500 transition"
-                  />
-                  {search && (
+                return (
+                  <React.Fragment>
                     <button
                       type="button"
-                      aria-label="Clear search"
-                      onClick={() => handleSearchInputChange("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded transition"
+                      onClick={() => setNavFilterExpanded(prev => !prev)}
+                      aria-expanded={navFilterExpanded}
+                      className="w-full px-4 py-2.5 flex items-center justify-between gap-2 text-left hover:bg-white/[0.03] transition cursor-pointer"
                     >
-                      <Icon name="X" className="w-3.5 h-3.5" />
+                      <div className="flex flex-wrap items-center gap-2 min-w-0">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl theme-accent-btn text-xs font-bold shadow-sm">
+                          <Icon name={currentNavTab.icon} className="w-3.5 h-3.5" />
+                          {currentNavTab.label}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-300">Views &amp; Filters</span>
+                        {activeFilterCount > 0 && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 font-mono-num">
+                            {activeFilterCount} active
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0 font-semibold">
+                        <span>{navFilterExpanded ? "Minimize" : "Expand"}</span>
+                        <Icon name={navFilterExpanded ? "ChevronUp" : "ChevronDown"} className="w-4 h-4" />
+                      </span>
                     </button>
-                  )}
-                </div>
 
-                <select
-                  value={stageFilter}
-                  onChange={e => {
-                    const val = e.target.value;
-                    setStageFilter(val);
-                    setHighlightedStage(val);
-                    if (val === "Offer / Successful") {
-                      setRoleCategory("successful");
-                    } else if (roleCategory === "successful") {
-                      setRoleCategory("internship");
-                    }
-                  }}
-                  aria-label="Filter by Pipeline Stage"
-                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
-                >
-                  <option value="All">All Stages</option>
-                  {STAGES.map(st => <option key={st.id} value={st.id}>{st.label}</option>)}
-                </select>
+                    {navFilterExpanded && (
+                      <div className="px-3 pb-3 pt-2.5 border-t border-white/[0.06] flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {navTabs.map(tab => (
+                            <button
+                              key={tab.id}
+                              onClick={() => setActiveTab(tab.id)}
+                              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                                activeTab === tab.id
+                                  ? "theme-accent-btn shadow-sm"
+                                  : "text-slate-400 hover:text-slate-200"
+                              }`}
+                            >
+                              <Icon name={tab.icon} className="w-3.5 h-3.5" />
+                              {tab.label}
+                            </button>
+                          ))}
 
-                <select
-                  value={sectorFilter}
-                  onChange={e => setSectorFilter(e.target.value)}
-                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
-                >
-                  {sectors.map(s => <option key={s} value={s}>{s === "All" ? "All Sectors" : s}</option>)}
-                </select>
+                          {activeTab === "kanban" && (
+                            <div className="hidden sm:flex items-center gap-1 pl-2 ml-1 border-l border-white/[0.08]">
+                              <button
+                                onClick={() => setBoardLayout(prev => prev === "bento" ? "swimlane" : "bento")}
+                                title="Switch between 4x2 Organized Bento Grid and Horizontal Swimlanes"
+                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium theme-input text-slate-300 hover:text-white transition"
+                              >
+                                <Icon name={boardLayout === "bento" ? "LayoutGrid" : "Columns"} className="w-3.5 h-3.5" />
+                                {boardLayout === "bento" ? "4×2 Bento Grid" : "Swimlane Row"}
+                              </button>
+                              <button
+                                onClick={() => setCompactCards(prev => !prev)}
+                                title="Toggle compact card density"
+                                className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
+                                  compactCards ? "theme-accent-btn" : "theme-input text-slate-300 hover:text-white"
+                                }`}
+                              >
+                                {compactCards ? "Compact Cards" : "Detailed Cards"}
+                              </button>
+                              <button
+                                onClick={() => setHideArchivedCols(prev => !prev)}
+                                title="Hide On Hold and Closed columns to focus only on active pipeline & offers"
+                                className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
+                                  hideArchivedCols ? "theme-accent-btn" : "theme-input text-slate-300 hover:text-white"
+                                }`}
+                              >
+                                {hideArchivedCols ? "Showing Active + Offers Only" : "Hide Hold/Closed"}
+                              </button>
+                            </div>
+                          )}
+                        </div>
 
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
-                  aria-label="Sort Applications"
-                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
-                >
-                  <option value="newest">Sort: Newest Applied</option>
-                  <option value="deadline">Sort: Urgent Deadline</option>
-                  <option value="company">Sort: Company (A–Z)</option>
-                  <option value="sector">Sort: Sector</option>
-                </select>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className="relative flex-1 sm:w-52">
+                            <input
+                              type="text"
+                              value={search}
+                              onChange={e => handleSearchInputChange(e.target.value)}
+                              onKeyDown={handleSearchKeyDown}
+                              placeholder="Search firm, role, stage..."
+                              className="w-full theme-input rounded-xl pl-3 pr-8 py-1.5 text-xs placeholder-slate-500 transition"
+                            />
+                            {search && (
+                              <button
+                                type="button"
+                                aria-label="Clear search"
+                                onClick={() => handleSearchInputChange("")}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded transition"
+                              >
+                                <Icon name="X" className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
 
-                <select
-                  value={rejectionFilter}
-                  onChange={e => setRejectionFilter(e.target.value)}
-                  title="Filter Closed / Unsuccessful by which stage you were unsuccessful after"
-                  className="theme-input rounded-xl px-2.5 py-1.5 text-xs"
-                >
-                  <option value="All">Unsuccessful Stage: All</option>
-                  {REJECTION_STAGES.map(r => (
-                    <option key={r.id} value={r.id}>{r.label}</option>
-                  ))}
-                </select>
+                          <GlassDropdown
+                            ariaLabel="Filter by Pipeline Stage"
+                            value={stageFilter}
+                            highlightWhenActive={true}
+                            minWidth="min-w-[250px]"
+                            onChange={(val) => {
+                              setStageFilter(val);
+                              setHighlightedStage(val);
+                              if (val === "Offer / Successful") {
+                                setRoleCategory("successful");
+                              } else if (roleCategory === "successful") {
+                                setRoleCategory("internship");
+                              }
+                            }}
+                            options={[
+                              { value: "All", label: "All Stages", count: categoryApps.length },
+                              ...STAGES.map(st => ({
+                                value: st.id,
+                                label: st.label,
+                                dot: st.dotColor,
+                                count: st.id === "Offer / Successful"
+                                  ? apps.filter(a => a.stage === "Offer / Successful").length
+                                  : categoryApps.filter(a => a.stage === st.id).length
+                              }))
+                            ]}
+                          />
 
-                <button onClick={resetData} title="Reset to default Gmail sync" className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl transition">
-                  Reset
-                </button>
-              </div>
+                          <GlassDropdown
+                            ariaLabel="Filter by Sector"
+                            value={sectorFilter}
+                            highlightWhenActive={true}
+                            minWidth="min-w-[230px]"
+                            onChange={(val) => setSectorFilter(val)}
+                            options={sectors.map(s => ({
+                              value: s,
+                              label: s === "All" ? "All Sectors" : s,
+                              count: s === "All" ? categoryApps.length : categoryApps.filter(a => a.sector === s).length
+                            }))}
+                          />
+
+                          <GlassDropdown
+                            ariaLabel="Sort Applications"
+                            value={sortBy}
+                            minWidth="min-w-[205px]"
+                            onChange={(val) => setSortBy(val)}
+                            options={[
+                              { value: "newest", label: "Newest Applied", buttonLabel: "Sort: Newest Applied" },
+                              { value: "deadline", label: "Urgent Deadline", buttonLabel: "Sort: Urgent Deadline" },
+                              { value: "company", label: "Company (A–Z)", buttonLabel: "Sort: Company (A–Z)" },
+                              { value: "sector", label: "Sector", buttonLabel: "Sort: Sector" }
+                            ]}
+                          />
+
+                          <GlassDropdown
+                            ariaLabel="Filter by Unsuccessful Stage"
+                            title="Filter Closed / Unsuccessful by which stage you were unsuccessful after"
+                            value={rejectionFilter}
+                            highlightWhenActive={true}
+                            minWidth="min-w-[250px]"
+                            onChange={(val) => setRejectionFilter(val)}
+                            options={[
+                              { value: "All", label: "Unsuccessful Stage: All" },
+                              ...REJECTION_STAGES.map(r => ({
+                                value: r.id,
+                                label: r.label,
+                                dot: r.dot
+                              }))
+                            ]}
+                          />
+
+                          <button onClick={resetData} title="Reset to default Gmail sync" className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-xl transition">
+                            Reset
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })()}
             </div>
 
             {/* VIEW 1: ORGANIZED KANBAN PIPELINE BOARD (OFFER / SUCCESSFUL AT THE VERY END) */}
             {activeTab === "kanban" && (
               <div className="space-y-4">
-                {/* Visual Pipeline Flow Progress Bar (Interactive Stage Filter Pills) */}
+                {/* Visual Pipeline Flow Progress Bar (Minimized by default — click to expand) */}
                 <div
-                  className={`glass-surface rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs transition-all ${
+                  className={`glass-surface rounded-2xl overflow-hidden text-xs transition-all ${
                     highlightedStage === "All" ? "ring-2 ring-indigo-400/60" : ""
                   }`}
                 >
-                  <div className="flex items-center gap-2 text-slate-300 font-semibold">
-                    <Icon name="GitBranch" className="w-3.5 h-3.5 theme-accent-text" />
-                    <span>Pipeline Flow Order:</span>
-                    {stageFilter !== "All" && (
-                      <button
-                        type="button"
-                        onClick={() => handleKpiCardClick("All", "internship")}
-                        className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg theme-accent-btn shadow-sm ml-1"
-                      >
-                        ← Show All 8 Stages ({stats.total})
-                      </button>
-                    )}
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={flowOrderExpanded}
+                    onClick={() => setFlowOrderExpanded(prev => !prev)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setFlowOrderExpanded(prev => !prev);
+                      }
+                    }}
+                    className="w-full px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 hover:bg-white/[0.03] transition cursor-pointer select-none"
+                  >
+                    <div className="flex flex-wrap items-center gap-2 text-slate-300 font-semibold">
+                      <Icon name="GitBranch" className="w-3.5 h-3.5 theme-accent-text" />
+                      <span>Pipeline Flow Order</span>
+                      <span className="text-[11px] font-mono-num text-slate-400">
+                        ({stageFilter === "All" ? `${STAGES.length} stages` : stageFilter})
+                      </span>
+                      {stageFilter !== "All" && (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleKpiCardClick("All", "internship");
+                          }}
+                          className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg theme-accent-btn shadow-sm ml-1"
+                        >
+                          ← Show All 8 Stages ({stats.total})
+                        </button>
+                      )}
+                    </div>
+                    <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0 font-semibold">
+                      <span>{flowOrderExpanded ? "Minimize" : "Expand"}</span>
+                      <Icon name={flowOrderExpanded ? "ChevronUp" : "ChevronDown"} className="w-4 h-4" />
+                    </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                    {STAGES.map((st, idx) => {
-                      const pool = st.id === "Offer / Successful"
-                        ? apps.filter(a => a.stage === "Offer / Successful")
-                        : apps.filter(a => a.category === (roleCategory === "parttime" ? "parttime" : "internship") && a.stage === st.id);
-                      const count = pool.length;
-                      const isFocused = stageFilter === st.id;
-                      return (
-                        <React.Fragment key={st.id}>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              isFocused
-                                ? handleKpiCardClick("All", "internship")
-                                : handleKpiCardClick(st.id, st.id === "Offer / Successful" ? "successful" : roleCategory)
-                            }
-                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border font-medium cursor-pointer transition-all ${st.badge} ${
-                              isFocused ? "ring-2 ring-white/70 scale-105 font-bold" : "hover:opacity-90"
-                            }`}
-                          >
-                            <span>{st.label}</span>
-                            <strong className="font-mono-num ml-0.5">({count})</strong>
-                          </button>
-                          {idx < STAGES.length - 1 && (
-                            <span className="text-slate-600 font-mono-num">→</span>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </div>
+
+                  {flowOrderExpanded && (
+                    <div className="px-4 pb-3 pt-2 border-t border-white/[0.06] flex flex-wrap items-center gap-1.5 text-[11px]">
+                      {STAGES.map((st, idx) => {
+                        const pool = st.id === "Offer / Successful"
+                          ? apps.filter(a => a.stage === "Offer / Successful")
+                          : apps.filter(a => a.category === (roleCategory === "parttime" ? "parttime" : "internship") && a.stage === st.id);
+                        const count = pool.length;
+                        const isFocused = stageFilter === st.id;
+                        return (
+                          <React.Fragment key={st.id}>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                isFocused
+                                  ? handleKpiCardClick("All", "internship")
+                                  : handleKpiCardClick(st.id, st.id === "Offer / Successful" ? "successful" : roleCategory)
+                              }
+                              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border font-medium cursor-pointer transition-all ${st.badge} ${
+                                isFocused ? "ring-2 ring-white/70 scale-105 font-bold" : "hover:opacity-90"
+                              }`}
+                            >
+                              <span>{st.label}</span>
+                              <strong className="font-mono-num ml-0.5">({count})</strong>
+                            </button>
+                            {idx < STAGES.length - 1 && (
+                              <span className="text-slate-600 font-mono-num">→</span>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 {/* Columns Grid: Full-Width Expanded Stage View when filtered, or 4x2 Bento Grid / Horizontal Swimlane */}
@@ -5095,12 +5304,32 @@
               </div>
             )}
 
-            {/* VIEW 3: INTERACTIVE CALENDAR (SEPT–DEC 2026) */}
+            {/* VIEW 3: INTERACTIVE CALENDAR (SEPT 2026 – JUNE 2027) */}
             {activeTab === "calendar" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2 glass-surface rounded-2xl p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                    <h2 className="text-sm font-bold text-white">Application & Assessment Schedule</h2>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-sm font-bold text-white">Application & Assessment Schedule</h2>
+                      {(stageFilter !== "All" || sectorFilter !== "All" || search.trim() || rejectionFilter !== "All") && (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-200 border border-fuchsia-400/40">
+                          <span>Filtered ({filteredApps.length})</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStageFilter("All");
+                              setHighlightedStage(null);
+                              setSectorFilter("All");
+                              setRejectionFilter("All");
+                              handleSearchInputChange("");
+                            }}
+                            className="hover:text-white underline ml-0.5"
+                          >
+                            Clear
+                          </button>
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-1.5">
                       {(() => {
                         const curIdx = CAL_MONTHS.findIndex(m => m.id === calMonth);
@@ -5115,18 +5344,24 @@
                             >
                               <Icon name="ChevronLeft" className="w-4 h-4" />
                             </button>
-                            <select
-                              aria-label="Select Calendar Month"
+                            <GlassDropdown
+                              ariaLabel="Select Calendar Month"
                               value={calMonth}
-                              onChange={e => setCalMonth(e.target.value)}
-                              className="theme-input rounded-xl px-3 py-1.5 text-xs font-semibold cursor-pointer"
-                            >
-                              {CAL_MONTHS.map(m => (
-                                <option key={m.id} value={m.id} className="bg-slate-900 text-slate-100">
-                                  {m.label}
-                                </option>
-                              ))}
-                            </select>
+                              align="right"
+                              minWidth="min-w-[205px]"
+                              onChange={(val) => setCalMonth(val)}
+                              options={CAL_MONTHS.map(m => {
+                                const monthEvents = filteredApps.filter(a =>
+                                  (a.deadline && a.deadline.startsWith(m.id)) ||
+                                  (a.appliedDate && a.appliedDate.startsWith(m.id))
+                                ).length;
+                                return {
+                                  value: m.id,
+                                  label: m.label,
+                                  count: monthEvents > 0 ? monthEvents : null
+                                };
+                              })}
+                            />
                             <button
                               type="button"
                               aria-label="Next month"
@@ -5207,10 +5442,16 @@
                   </div>
 
                   {(() => {
-                    const dayDeadlines = apps.filter(a => a.deadline && a.deadline.startsWith(selectedDay));
-                    const dayApplied = apps.filter(a => a.appliedDate === selectedDay);
+                    const dayDeadlines = filteredApps.filter(a => a.deadline && a.deadline.startsWith(selectedDay));
+                    const dayApplied = filteredApps.filter(a => a.appliedDate === selectedDay);
                     if (dayDeadlines.length === 0 && dayApplied.length === 0) {
-                      return <p className="text-xs text-slate-500 py-6 text-center">No logged submissions or assessment deadlines on this date.</p>;
+                      return (
+                        <p className="text-xs text-slate-500 py-6 text-center">
+                          {(stageFilter !== "All" || sectorFilter !== "All" || search.trim() || rejectionFilter !== "All")
+                            ? "No matching submissions or deadlines on this date for your current filter."
+                            : "No logged submissions or assessment deadlines on this date."}
+                        </p>
+                      );
                     }
                     return (
                       <div className="space-y-3">
