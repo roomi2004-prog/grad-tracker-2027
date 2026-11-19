@@ -355,8 +355,66 @@
       color: var(--text-primary, #FAFAFA);
       font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
+    #root {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Animated Shader Layer: let the WebGL shader breathe through translucent frosted surfaces */
+    body[data-shader-active="true"][data-theme="neon-orchid"] {
+      --bg-header: rgba(18, 6, 31, 0.78);
+      --bg-surface: rgba(26, 11, 46, 0.74);
+      --bg-card: rgba(34, 16, 56, 0.78);
+      --bg-card-hover: rgba(45, 22, 74, 0.86);
+      --bg-input: rgba(21, 8, 38, 0.72);
+    }
+    body[data-shader-active="true"][data-theme="carbon-gold"] {
+      --bg-header: rgba(10, 10, 10, 0.80);
+      --bg-surface: rgba(20, 20, 20, 0.76);
+      --bg-card: rgba(24, 24, 27, 0.80);
+      --bg-card-hover: rgba(34, 34, 39, 0.88);
+      --bg-input: rgba(14, 14, 16, 0.74);
+    }
+    body[data-shader-active="true"][data-theme="forest-sage"] {
+      --bg-header: rgba(11, 18, 16, 0.80);
+      --bg-surface: rgba(18, 28, 25, 0.76);
+      --bg-card: rgba(21, 34, 30, 0.80);
+      --bg-card-hover: rgba(28, 46, 40, 0.88);
+      --bg-input: rgba(11, 18, 16, 0.74);
+    }
+    body[data-shader-active="true"][data-theme="daylight"] {
+      --bg-header: rgba(248, 250, 252, 0.82);
+      --bg-surface: rgba(255, 255, 255, 0.78);
+      --bg-card: rgba(255, 255, 255, 0.84);
+      --bg-card-hover: rgba(255, 255, 255, 0.94);
+      --bg-input: rgba(241, 245, 249, 0.82);
+    }
+    body[data-shader-active="true"][data-theme="barbie-dreamhouse"] {
+      --bg-header: rgba(255, 240, 248, 0.82);
+      --bg-surface: rgba(255, 255, 255, 0.78);
+      --bg-card: rgba(255, 255, 255, 0.84);
+      --bg-card-hover: rgba(255, 245, 251, 0.94);
+      --bg-input: rgba(255, 234, 244, 0.80);
+    }
+    body[data-shader-active="true"][data-theme="barbie-dreamhouse"] .glass-surface,
+    body[data-shader-active="true"][data-theme="barbie-dreamhouse"] .glass-card {
+      background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 240, 248, 0.76) 100%);
+    }
+
+    @keyframes shader-fallback-drift {
+      0% { transform: translate3d(-4%, -3%, 0) scale(1.06) rotate(0deg); }
+      50% { transform: translate3d(4%, 3%, 0) scale(1.12) rotate(4deg); }
+      100% { transform: translate3d(-4%, -3%, 0) scale(1.06) rotate(0deg); }
+    }
+    .shader-css-fallback {
+      animation: shader-fallback-drift 18s ease-in-out infinite;
+    }
+
+    /* Shadcn UI (New-York) Polish: crisp elevation, focus rings, tactile press & table rhythm */
     .font-mono-num {
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-variant-numeric: tabular-nums;
@@ -364,28 +422,46 @@
     .theme-header {
       background-color: var(--bg-header);
       border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.45);
     }
     .glass-surface {
       background-color: var(--bg-surface);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
       border: 1px solid var(--border-color);
-      box-shadow: var(--card-shadow);
-      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), var(--card-shadow);
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .glass-card {
       background-color: var(--bg-card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(18px) saturate(135%);
+      -webkit-backdrop-filter: blur(18px) saturate(135%);
       border: 1px solid var(--border-color);
-      box-shadow: var(--card-shadow);
-      transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), var(--card-shadow);
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
     }
     .glass-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1.5px);
       border-color: var(--border-hover);
       background-color: var(--bg-card-hover);
-      box-shadow: var(--card-shadow-hover);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), var(--card-shadow-hover);
+    }
+    button:not(:disabled) {
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+    }
+    button:not(:disabled):active {
+      transform: scale(0.985);
+    }
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg-canvas), 0 0 0 3.5px var(--accent-border);
+    }
+    table tbody tr {
+      transition: background-color 0.14s ease;
     }
     .offer-column-glow {
       border-color: rgba(163, 230, 53, 0.35) !important;
@@ -399,18 +475,27 @@
       background-color: var(--bg-input) !important;
       border: 1px solid var(--border-color) !important;
       color: var(--text-primary) !important;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
     }
-    .theme-input:focus {
+    .theme-input:hover {
+      border-color: var(--border-hover) !important;
+    }
+    .theme-input:focus,
+    .theme-input:focus-within {
       border-color: var(--accent-color) !important;
+      box-shadow: 0 0 0 2px var(--accent-border);
       outline: none;
     }
     .theme-accent-btn {
       background-color: var(--accent-color) !important;
       color: var(--accent-fg) !important;
       border: 1px solid var(--accent-border) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 1px 2px rgba(0, 0, 0, 0.25);
     }
     .theme-accent-btn:hover {
       background-color: var(--accent-hover) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 6px 18px -6px var(--accent-border);
     }
     .theme-accent-text {
       color: var(--accent-color) !important;
@@ -560,6 +645,339 @@
     ];
 
     const THEME_STORAGE_KEY = "ramis_grad_tracker_theme_v3";
+    const SHADER_STORAGE_KEY = "ramis_grad_tracker_shader_v1";
+
+    const SHADER_PRESETS = [
+      { id: "aurora", label: "Shader: Aurora Mesh", shortLabel: "Aurora Mesh" },
+      { id: "silk", label: "Shader: Liquid Silk", shortLabel: "Liquid Silk" },
+      { id: "nebula", label: "Shader: Nebula Pulse", shortLabel: "Nebula Pulse" },
+      { id: "off", label: "Shaders: Off", shortLabel: "Off" }
+    ];
+
+    const SHADER_THEME_PALETTES = {
+      "neon-orchid": {
+        isLight: 0.0,
+        base: [0.071, 0.024, 0.122],
+        c1: [0.969, 0.145, 0.522],
+        c2: [0.447, 0.035, 0.718],
+        c3: [0.227, 0.047, 0.639],
+        css: "radial-gradient(60% 60% at 20% 20%, rgba(247,37,133,0.35), transparent 70%), radial-gradient(55% 55% at 80% 30%, rgba(114,9,183,0.40), transparent 70%), radial-gradient(65% 65% at 50% 85%, rgba(58,12,163,0.38), transparent 75%)"
+      },
+      "carbon-gold": {
+        isLight: 0.0,
+        base: [0.039, 0.039, 0.043],
+        c1: [0.831, 0.686, 0.216],
+        c2: [0.545, 0.416, 0.110],
+        c3: [0.200, 0.175, 0.125],
+        css: "radial-gradient(55% 55% at 22% 18%, rgba(212,175,55,0.22), transparent 70%), radial-gradient(60% 60% at 78% 72%, rgba(139,106,28,0.22), transparent 70%)"
+      },
+      "forest-sage": {
+        isLight: 0.0,
+        base: [0.043, 0.071, 0.063],
+        c1: [0.204, 0.827, 0.600],
+        c2: [0.063, 0.565, 0.408],
+        c3: [0.075, 0.306, 0.290],
+        css: "radial-gradient(55% 55% at 18% 22%, rgba(52,211,153,0.24), transparent 70%), radial-gradient(60% 60% at 82% 76%, rgba(16,185,129,0.22), transparent 70%)"
+      },
+      "daylight": {
+        isLight: 1.0,
+        base: [0.973, 0.980, 0.988],
+        c1: [0.745, 0.898, 0.996],
+        c2: [0.867, 0.839, 0.996],
+        c3: [0.745, 0.965, 0.922],
+        css: "radial-gradient(55% 55% at 20% 20%, rgba(14,165,233,0.16), transparent 70%), radial-gradient(60% 60% at 82% 28%, rgba(139,92,246,0.14), transparent 70%), radial-gradient(60% 60% at 50% 85%, rgba(20,184,166,0.14), transparent 75%)"
+      },
+      "barbie-dreamhouse": {
+        isLight: 1.0,
+        base: [1.000, 0.910, 0.957],
+        c1: [1.000, 0.302, 0.651],
+        c2: [1.000, 0.620, 0.824],
+        c3: [0.847, 0.706, 0.996],
+        css: "radial-gradient(55% 55% at 20% 20%, rgba(255,20,147,0.24), transparent 70%), radial-gradient(60% 60% at 80% 30%, rgba(255,133,192,0.34), transparent 70%), radial-gradient(60% 60% at 50% 85%, rgba(192,132,252,0.26), transparent 75%)"
+      }
+    };
+
+    const SHADER_VERT_SRC = `
+      attribute vec2 a_position;
+      void main() {
+        gl_Position = vec4(a_position, 0.0, 1.0);
+      }
+    `;
+
+    const SHADER_FRAG_SRC = `
+      precision mediump float;
+      uniform vec2 u_resolution;
+      uniform float u_time;
+      uniform int u_mode;
+      uniform vec3 u_base;
+      uniform vec3 u_c1;
+      uniform vec3 u_c2;
+      uniform vec3 u_c3;
+      uniform float u_isLight;
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+          mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+          u.y
+        );
+      }
+
+      float fbm(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        mat2 rot = mat2(0.80, 0.60, -0.60, 0.80);
+        for (int i = 0; i < 4; i++) {
+          v += a * noise(p);
+          p = rot * p * 2.02;
+          a *= 0.5;
+        }
+        return v;
+      }
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+        float aspect = u_resolution.x / max(u_resolution.y, 1.0);
+        vec2 p = (uv - 0.5) * vec2(aspect, 1.0);
+        float t = u_time;
+
+        vec3 col = u_base;
+
+        if (u_mode == 0) {
+          // Aurora Mesh: domain-warped organic ribbons
+          vec2 q = vec2(
+            fbm(p * 1.45 + vec2(t * 0.09, -t * 0.06)),
+            fbm(p * 1.45 + vec2(5.2 - t * 0.07, 1.3 + t * 0.08))
+          );
+          float f = fbm(p * 1.65 + 1.35 * q + vec2(t * 0.05, t * 0.03));
+          float ribbon1 = smoothstep(0.22, 0.82, f);
+          float ribbon2 = smoothstep(0.32, 0.92, length(q));
+          float crest = smoothstep(0.62, 0.95, f * (0.65 + 0.55 * q.x));
+
+          float strength = mix(0.55, 0.72, u_isLight);
+          col = mix(col, u_c3, ribbon2 * strength * 0.75);
+          col = mix(col, u_c2, ribbon1 * strength * 0.72);
+          col = mix(col, u_c1, crest * mix(0.58, 0.42, u_isLight));
+        } else if (u_mode == 1) {
+          // Liquid Silk: flowing iridescent wave interference
+          vec2 w = p * 2.1;
+          for (int i = 1; i <= 3; i++) {
+            float fi = float(i);
+            w.x += 0.36 / fi * sin(fi * 1.65 * w.y + t * (0.28 + 0.07 * fi));
+            w.y += 0.36 / fi * cos(fi * 1.55 * w.x - t * (0.24 + 0.06 * fi));
+          }
+          float s1 = 0.5 + 0.5 * sin(w.x * 1.6 + w.y * 1.2);
+          float s2 = 0.5 + 0.5 * cos(w.y * 1.8 - w.x * 1.1 + t * 0.15);
+          float sheen = pow(smoothstep(0.45, 1.0, s1 * s2), 1.6);
+
+          float strength = mix(0.52, 0.65, u_isLight);
+          col = mix(col, u_c3, s2 * strength * 0.65);
+          col = mix(col, u_c2, s1 * strength * 0.62);
+          col = mix(col, u_c1, sheen * mix(0.62, 0.46, u_isLight));
+        } else {
+          // Nebula Pulse: soft drifting luminous orbs with noise halo
+          float n = fbm(p * 1.8 + vec2(t * 0.06, -t * 0.05));
+          vec2 o1 = vec2(sin(t * 0.21) * 0.48, cos(t * 0.17) * 0.28);
+          vec2 o2 = vec2(cos(t * 0.16 + 2.1) * 0.52, sin(t * 0.23 + 1.2) * 0.32);
+          vec2 o3 = vec2(sin(t * 0.13 + 4.0) * 0.36, cos(t * 0.19 + 3.1) * 0.36);
+
+          float g1 = exp(-2.4 * dot(p - o1, p - o1)) * (0.75 + 0.45 * n);
+          float g2 = exp(-2.1 * dot(p - o2, p - o2)) * (0.75 + 0.45 * (1.0 - n));
+          float g3 = exp(-1.9 * dot(p - o3, p - o3)) * (0.70 + 0.50 * n);
+
+          float gain = mix(0.62, 0.52, u_isLight);
+          col = mix(col, u_c3, clamp(g3 * gain, 0.0, 0.78));
+          col = mix(col, u_c2, clamp(g2 * gain, 0.0, 0.78));
+          col = mix(col, u_c1, clamp(g1 * gain * 0.92, 0.0, 0.72));
+        }
+
+        // Subtle vignette for dark themes so focus stays on dashboard cards
+        float vig = 1.0 - smoothstep(0.55, 1.48, length(p));
+        col = mix(u_base, col, mix(0.45 + 0.55 * vig, 0.72 + 0.28 * vig, u_isLight));
+
+        // Ultra-subtle film dither to prevent 8-bit gradient banding
+        col += (hash(gl_FragCoord.xy + fract(t) * 100.0) - 0.5) * 0.012;
+
+        gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+      }
+    `;
+
+    const ShaderBackground = React.memo(({ theme, mode }) => {
+      const canvasRef = React.useRef(null);
+      const [useFallback, setUseFallback] = useState(false);
+      const themeRef = React.useRef(theme);
+      const modeRef = React.useRef(mode);
+      themeRef.current = theme;
+      modeRef.current = mode;
+
+      const isActive = mode !== "off";
+
+      useEffect(() => {
+        if (!isActive || useFallback) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        let gl = null;
+        try {
+          gl = canvas.getContext("webgl", {
+            alpha: false,
+            antialias: false,
+            depth: false,
+            stencil: false,
+            powerPreference: "low-power",
+            preserveDrawingBuffer: false
+          });
+        } catch {
+          gl = null;
+        }
+        if (!gl) {
+          setUseFallback(true);
+          return;
+        }
+
+        const compile = (type, src) => {
+          const sh = gl.createShader(type);
+          gl.shaderSource(sh, src);
+          gl.compileShader(sh);
+          if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+            gl.deleteShader(sh);
+            return null;
+          }
+          return sh;
+        };
+
+        const vs = compile(gl.VERTEX_SHADER, SHADER_VERT_SRC);
+        const fs = compile(gl.FRAGMENT_SHADER, SHADER_FRAG_SRC);
+        if (!vs || !fs) {
+          setUseFallback(true);
+          return;
+        }
+
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+          setUseFallback(true);
+          return;
+        }
+
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+          gl.STATIC_DRAW
+        );
+
+        const posLoc = gl.getAttribLocation(prog, "a_position");
+        const uRes = gl.getUniformLocation(prog, "u_resolution");
+        const uTime = gl.getUniformLocation(prog, "u_time");
+        const uMode = gl.getUniformLocation(prog, "u_mode");
+        const uBase = gl.getUniformLocation(prog, "u_base");
+        const uC1 = gl.getUniformLocation(prog, "u_c1");
+        const uC2 = gl.getUniformLocation(prog, "u_c2");
+        const uC3 = gl.getUniformLocation(prog, "u_c3");
+        const uIsLight = gl.getUniformLocation(prog, "u_isLight");
+
+        const resize = () => {
+          const scale = Math.min(window.devicePixelRatio || 1, 1.25) * 0.65;
+          const w = Math.max(1, Math.floor(window.innerWidth * scale));
+          const h = Math.max(1, Math.floor(window.innerHeight * scale));
+          if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+            gl.viewport(0, 0, w, h);
+          }
+        };
+        resize();
+        window.addEventListener("resize", resize);
+
+        const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let rafId = 0;
+        let startTs = performance.now();
+
+        const renderFrame = (now) => {
+          const pal = SHADER_THEME_PALETTES[themeRef.current] || SHADER_THEME_PALETTES["neon-orchid"];
+          const modeIdx = modeRef.current === "silk" ? 1 : modeRef.current === "nebula" ? 2 : 0;
+          const elapsed = reducedMotion ? 12.0 : (now - startTs) * 0.001;
+
+          gl.useProgram(prog);
+          gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+          gl.enableVertexAttribArray(posLoc);
+          gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+          gl.uniform2f(uRes, canvas.width, canvas.height);
+          gl.uniform1f(uTime, elapsed);
+          gl.uniform1i(uMode, modeIdx);
+          gl.uniform3fv(uBase, pal.base);
+          gl.uniform3fv(uC1, pal.c1);
+          gl.uniform3fv(uC2, pal.c2);
+          gl.uniform3fv(uC3, pal.c3);
+          gl.uniform1f(uIsLight, pal.isLight);
+
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+          if (!reducedMotion && !document.hidden) {
+            rafId = requestAnimationFrame(renderFrame);
+          }
+        };
+
+        const handleVis = () => {
+          if (!document.hidden && !reducedMotion) {
+            cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(renderFrame);
+          }
+        };
+        document.addEventListener("visibilitychange", handleVis);
+        rafId = requestAnimationFrame(renderFrame);
+
+        return () => {
+          cancelAnimationFrame(rafId);
+          window.removeEventListener("resize", resize);
+          document.removeEventListener("visibilitychange", handleVis);
+          try {
+            gl.deleteBuffer(buf);
+            gl.deleteProgram(prog);
+            gl.deleteShader(vs);
+            gl.deleteShader(fs);
+          } catch {}
+        };
+      }, [isActive, useFallback]);
+
+      if (mode === "off") return null;
+
+      if (useFallback) {
+        const pal = SHADER_THEME_PALETTES[theme] || SHADER_THEME_PALETTES["neon-orchid"];
+        return (
+          <div
+            aria-hidden="true"
+            className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
+          >
+            <div
+              className="w-full h-full shader-css-fallback"
+              style={{ backgroundImage: pal.css }}
+            />
+          </div>
+        );
+      }
+
+      return (
+        <canvas
+          ref={canvasRef}
+          aria-hidden="true"
+          data-shader-canvas="true"
+          className="fixed inset-0 w-full h-full pointer-events-none z-0"
+        />
+      );
+    });
 
     const CAL_MONTHS = Array.from({ length: 10 }, (_, i) => {
       const d = new Date(2026, 8 + i, 1);
@@ -2615,6 +3033,14 @@
           return "neon-orchid";
         }
       });
+      const [shaderMode, setShaderMode] = useState(() => {
+        try {
+          const savedShader = localStorage.getItem(SHADER_STORAGE_KEY);
+          return SHADER_PRESETS.some(s => s.id === savedShader) ? savedShader : "aurora";
+        } catch {
+          return "aurora";
+        }
+      });
       const [barbieAudioPlaying, setBarbieAudioPlaying] = useState(false);
       const [barbieAudioMuted, setBarbieAudioMuted] = useState(false);
       const [vivaAudioPlaying, setVivaAudioPlaying] = useState(false);
@@ -2967,6 +3393,13 @@
           }
         } catch {}
       }, [theme]);
+
+      useEffect(() => {
+        document.body.setAttribute("data-shader-active", shaderMode !== "off" ? "true" : "false");
+        try {
+          localStorage.setItem(SHADER_STORAGE_KEY, shaderMode);
+        } catch {}
+      }, [shaderMode]);
 
       useEffect(() => {
         return () => {
@@ -4167,7 +4600,8 @@
       }, [calMonth, filteredApps]);
 
       return (
-        <div className="min-h-screen pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
+        <div className="relative min-h-screen pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
+          <ShaderBackground theme={theme} mode={shaderMode} />
           {/* Fixed Top Command Header (Out of document flow so expanding/collapsing never causes layout-shift flash!) */}
           <header
             ref={headerRef}
@@ -4365,7 +4799,7 @@
           </header>
           <div style={{ height: `${headerSpacerHeight}px` }} aria-hidden="true" />
 
-          <main className="max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-5">
+          <main className="relative z-10 max-w-[1640px] mx-auto px-4 md:px-8 pt-6 space-y-5">
             {cycleArchive && cycleArchive.offerAccepted && cycleArchive.acceptedOffer && (
               <section className="glass-surface offer-column-glow rounded-2xl p-4 md:p-5 border border-lime-400/40">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -6027,8 +6461,8 @@
             )}
           </main>
 
-          {/* Subtle Bottom Settings & Data Utility Footer (Theme, Cloud Sync Token, Backup / Restore JSON) */}
-          <footer className="max-w-[1640px] mx-auto px-4 md:px-8 mt-10 pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
+          {/* Subtle Bottom Settings & Data Utility Footer (Theme, Background Shaders, Cloud Sync Token, Backup / Restore JSON) */}
+          <footer className="relative z-10 max-w-[1640px] mx-auto px-4 md:px-8 mt-10 pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
             <span>Settings & Data Utilities</span>
             <div className="flex flex-wrap items-center gap-2">
               <div className="theme-input rounded-lg px-2.5 py-1 flex items-center gap-2">
@@ -6045,6 +6479,30 @@
                   className="bg-transparent text-[11px] font-semibold text-slate-300 focus:outline-none cursor-pointer pr-1"
                 >
                   {THEME_PRESETS.map(preset => (
+                    <option key={preset.id} value={preset.id} className="bg-slate-900 text-slate-100">
+                      {preset.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="theme-input rounded-lg px-2.5 py-1 flex items-center gap-2">
+                <span
+                  className={`w-2 h-2 rounded-full shrink-0 ${
+                    shaderMode !== "off"
+                      ? "bg-fuchsia-400 shadow-[0_0_8px_rgba(232,121,249,0.9)] animate-pulse"
+                      : "bg-slate-500"
+                  }`}
+                  title={shaderMode !== "off" ? `Animated WebGL Shader Active (${shaderMode})` : "Background Shaders Off"}
+                />
+                <Icon name="Sparkles" className="w-3 h-3 text-slate-400" />
+                <select
+                  aria-label="Background Shader Switcher"
+                  value={shaderMode}
+                  onChange={e => setShaderMode(e.target.value)}
+                  className="bg-transparent text-[11px] font-semibold text-slate-300 focus:outline-none cursor-pointer pr-1"
+                >
+                  {SHADER_PRESETS.map(preset => (
                     <option key={preset.id} value={preset.id} className="bg-slate-900 text-slate-100">
                       {preset.label}
                     </option>
