@@ -1471,6 +1471,7 @@
     const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
     const SHORTLISTED_RECS_KEY = "ramis_grad_tracker_2027_shortlisted_recs_v1";
     const SNOOZED_RECS_KEY = "ramis_grad_tracker_2027_snoozed_recs_v1";
+    const PENDING_REVIEW_KEY = "ramis_grad_tracker_2027_pending_review_v1";
     const SNOOZE_DAYS = 7;
     const DELETED_APPS_KEY = "ramis_grad_tracker_2027_deleted_apps_v1";
     const LOCAL_UPDATED_AT_KEY = "ramis_grad_tracker_2027_updated_at_v1";
@@ -1814,6 +1815,17 @@
         return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
       } catch {
         return {};
+      }
+    }
+
+    function loadPendingEmailReview() {
+      try {
+        const raw = localStorage.getItem(PENDING_REVIEW_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
       }
     }
 
@@ -3009,6 +3021,9 @@
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
       const [shortlistedRecs, setShortlistedRecs] = useState(loadShortlistedRecs);
       const [snoozedRecs, setSnoozedRecs] = useState(loadSnoozedRecs);
+      const [pendingReviews, setPendingReviews] = useState(loadPendingEmailReview);
+      const [reviewDrafts, setReviewDrafts] = useState({});
+      const [reviewCollapsed, setReviewCollapsed] = useState(false);
       const [deletedAppIds, setDeletedAppIds] = useState(loadDeletedAppIds);
       const [isStateLoading, setIsStateLoading] = useState(() => loadMergedApps().length === 0 && !loadCycleArchive());
 
@@ -3025,8 +3040,8 @@
       const [isTestingToken, setIsTestingToken] = useState(false);
       const cloudQueueRef = React.useRef(Promise.resolve());
       const remoteExtrasRef = React.useRef({});
-      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, snoozed: snoozedRecs, archive: cycleArchive, deletedIds: deletedAppIds });
-      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, snoozed: snoozedRecs, archive: cycleArchive, deletedIds: deletedAppIds };
+      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, snoozed: snoozedRecs, pendingReviews, archive: cycleArchive, deletedIds: deletedAppIds });
+      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, snoozed: snoozedRecs, pendingReviews, archive: cycleArchive, deletedIds: deletedAppIds };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
       const [recsCollapsed, setRecsCollapsed] = useState(false);
       const [navFilterExpanded, setNavFilterExpanded] = useState(false);
@@ -3434,6 +3449,10 @@
       }, [snoozedRecs]);
 
       useEffect(() => {
+        try { localStorage.setItem(PENDING_REVIEW_KEY, JSON.stringify(pendingReviews)); } catch {}
+      }, [pendingReviews]);
+
+      useEffect(() => {
         try { localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(rawRecs)); } catch {}
       }, [rawRecs]);
 
@@ -3449,6 +3468,7 @@
         const nextHandled = overrides.handledRecIds !== undefined ? overrides.handledRecIds : cur.handled;
         const nextShortlisted = overrides.shortlistedRecIds !== undefined ? overrides.shortlistedRecIds : cur.shortlisted;
         const nextSnoozed = overrides.snoozedRecs !== undefined ? overrides.snoozedRecs : cur.snoozed;
+        const nextPendingReviews = overrides.pendingEmailReview !== undefined ? overrides.pendingEmailReview : cur.pendingReviews;
         const nextDeleted = overrides.deletedAppIds !== undefined ? overrides.deletedAppIds : cur.deletedIds;
         const nextArchive = overrides.cycleArchive !== undefined ? overrides.cycleArchive : cur.archive;
         const cleanApps = sanitizeAndDedupeApps(nextApps, nextDeleted);
@@ -3466,6 +3486,7 @@
           dismissedIds: nextHandled,
           shortlistedRecIds: nextShortlisted,
           snoozedRecs: nextSnoozed,
+          pendingEmailReview: nextPendingReviews || [],
           deletedAppIds: nextDeleted,
           cycleArchive: nextArchive || null,
           offerAccepted: nextOfferAccepted,
@@ -3479,6 +3500,7 @@
           localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(nextHandled));
           localStorage.setItem(SHORTLISTED_RECS_KEY, JSON.stringify(nextShortlisted));
           localStorage.setItem(SNOOZED_RECS_KEY, JSON.stringify(nextSnoozed || {}));
+          localStorage.setItem(PENDING_REVIEW_KEY, JSON.stringify(nextPendingReviews || []));
           localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(nextDeleted));
         } catch {}
 
@@ -3513,7 +3535,7 @@
           if (!remote || !Array.isArray(remote.applications)) return null;
 
           // Keep extra keys written by external sync jobs (e.g. processedEmailIds from Cloud Gmail Sync)
-          const { version, updatedAt, applications, recommendations, handledRecIds, shortlistedRecIds: remoteShortlistedIds, snoozedRecs: remoteSnoozedRecs, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
+          const { version, updatedAt, applications, recommendations, handledRecIds, shortlistedRecIds: remoteShortlistedIds, snoozedRecs: remoteSnoozedRecs, pendingEmailReview: remotePendingReview, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
           remoteExtrasRef.current = extraKeys;
 
           const mergedDeletedIds = Array.from(new Set([
@@ -3540,6 +3562,10 @@
           // Merge 7-day archive (snooze) timestamps from cloud + this device, keeping the later expiry
           if (remoteSnoozedRecs && typeof remoteSnoozedRecs === "object" && !Array.isArray(remoteSnoozedRecs)) {
             setSnoozedRecs(mergeSnoozedMaps(loadSnoozedRecs(), remoteSnoozedRecs));
+          }
+
+          if (Array.isArray(remotePendingReview)) {
+            setPendingReviews(remotePendingReview);
           }
 
           // Always union handledRecIds + dismissedIds so applied/dismissed roles never reappear
@@ -3830,6 +3856,120 @@
         pushSnapshotToCloud(
           { snoozedRecs: nextSnoozed },
           `Restored from archive: ${rec.company}`
+        );
+      };
+
+      const updateReviewDraft = (reviewId, patch) => {
+        setReviewDrafts(prev => ({ ...prev, [reviewId]: { ...(prev[reviewId] || {}), ...patch } }));
+      };
+
+      const handleApprovePendingReview = (item) => {
+        const draft = reviewDrafts[item.id] || {};
+        const company = String(draft.company !== undefined ? draft.company : (item.company || "")).trim();
+        if (!company) {
+          setSyncStatus({ ok: false, time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }), message: "Please enter a company name before approving.", emails: [] });
+          return;
+        }
+        const role = String(draft.role !== undefined ? draft.role : (item.role || "2027 Summer Internship")).trim() || "2027 Summer Internship";
+        const stage = normalizeStage(draft.stage !== undefined ? draft.stage : (item.stage || "Application Submitted"));
+        const category = draft.category !== undefined ? draft.category : (item.category || "internship");
+        const dateStr = item.date || localTodayStr();
+        const nowIso = new Date().toISOString();
+        const targetKey = canonicalFirmKey(company);
+
+        // Update existing card if same firm + category matches (for non-parttime), else create a brand-new card
+        let matchedExisting = false;
+        let nextApps = rawApps.map(a => {
+          if (matchedExisting) return a;
+          const sameFirm = targetKey && canonicalFirmKey(a.company || a.firm) === targetKey;
+          const sameCat = (a.category || "internship") === category;
+          const sameRole = category !== "parttime" || String(a.role || "").toLowerCase().trim() === role.toLowerCase().trim();
+          if (sameFirm && sameCat && sameRole) {
+            matchedExisting = true;
+            const isClosed = stage === "Closed / Unsuccessful";
+            const clearDl = isClosed || stage === "Offer / Successful" || stage === "On Hold / Waitlist";
+            return {
+              ...a,
+              stage,
+              subStatus: `${stage} (Approved from Gmail Review)`,
+              deadline: clearDl ? null : (item.deadline || a.deadline || null),
+              portalLink: item.portalLink || a.portalLink || "",
+              lastUpdated: item.receivedAt || nowIso,
+              rejectedAfterStage: isClosed ? (a.rejectedAfterStage || item.rejectedAfterStage || "CV / Application Screen") : a.rejectedAfterStage,
+              notes: `${a.notes ? `${a.notes}\n` : ""}[${dateStr}] Approved Gmail email: ${item.subject}`.trim()
+            };
+          }
+          return a;
+        });
+
+        if (!matchedExisting) {
+          const isClosed = stage === "Closed / Unsuccessful";
+          const clearDl = isClosed || stage === "Offer / Successful" || stage === "On Hold / Waitlist";
+          nextApps = [{
+            id: Date.now(),
+            category,
+            company,
+            role,
+            sector: item.sector || (category === "parttime" ? "Part-Time & Flex" : "Corporate & Investment Banking"),
+            appliedDate: dateStr,
+            lastUpdated: item.receivedAt || nowIso,
+            stage,
+            subStatus: `${stage} (Approved from Gmail Review)`,
+            deadline: clearDl ? null : (item.deadline || null),
+            portalLink: item.portalLink || "",
+            calendarSynced: false,
+            notes: `[${dateStr}] Approved from Gmail Review: ${item.subject}`,
+            rejectedAfterStage: isClosed ? (item.rejectedAfterStage || "CV / Application Screen") : null,
+            _gmailSubStatus: stage,
+            _gmailDeadline: clearDl ? null : (item.deadline || null)
+          }, ...nextApps];
+        }
+
+        // Also clear any matching Recommended / Shortlisted / Archived entry for this company
+        let nextHandled = [...handledRecs];
+        let nextShortlisted = [...shortlistedRecs];
+        const nextSnoozed = { ...snoozedRecs };
+        for (const rec of rawRecs) {
+          if (targetKey && canonicalFirmKey(rec.company) === targetKey) {
+            const slug = makeRecSlug(rec.company, rec.role);
+            if (!nextHandled.includes(rec.id)) nextHandled.push(rec.id);
+            if (!nextHandled.includes(slug)) nextHandled.push(slug);
+            nextShortlisted = nextShortlisted.filter(k => k !== rec.id && k !== slug);
+            delete nextSnoozed[rec.id];
+            delete nextSnoozed[slug];
+          }
+        }
+
+        const nextPending = pendingReviews.filter(r => r.id !== item.id);
+        setApps(nextApps);
+        setHandledRecs(nextHandled);
+        setShortlistedRecs(nextShortlisted);
+        setSnoozedRecs(nextSnoozed);
+        setPendingReviews(nextPending);
+        pushSnapshotToCloud(
+          {
+            applications: nextApps,
+            handledRecIds: nextHandled,
+            shortlistedRecIds: nextShortlisted,
+            snoozedRecs: nextSnoozed,
+            pendingEmailReview: nextPending
+          },
+          `Approved Gmail review: ${company} (${stage})`
+        );
+        setSyncStatus({
+          ok: true,
+          time: new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" }),
+          message: `${matchedExisting ? "Updated" : "Added"} "${company}" → ${stage}.`,
+          emails: []
+        });
+      };
+
+      const handleDismissPendingReview = (item) => {
+        const nextPending = pendingReviews.filter(r => r.id !== item.id);
+        setPendingReviews(nextPending);
+        pushSnapshotToCloud(
+          { pendingEmailReview: nextPending },
+          `Ignored Gmail review: ${item.subject || item.company || item.id}`
         );
       };
 
@@ -5215,6 +5355,128 @@
                                   </a>
                                 )}
                               </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* 1-TAP NEEDS REVIEW BANNER — catches uncertain / unusual job emails so none vanish silently */}
+            {pendingReviews.length > 0 && (
+              <section className="glass-surface rounded-2xl p-4 md:p-5 border border-amber-400/35 bg-amber-500/[0.04]">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_10px_#fbbf24] animate-pulse"></span>
+                    <h2 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-amber-300">
+                      Uncertain Job Emails — Needs Review ({pendingReviews.length})
+                    </h2>
+                    <span className="text-[11px] text-slate-400">
+                      • 1-tap approve to add/update tracker, or ignore if not a job application
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setReviewCollapsed(c => !c)}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold theme-input text-slate-300 hover:text-white transition"
+                  >
+                    <Icon name={reviewCollapsed ? "ChevronDown" : "ChevronUp"} className="w-3.5 h-3.5" />
+                    {reviewCollapsed ? "Show" : "Hide"}
+                  </button>
+                </div>
+
+                {!reviewCollapsed && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3.5">
+                    {pendingReviews.map(item => {
+                      const draft = reviewDrafts[item.id] || {};
+                      const companyVal = draft.company !== undefined ? draft.company : (item.company || "");
+                      const roleVal = draft.role !== undefined ? draft.role : (item.role || "2027 Summer Internship");
+                      const stageVal = draft.stage !== undefined ? draft.stage : (item.stage || "Application Submitted");
+                      const catVal = draft.category !== undefined ? draft.category : (item.category || "internship");
+                      return (
+                        <div key={item.id} className="glass-card rounded-xl p-3.5 flex flex-col justify-between gap-3 border border-amber-400/25">
+                          <div className="space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold text-white truncate" title={item.subject}>
+                                  {item.subject || "(No subject)"}
+                                </p>
+                                <p className="text-[11px] text-slate-400 truncate mt-0.5" title={item.from}>
+                                  From: {item.from || "Unknown"} • {item.date || ""}
+                                </p>
+                              </div>
+                              {typeof item.confidence === "number" && (
+                                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-400/30 font-mono-num">
+                                  {Math.round(item.confidence * 100)}% conf
+                                </span>
+                              )}
+                            </div>
+
+                            {item.snippet && (
+                              <p className="text-[11px] text-slate-300/90 line-clamp-2 bg-black/20 rounded-lg px-2.5 py-1.5 border border-white/[0.06]">
+                                {item.snippet}
+                              </p>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                              <input
+                                type="text"
+                                value={companyVal}
+                                onChange={e => updateReviewDraft(item.id, { company: e.target.value })}
+                                placeholder="Company name..."
+                                className="theme-input rounded-lg px-2.5 py-1.5 text-xs font-semibold"
+                              />
+                              <input
+                                type="text"
+                                value={roleVal}
+                                onChange={e => updateReviewDraft(item.id, { role: e.target.value })}
+                                placeholder="Role title..."
+                                className="theme-input rounded-lg px-2.5 py-1.5 text-xs"
+                              />
+                              <select
+                                value={stageVal}
+                                onChange={e => updateReviewDraft(item.id, { stage: e.target.value })}
+                                className="theme-input rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer"
+                              >
+                                {STAGES.map(st => (
+                                  <option key={st.id} value={st.id} className="bg-slate-900 text-slate-100">
+                                    {st.label}
+                                  </option>
+                                ))}
+                              </select>
+                              <select
+                                value={catVal}
+                                onChange={e => updateReviewDraft(item.id, { category: e.target.value })}
+                                className="theme-input rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer"
+                              >
+                                <option value="internship" className="bg-slate-900 text-slate-100">2027 Intern / Grad</option>
+                                <option value="parttime" className="bg-slate-900 text-slate-100">Part-Time & Flex</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/[0.06]">
+                            <span className="text-[10px] text-slate-400 truncate" title={item.reason || ""}>
+                              {item.reason || "Flagged for quick confirmation"}
+                            </span>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => handleDismissPendingReview(item)}
+                                className="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold theme-input text-slate-400 hover:text-rose-300 transition"
+                              >
+                                Ignore ✕
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleApprovePendingReview(item)}
+                                className="px-3 py-1.5 rounded-lg text-[11px] font-bold theme-accent-btn transition"
+                              >
+                                Approve ✓
+                              </button>
                             </div>
                           </div>
                         </div>
