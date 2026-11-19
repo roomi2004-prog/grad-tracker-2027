@@ -2229,7 +2229,7 @@
         }
       };
 
-      const handleSearchKeyDown = (e) => {
+      const handleSearchKeyDown = (e, fromHeader = false) => {
         if (e.key === "Enter") {
           const normalized = e.currentTarget.value.trim().toLowerCase();
           if (normalized === BARBIE_TRIGGER_PHRASE) {
@@ -2241,6 +2241,8 @@
           } else if (/^hell\s+yeah{2,}$/.test(normalized)) {
             e.preventDefault();
             startOfferCelebration();
+          } else if (fromHeader && normalized && pipelineSectionRef.current) {
+            pipelineSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         }
       };
@@ -2248,6 +2250,8 @@
       const [activeTab, setActiveTab] = useState("kanban");
       const [roleCategory, setRoleCategory] = useState("internship");
       const [search, setSearch] = useState("");
+      const [headerSearchOpen, setHeaderSearchOpen] = useState(false);
+      const headerSearchInputRef = React.useRef(null);
       const [sectorFilter, setSectorFilter] = useState("All");
       const [stageFilter, setStageFilter] = useState("All");
       const [rejectionFilter, setRejectionFilter] = useState("All");
@@ -3124,6 +3128,7 @@
           setShowForceArchiveModal(false);
           setShowExternalOfferModal(false);
           setShowCloudSyncModal(false);
+          setHeaderSearchOpen(false);
           closeTwerkEasterEgg();
         };
         window.addEventListener("keydown", onKey);
@@ -3533,6 +3538,60 @@
                   onChange={handleRestoreJson}
                   className="hidden"
                 />
+
+                {/* Expandable Top Header Magnifying Glass Search Bar */}
+                <div className="flex items-center shrink-0">
+                  {headerSearchOpen ? (
+                    <div className={`relative flex items-center glass-surface rounded-xl transition-all duration-200 ${
+                      isHeaderCompact ? "w-44 sm:w-56" : "w-48 sm:w-64"
+                    }`}>
+                      <span className="pl-2.5 text-slate-400 pointer-events-none flex items-center">
+                        <Icon name="Search" className="w-3.5 h-3.5" />
+                      </span>
+                      <input
+                        ref={headerSearchInputRef}
+                        type="text"
+                        value={search}
+                        onChange={e => handleSearchInputChange(e.target.value)}
+                        onKeyDown={e => handleSearchKeyDown(e, true)}
+                        placeholder="Search firm, role, stage..."
+                        aria-label="Header search applications"
+                        className={`w-full bg-transparent text-white placeholder-slate-400 focus:outline-none px-2 ${
+                          isHeaderCompact ? "py-1 text-[11px]" : "py-1.5 text-xs"
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        aria-label="Close header search"
+                        onClick={() => {
+                          handleSearchInputChange("");
+                          setHeaderSearchOpen(false);
+                        }}
+                        className="pr-2 text-slate-400 hover:text-white transition flex items-center"
+                      >
+                        <Icon name="X" className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      aria-label="Open header search"
+                      title="Search applications"
+                      onClick={() => {
+                        setHeaderSearchOpen(true);
+                        setTimeout(() => headerSearchInputRef.current && headerSearchInputRef.current.focus(), 30);
+                      }}
+                      className={`relative flex items-center justify-center glass-surface hover:border-current text-white rounded-xl transition-all shrink-0 ${
+                        isHeaderCompact ? "p-1.5" : "p-2"
+                      }`}
+                    >
+                      <Icon name="Search" className={isHeaderCompact ? "w-3.5 h-3.5" : "w-4 h-4"} />
+                      {search && (
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-fuchsia-400 shadow-[0_0_6px_#e879f9]" />
+                      )}
+                    </button>
+                  )}
+                </div>
 
                 {/* Add Role Button — compact when scrolled down */}
                 <button
