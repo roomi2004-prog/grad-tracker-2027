@@ -1907,6 +1907,7 @@
       const twerkSynthRef = React.useRef(null);
       const barbiePhraseActiveRef = React.useRef(false);
       const twerkPhraseActiveRef = React.useRef(false);
+      const vivaPhraseActiveRef = React.useRef(false);
 
       const getTwerkSynth = () => {
         if (!twerkSynthRef.current) {
@@ -2049,6 +2050,14 @@
         } else {
           twerkPhraseActiveRef.current = false;
         }
+        if (/^hell\s+yeah{2,}$/.test(normalized)) {
+          if (!vivaPhraseActiveRef.current) {
+            vivaPhraseActiveRef.current = true;
+            startOfferCelebration();
+          }
+        } else {
+          vivaPhraseActiveRef.current = false;
+        }
       };
 
       const handleSearchKeyDown = (e) => {
@@ -2060,6 +2069,9 @@
           } else if (/^hell\s+nah{2,}$/.test(normalized)) {
             e.preventDefault();
             activateTwerkEasterEgg();
+          } else if (/^hell\s+yeah{2,}$/.test(normalized)) {
+            e.preventDefault();
+            startOfferCelebration();
           }
         }
       };
