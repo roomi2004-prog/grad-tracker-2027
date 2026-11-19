@@ -925,6 +925,7 @@
     const STORAGE_KEY = "ramis_grad_tracker_2027_v4_offers";
     const CACHED_RECS_KEY = "ramis_grad_tracker_2027_recs_cache_v1";
     const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
+    const SHORTLISTED_RECS_KEY = "ramis_grad_tracker_2027_shortlisted_recs_v1";
     const DELETED_APPS_KEY = "ramis_grad_tracker_2027_deleted_apps_v1";
     const LOCAL_UPDATED_AT_KEY = "ramis_grad_tracker_2027_updated_at_v1";
     const CYCLE_ARCHIVE_KEY = "ramis_grad_tracker_2027_cycle_archive_v1";
@@ -1240,6 +1241,17 @@
     function loadHandledRecs() {
       try {
         const raw = localStorage.getItem(HANDLED_RECS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function loadShortlistedRecs() {
+      try {
+        const raw = localStorage.getItem(SHORTLISTED_RECS_KEY);
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
@@ -2359,6 +2371,7 @@
       const recsPaused = Boolean(cycleArchive && (cycleArchive.offerAccepted || cycleArchive.archived || cycleArchive.recommendationsPaused));
       const [rawRecs, setRawRecs] = useState(loadCachedRecs);
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
+      const [shortlistedRecs, setShortlistedRecs] = useState(loadShortlistedRecs);
       const [deletedAppIds, setDeletedAppIds] = useState(loadDeletedAppIds);
       const [isStateLoading, setIsStateLoading] = useState(() => loadMergedApps().length === 0 && !loadCycleArchive());
 
@@ -2375,8 +2388,8 @@
       const [isTestingToken, setIsTestingToken] = useState(false);
       const cloudQueueRef = React.useRef(Promise.resolve());
       const remoteExtrasRef = React.useRef({});
-      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive, deletedIds: deletedAppIds });
-      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, archive: cycleArchive, deletedIds: deletedAppIds };
+      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, archive: cycleArchive, deletedIds: deletedAppIds });
+      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, archive: cycleArchive, deletedIds: deletedAppIds };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
       const [recsCollapsed, setRecsCollapsed] = useState(false);
 
@@ -2755,6 +2768,10 @@
       }, [handledRecs]);
 
       useEffect(() => {
+        try { localStorage.setItem(SHORTLISTED_RECS_KEY, JSON.stringify(shortlistedRecs)); } catch {}
+      }, [shortlistedRecs]);
+
+      useEffect(() => {
         try { localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(rawRecs)); } catch {}
       }, [rawRecs]);
 
@@ -2768,6 +2785,7 @@
         const nextApps = overrides.applications !== undefined ? overrides.applications : cur.apps;
         const nextRecs = overrides.recommendations !== undefined ? overrides.recommendations : cur.recs;
         const nextHandled = overrides.handledRecIds !== undefined ? overrides.handledRecIds : cur.handled;
+        const nextShortlisted = overrides.shortlistedRecIds !== undefined ? overrides.shortlistedRecIds : cur.shortlisted;
         const nextDeleted = overrides.deletedAppIds !== undefined ? overrides.deletedAppIds : cur.deletedIds;
         const nextArchive = overrides.cycleArchive !== undefined ? overrides.cycleArchive : cur.archive;
         const cleanApps = sanitizeAndDedupeApps(nextApps, nextDeleted);
@@ -2783,6 +2801,7 @@
           recommendations: nextRecs,
           handledRecIds: nextHandled,
           dismissedIds: nextHandled,
+          shortlistedRecIds: nextShortlisted,
           deletedAppIds: nextDeleted,
           cycleArchive: nextArchive || null,
           offerAccepted: nextOfferAccepted,
@@ -2794,6 +2813,7 @@
           localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanApps));
           localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(nextRecs));
           localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(nextHandled));
+          localStorage.setItem(SHORTLISTED_RECS_KEY, JSON.stringify(nextShortlisted));
           localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(nextDeleted));
         } catch {}
 
@@ -2828,7 +2848,7 @@
           if (!remote || !Array.isArray(remote.applications)) return null;
 
           // Keep extra keys written by external sync jobs (e.g. processedEmailIds from Cloud Gmail Sync)
-          const { version, updatedAt, applications, recommendations, handledRecIds, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
+          const { version, updatedAt, applications, recommendations, handledRecIds, shortlistedRecIds: remoteShortlistedIds, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
           remoteExtrasRef.current = extraKeys;
 
           const mergedDeletedIds = Array.from(new Set([
@@ -2859,6 +2879,12 @@
             ...(remote.dismissedIds || [])
           ]));
           setHandledRecs(mergedHandled);
+
+          if (Array.isArray(remoteShortlistedIds) && remoteIsNewer) {
+            setShortlistedRecs(remoteShortlistedIds);
+          } else if (Array.isArray(remoteShortlistedIds) && loadShortlistedRecs().length === 0 && remoteShortlistedIds.length > 0) {
+            setShortlistedRecs(remoteShortlistedIds);
+          }
 
           if (combinedRemoteRecs.length > 0) {
             const seenRec = new Set();
@@ -2983,32 +3009,18 @@
         return keys;
       }, [apps, cycleArchive]);
 
-      const activeRecommendations = useMemo(() => {
+      const shortlistedRecSet = useMemo(() => new Set(shortlistedRecs), [shortlistedRecs]);
+
+      const isRecShortlisted = (rec) => {
+        if (!rec) return false;
+        const slug = makeRecSlug(rec.company, rec.role);
+        return shortlistedRecSet.has(rec.id) || shortlistedRecSet.has(slug);
+      };
+
+      const unhandledRecommendations = useMemo(() => {
         const handledSet = new Set(handledRecs);
         const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
         if (recsPaused) return [];
-        return rawRecs.filter(rec => {
-          const slug = makeRecSlug(rec.company, rec.role);
-          const firmKey = canonicalFirmKey(rec.company);
-          if (
-            handledSet.has(rec.id) ||
-            handledSet.has(slug) ||
-            existingAppSlugs.has(slug) ||
-            (firmKey && appliedFirmKeys.has(firmKey))
-          ) {
-            return false;
-          }
-          if (recSourceFilter !== "All" && rec.source !== recSourceFilter) {
-            return false;
-          }
-          return true;
-        });
-      }, [rawRecs, handledRecs, apps, appliedFirmKeys, recSourceFilter, recsPaused]);
-
-      const totalUnhandledRecsCount = useMemo(() => {
-        const handledSet = new Set(handledRecs);
-        const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
-        if (recsPaused) return 0;
         return rawRecs.filter(rec => {
           const slug = makeRecSlug(rec.company, rec.role);
           const firmKey = canonicalFirmKey(rec.company);
@@ -3018,8 +3030,41 @@
             !existingAppSlugs.has(slug) &&
             !(firmKey && appliedFirmKeys.has(firmKey))
           );
-        }).length;
+        });
       }, [rawRecs, handledRecs, apps, appliedFirmKeys, recsPaused]);
+
+      const activeRecommendations = useMemo(() => {
+        const filtered = unhandledRecommendations.filter(rec => {
+          if (recSourceFilter === "Shortlisted") return isRecShortlisted(rec);
+          if (recSourceFilter !== "All" && rec.source !== recSourceFilter) return false;
+          return true;
+        });
+        // Pin shortlisted roles to the front so top targets are always immediately visible
+        return [...filtered].sort((a, b) => {
+          const aStar = isRecShortlisted(a) ? 1 : 0;
+          const bStar = isRecShortlisted(b) ? 1 : 0;
+          return bStar - aStar;
+        });
+      }, [unhandledRecommendations, recSourceFilter, shortlistedRecSet]);
+
+      const totalUnhandledRecsCount = unhandledRecommendations.length;
+
+      const shortlistedRecsCount = useMemo(() => {
+        return unhandledRecommendations.filter(rec => isRecShortlisted(rec)).length;
+      }, [unhandledRecommendations, shortlistedRecSet]);
+
+      const handleToggleShortlistRecommendation = (rec) => {
+        const slug = makeRecSlug(rec.company, rec.role);
+        const currentlyShortlisted = shortlistedRecSet.has(rec.id) || shortlistedRecSet.has(slug);
+        const nextShortlisted = currentlyShortlisted
+          ? shortlistedRecs.filter(k => k !== rec.id && k !== slug)
+          : Array.from(new Set([...shortlistedRecs, rec.id, slug]));
+        setShortlistedRecs(nextShortlisted);
+        pushSnapshotToCloud(
+          { shortlistedRecIds: nextShortlisted },
+          `${currentlyShortlisted ? "Removed from shortlist" : "Shortlisted"}: ${rec.company} — ${rec.role}`
+        );
+      };
 
       // One-Click "Applied" on a Recommended Role:
       // Moves role out of "Recommended to Apply", adds into main tracker under "Application Submitted" with today's date,
@@ -3046,10 +3091,12 @@
 
         const nextApps = [newAppEntry, ...rawApps];
         const nextHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
+        const nextShortlisted = shortlistedRecs.filter(k => k !== rec.id && k !== slug);
         setApps(nextApps);
         setHandledRecs(nextHandled);
+        setShortlistedRecs(nextShortlisted);
         pushSnapshotToCloud(
-          { applications: nextApps, handledRecIds: nextHandled },
+          { applications: nextApps, handledRecIds: nextHandled, shortlistedRecIds: nextShortlisted },
           `Applied: ${rec.company} — ${rec.role}`
         );
         setSyncStatus({
@@ -3063,9 +3110,11 @@
       const handleDismissRecommendation = (rec) => {
         const slug = makeRecSlug(rec.company, rec.role);
         const nextHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
+        const nextShortlisted = shortlistedRecs.filter(k => k !== rec.id && k !== slug);
         setHandledRecs(nextHandled);
+        setShortlistedRecs(nextShortlisted);
         pushSnapshotToCloud(
-          { handledRecIds: nextHandled },
+          { handledRecIds: nextHandled, shortlistedRecIds: nextShortlisted },
           `Dismissed recommendation: ${rec.company}`
         );
       };
@@ -3074,10 +3123,11 @@
         try {
           const dateSlug = new Date().toISOString().slice(0, 10);
           const payload = {
-            version: 5,
+            version: 6,
             exportedAt: new Date().toISOString(),
             theme,
             handledRecommendations: handledRecs,
+            shortlistedRecommendations: shortlistedRecs,
             applications: apps
           };
           const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -3125,10 +3175,14 @@
               ? Array.from(new Set([...handledRecs, ...parsed.handledRecommendations]))
               : handledRecs;
             if (nextHandled !== handledRecs) setHandledRecs(nextHandled);
+            const nextShortlisted = parsed && Array.isArray(parsed.shortlistedRecommendations)
+              ? Array.from(new Set([...shortlistedRecs, ...parsed.shortlistedRecommendations]))
+              : shortlistedRecs;
+            if (nextShortlisted !== shortlistedRecs) setShortlistedRecs(nextShortlisted);
             const merged = smartMergeApps(rawApps, restoredApps);
             setApps(merged);
             pushSnapshotToCloud(
-              { applications: merged, handledRecIds: nextHandled },
+              { applications: merged, handledRecIds: nextHandled, shortlistedRecIds: nextShortlisted },
               `Restored backup from ${file.name}`
             );
             setSyncStatus({
@@ -4366,6 +4420,7 @@
                 <div className="flex flex-wrap items-center gap-1.5">
                   {[
                     { id: "All", label: `All (${totalUnhandledRecsCount})` },
+                    { id: "Shortlisted", label: `★ Shortlisted (${shortlistedRecsCount})`, isShortlist: true },
                     { id: "Trackr", label: "Trackr" },
                     { id: "Gradcracker", label: "Gradcracker" },
                     { id: "Email", label: "Email Alerts" }
@@ -4375,7 +4430,11 @@
                       onClick={() => setRecSourceFilter(tab.id)}
                       className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg transition ${
                         recSourceFilter === tab.id
-                          ? "theme-accent-btn shadow-sm"
+                          ? tab.isShortlist
+                            ? "bg-amber-400 text-slate-950 font-extrabold shadow-sm"
+                            : "theme-accent-btn shadow-sm"
+                          : tab.isShortlist && shortlistedRecsCount > 0
+                          ? "bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25"
                           : "theme-input text-slate-400 hover:text-white"
                       }`}
                     >
@@ -4400,10 +4459,16 @@
                       {activeRecommendations.map(rec => {
                         const isTrackr = rec.source === "Trackr";
                         const isGradcracker = rec.source === "Gradcracker";
+                        const starred = isRecShortlisted(rec);
                         return (
-                          <div key={rec.id} className="glass-card rounded-xl p-3.5 flex flex-col justify-between space-y-3">
+                          <div
+                            key={rec.id}
+                            className={`glass-card rounded-xl p-3.5 flex flex-col justify-between space-y-3 transition ${
+                              starred ? "border-amber-400/60 ring-1 ring-amber-400/30 shadow-[0_0_20px_-6px_rgba(251,191,36,0.35)]" : ""
+                            }`}
+                          >
                             <div className="space-y-2">
-                              {/* Top Row: Monogram + Firm + Source Badge (Trackr vs Gradcracker vs Email) */}
+                              {/* Top Row: Logo + Firm + Source Badge */}
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-2 min-w-0">
                                   <CompanyMonogram company={rec.company} />
@@ -4444,36 +4509,65 @@
                               </div>
                             </div>
 
-                            {/* Action Buttons: One-Click "Applied", "Apply ↗", and "Dismiss" */}
-                            <div className="pt-2.5 border-t border-white/[0.07] flex items-center justify-between gap-1.5">
+                            {/* Action Buttons: Rectangular Shortlist Toggle + "Applied", "Role ↗", and "Dismiss" */}
+                            <div className="pt-2.5 border-t border-white/[0.07] space-y-1.5">
                               <button
-                                onClick={() => handleMarkRecommendedApplied(rec)}
-                                title="Move out of Recommended to Apply and add to Application Submitted with today's date"
-                                className="applied-action-btn flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-[11px] px-2.5 py-1.5 rounded-lg flex items-center justify-center gap-1 transition shadow-sm"
+                                type="button"
+                                onClick={() => handleToggleShortlistRecommendation(rec)}
+                                aria-label={starred ? `Remove ${rec.company} from shortlist` : `Shortlist ${rec.company}`}
+                                aria-pressed={starred}
+                                title={starred ? "Remove from Shortlist" : "Shortlist this role"}
+                                className={`w-full py-1.5 px-3 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 border transition ${
+                                  starred
+                                    ? "bg-amber-400/20 text-amber-300 border-amber-400/60 hover:bg-amber-400/30"
+                                    : "theme-input text-slate-300 hover:text-amber-300 hover:border-amber-400/45"
+                                }`}
                               >
-                                <Icon name="Check" className="w-3.5 h-3.5" />
-                                Applied
-                              </button>
-
-                              {rec.applyLink && (
-                                <a
-                                  href={rec.applyLink}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  title="Open application link in new tab"
-                                  className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg theme-input text-slate-200 hover:text-white flex items-center gap-1 transition"
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  className="w-3.5 h-3.5 shrink-0"
+                                  fill={starred ? "currentColor" : "none"}
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
                                 >
-                                  Role <Icon name="ExternalLink" className="w-3 h-3" />
-                                </a>
-                              )}
-
-                              <button
-                                onClick={() => handleDismissRecommendation(rec)}
-                                title="Dismiss this recommendation permanently"
-                                className="text-[11px] text-slate-400 hover:text-rose-300 px-2 py-1.5 rounded-lg theme-input transition"
-                              >
-                                Dismiss
+                                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                                <span>{starred ? "Shortlisted" : "Shortlist"}</span>
                               </button>
+
+                              <div className="flex items-center justify-between gap-1.5">
+                                <button
+                                  onClick={() => handleMarkRecommendedApplied(rec)}
+                                  title="Move out of Recommended to Apply and add to Application Submitted with today's date"
+                                  className="applied-action-btn flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-[11px] px-2.5 py-1.5 rounded-lg flex items-center justify-center gap-1 transition shadow-sm"
+                                >
+                                  <Icon name="Check" className="w-3.5 h-3.5" />
+                                  Applied
+                                </button>
+
+                                {rec.applyLink && (
+                                  <a
+                                    href={rec.applyLink}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    title="Open application link in new tab"
+                                    className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg theme-input text-slate-200 hover:text-white flex items-center gap-1 transition"
+                                  >
+                                    Role <Icon name="ExternalLink" className="w-3 h-3" />
+                                  </a>
+                                )}
+
+                                <button
+                                  onClick={() => handleDismissRecommendation(rec)}
+                                  title="Dismiss this recommendation permanently"
+                                  className="text-[11px] text-slate-400 hover:text-rose-300 px-2 py-1.5 rounded-lg theme-input transition"
+                                >
+                                  Dismiss
+                                </button>
+                              </div>
                             </div>
                           </div>
                         );
@@ -4481,7 +4575,11 @@
                     </div>
                   ) : (
                     <div className="text-center py-6 text-xs text-slate-400 border border-dashed border-white/[0.08] rounded-xl">
-                      All current recommendations have been marked as Applied or Dismissed. Next automatic check: Hourly Gmail Sync & Daily 8:00 AM Trackr Scrape.
+                      {recSourceFilter === "Shortlisted"
+                        ? "No roles shortlisted yet — click the ★ star on any suggested role to pin it to your shortlist."
+                        : recSourceFilter !== "All"
+                        ? `No active suggestions from ${recSourceFilter === "Email" ? "Email Alerts" : recSourceFilter} right now.`
+                        : "All current recommendations have been marked as Applied or Dismissed. Next automatic check: Hourly Gmail Sync & Daily 8:00 AM Scrape."}
                     </div>
                   )}
                 </div>
