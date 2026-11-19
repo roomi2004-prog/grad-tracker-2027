@@ -79,7 +79,7 @@
   ],
   "lastGmailSync": "2026-11-18T23:32:57.674Z",
   "version": 6,
-  "updatedAt": "2026-11-19T01:09:24.451Z",
+  "updatedAt": "2026-11-19T01:09:39.567Z",
   "applications": [
     {
       "id": 1795049885047,
@@ -316,23 +316,6 @@
       "notes": "Applied Sep 21; granted extra time & 5-day extension by Wenjie Salas on Sep 30; evergreen internship application confirmed active Oct 7.",
       "rejectedAfterStage": null,
       "_gmailSubStatus": "SHL Assessments Completed with Extra Time (Oct 7)",
-      "_gmailDeadline": null
-    },
-    {
-      "id": 53,
-      "category": "internship",
-      "company": "Susquehanna (SIG)",
-      "role": "Equity Research Internship: Summer 2027 (London & Dublin)",
-      "sector": "Investment Management",
-      "appliedDate": "2026-09-24",
-      "stage": "Stage 1 - Online Assessment",
-      "subStatus": "Mettl Quantitative Assessment Stage (Sep 24)",
-      "deadline": null,
-      "portalLink": "https://sig.com/campus-programs/",
-      "calendarSynced": false,
-      "notes": "Invited to 23-minute timed Mettl online assessment by Jordan Morley on Sep 24. Rolling review (up to 8 weeks).",
-      "rejectedAfterStage": null,
-      "_gmailSubStatus": "Mettl Quantitative Assessment Stage (Sep 24)",
       "_gmailDeadline": null
     },
     {
@@ -1386,7 +1369,8 @@
     "app_e7ca42a4",
     "app_f5a22011",
     "1795044257639",
-    "49"
+    "49",
+    "53"
   ],
   "cycleArchive": null,
   "offerAccepted": false,
