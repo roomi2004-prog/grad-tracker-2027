@@ -1573,66 +1573,124 @@
       } catch {}
     }
 
-    // 100% Offline Web Audio API Orchestral String Synth of "Viva La Vida" (Ab Major: Db -> Eb -> Ab -> Fm, ~138 BPM)
+    // 100% Offline Studio-Quality Web Audio API Orchestral Arrangement of Coldplay's "Viva La Vida"
+    // Exact Ab Major syncopated string ostinato (Db -> Eb push -> Ab -> Fm push) @ 138 BPM
+    // with detuned multi-voice violin/viola/cello ensemble, generated concert-hall reverb,
+    // booming concert bass drum, Jerusalem church bells, chorus vocal line & stadium "Oh-oh-oh" hook!
     const VIVA_F = {
       Db2: 69.30, Eb2: 77.78, F2: 87.31, Ab2: 103.83,
+      Db3: 138.59, Eb3: 155.56, F3: 174.61, Ab3: 207.65, Bb3: 233.08,
       C4: 261.63, Db4: 277.18, Eb4: 311.13, F4: 349.23, G4: 392.00, Ab4: 415.30, Bb4: 466.16,
       C5: 523.25, Db5: 554.37, Eb5: 622.25, F5: 698.46, G5: 783.99, Ab5: 830.61
     };
+    // Rich 5-voice orchestral string voicings matching the Coldplay recording
     const VIVA_CHORDS = {
-      Db: [VIVA_F.Db4, VIVA_F.F4, VIVA_F.Ab4],
-      Eb: [VIVA_F.Eb4, VIVA_F.G4, VIVA_F.Bb4],
-      Ab: [VIVA_F.C4,  VIVA_F.Eb4, VIVA_F.Ab4],
-      Fm: [VIVA_F.C4,  VIVA_F.F4, VIVA_F.Ab4]
+      Db: [VIVA_F.Db3, VIVA_F.Ab3, VIVA_F.Db4, VIVA_F.F4,  VIVA_F.Ab4],
+      Eb: [VIVA_F.Eb3, VIVA_F.Bb3, VIVA_F.Eb4, VIVA_F.G4,  VIVA_F.Bb4],
+      Ab: [VIVA_F.Ab2, VIVA_F.Ab3, VIVA_F.C4,  VIVA_F.Eb4, VIVA_F.Ab4],
+      Fm: [VIVA_F.F2,  VIVA_F.Ab3, VIVA_F.C4,  VIVA_F.F4,  VIVA_F.Ab4]
     };
-    // 32-step (eighth-note) iconic rhythmic string pulse + soaring chorus melody
-    const VIVA_PATTERN = [
-      // Bar 1: Db major (4 driving staccato pulses: 1, &, 2, &, 3, 4, &)
-      { chord: "Db", bass: VIVA_F.Db2, lead: VIVA_F.Eb5, dur: 1.4, accent: true },
-      { chord: "Db", bass: null,       lead: null,       dur: 0 },
-      { chord: "Db", bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Db", bass: null,       lead: VIVA_F.F5,  dur: 1.4, accent: true },
-      { chord: "Db", bass: VIVA_F.Db2, lead: null,       dur: 0 },
-      { chord: null, bass: null,       lead: VIVA_F.F5,  dur: 0.9 },
-      { chord: "Db", bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Db", bass: null,       lead: VIVA_F.Db5, dur: 1.0 },
-      // Bar 2: Eb major (syncopated lift into beat 1)
-      { chord: "Eb", bass: VIVA_F.Eb2, lead: VIVA_F.Eb5, dur: 1.4, accent: true },
-      { chord: "Eb", bass: null,       lead: null,       dur: 0 },
-      { chord: "Eb", bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Eb", bass: null,       lead: VIVA_F.G5,  dur: 1.5, accent: true },
-      { chord: "Eb", bass: VIVA_F.Eb2, lead: null,       dur: 0 },
-      { chord: "Eb", bass: null,       lead: VIVA_F.F5,  dur: 0.9 },
-      { chord: null, bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Eb", bass: null,       lead: VIVA_F.F5,  dur: 1.0 },
-      // Bar 3: Ab major (triumphant soaring peak)
-      { chord: "Ab", bass: VIVA_F.Ab2, lead: VIVA_F.Ab5, dur: 1.6, accent: true },
-      { chord: "Ab", bass: null,       lead: null,       dur: 0 },
-      { chord: "Ab", bass: null,       lead: VIVA_F.G5,  dur: 0.9 },
-      { chord: "Ab", bass: null,       lead: VIVA_F.F5,  dur: 1.4, accent: true },
-      { chord: "Ab", bass: VIVA_F.Ab2, lead: null,       dur: 0 },
-      { chord: null, bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Ab", bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Ab", bass: null,       lead: VIVA_F.C5,  dur: 1.1 },
-      // Bar 4: F minor (warm resolution back to Db)
-      { chord: "Fm", bass: VIVA_F.F2,  lead: VIVA_F.F5,  dur: 1.4, accent: true },
-      { chord: "Fm", bass: null,       lead: null,       dur: 0 },
-      { chord: "Fm", bass: null,       lead: VIVA_F.Eb5, dur: 0.9 },
-      { chord: "Fm", bass: null,       lead: VIVA_F.Db5, dur: 1.4, accent: true },
-      { chord: "Fm", bass: VIVA_F.F2,  lead: null,       dur: 0 },
-      { chord: "Fm", bass: null,       lead: VIVA_F.C5,  dur: 1.2 },
-      { chord: null, bass: null,       lead: null,       dur: 0 },
-      { chord: "Fm", bass: null,       lead: VIVA_F.Db5, dur: 0.9 }
+    // Exact 32-step (4-bar, eighth-note) signature Viva La Vida string ostinato rhythm:
+    // Bar 1: Db(q) Db(q) Db(q) Db(8) [Eb(8) SYNCOPATED PUSH]
+    // Bar 2: (tie) Eb(8) (rest) Eb(8) Eb(q) Eb(q)
+    // Bar 3: Ab(q) Ab(q) Ab(q) Ab(8) [Fm(8) SYNCOPATED PUSH]
+    // Bar 4: (tie) Fm(8) (rest) Fm(8) Fm(q) Fm(q)
+    const VIVA_OSTINATO = [
+      // Bar 1 (0..7)
+      { chord: "Db", dur: 1.75, kick: true,  bass: VIVA_F.Db2, accent: true },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Db", dur: 1.75, kick: true,  bass: null },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Db", dur: 1.75, kick: true,  bass: VIVA_F.Db2 },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Db", dur: 0.9,  kick: true,  bass: null },
+      { chord: "Eb", dur: 1.85, kick: false, bass: VIVA_F.Eb2, accent: true }, // famous 4& push!
+      // Bar 2 (8..15)
+      { chord: null, dur: 0,    kick: true,  bass: null },
+      { chord: "Eb", dur: 0.95, kick: false, bass: null },
+      { chord: null, dur: 0,    kick: true,  bass: null },
+      { chord: "Eb", dur: 0.95, kick: false, bass: VIVA_F.Eb2 },
+      { chord: "Eb", dur: 1.75, kick: true,  bass: null, accent: true },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Eb", dur: 1.75, kick: true,  bass: null },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      // Bar 3 (16..23)
+      { chord: "Ab", dur: 1.75, kick: true,  bass: VIVA_F.Ab2, accent: true, bell: VIVA_F.Ab5 },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Ab", dur: 1.75, kick: true,  bass: null },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Ab", dur: 1.75, kick: true,  bass: VIVA_F.Ab2 },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Ab", dur: 0.9,  kick: true,  bass: null },
+      { chord: "Fm", dur: 1.85, kick: false, bass: VIVA_F.F2,  accent: true }, // famous 4& push!
+      // Bar 4 (24..31)
+      { chord: null, dur: 0,    kick: true,  bass: null },
+      { chord: "Fm", dur: 0.95, kick: false, bass: null },
+      { chord: null, dur: 0,    kick: true,  bass: null },
+      { chord: "Fm", dur: 0.95, kick: false, bass: VIVA_F.F2 },
+      { chord: "Fm", dur: 1.75, kick: true,  bass: null, accent: true, bell: VIVA_F.Eb5 },
+      { chord: null, dur: 0,    kick: false, bass: null },
+      { chord: "Fm", dur: 1.75, kick: true,  bass: null },
+      { chord: null, dur: 0,    kick: false, bass: null }
+    ];
+
+    // Phrase 1 (Bars 5-8): "I hear Jerusalem bells a-ringin', Roman cavalry choirs are singin'..."
+    const VIVA_CHORUS_MELODY = [
+      // Bar 5 (Db -> Eb)
+      { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 },
+      { f: VIVA_F.F4,  d: 0.9 }, { f: VIVA_F.F4,  d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Bb4, d: 1.9 },
+      // Bar 6 (Eb)
+      null,                      { f: VIVA_F.G4,  d: 0.9 }, { f: VIVA_F.G4,  d: 0.9 }, { f: VIVA_F.G4,  d: 0.9 },
+      { f: VIVA_F.G4,  d: 0.9 }, { f: VIVA_F.G4,  d: 0.9 }, { f: VIVA_F.Eb4, d: 0.9 }, { f: VIVA_F.G4,  d: 1.1 },
+      // Bar 7 (Ab -> Fm)
+      { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 },
+      { f: VIVA_F.C5,  d: 0.9 }, { f: VIVA_F.C5,  d: 0.9 }, { f: VIVA_F.Bb4, d: 0.9 }, { f: VIVA_F.Ab4, d: 1.9 },
+      // Bar 8 (Fm)
+      null,                      { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.Ab4, d: 0.9 }, { f: VIVA_F.G4,  d: 0.9 },
+      { f: VIVA_F.F4,  d: 1.4 }, null,                      { f: VIVA_F.Eb4, d: 0.9 }, { f: VIVA_F.F4,  d: 1.0 }
+    ];
+
+    // Phrase 2 (Bars 9-12): Stadium "Oh-oh-oh-oh-oh" soaring choir/violin chant
+    const VIVA_CHANT_MELODY = [
+      // Bar 9 (Db -> Eb)
+      { f: VIVA_F.C5,  d: 1.8 }, null, { f: VIVA_F.Db5, d: 1.8 }, null,
+      { f: VIVA_F.C5,  d: 1.8 }, null, { f: VIVA_F.Bb4, d: 0.9 }, { f: VIVA_F.Bb4, d: 1.9 },
+      // Bar 10 (Eb)
+      null, { f: VIVA_F.G4, d: 1.5 }, null, { f: VIVA_F.Bb4, d: 1.5 },
+      { f: VIVA_F.Eb5, d: 2.2 }, null, { f: VIVA_F.Db5, d: 1.6 }, null,
+      // Bar 11 (Ab -> Fm)
+      { f: VIVA_F.C5,  d: 1.8 }, null, { f: VIVA_F.Eb5, d: 1.8 }, null,
+      { f: VIVA_F.C5,  d: 1.8 }, null, { f: VIVA_F.Bb4, d: 0.9 }, { f: VIVA_F.Ab4, d: 2.2 },
+      // Bar 12 (Fm)
+      null, null, { f: VIVA_F.Ab4, d: 1.4 }, null,
+      { f: VIVA_F.F4,  d: 1.8 }, null, { f: VIVA_F.Ab4, d: 1.6 }, null
     ];
 
     function createVivaLaVidaSynth() {
       let ctx = null;
       let masterGain = null;
-      let stringFilter = null;
+      let dryBus = null;
+      let reverbSend = null;
       let timerId = null;
       let stepIdx = 0;
       let isPlaying = false;
       let isMuted = false;
+
+      const buildConcertReverb = (audioCtx) => {
+        const rate = audioCtx.sampleRate;
+        const length = Math.floor(rate * 1.9);
+        const impulse = audioCtx.createBuffer(2, length, rate);
+        for (let ch = 0; ch < 2; ch++) {
+          const data = impulse.getChannelData(ch);
+          for (let i = 0; i < length; i++) {
+            const decay = Math.pow(1 - i / length, 2.6);
+            data[i] = (Math.random() * 2 - 1) * decay * 0.45;
+          }
+        }
+        const conv = audioCtx.createConvolver();
+        conv.buffer = impulse;
+        return conv;
+      };
 
       const ensureCtx = () => {
         if (!ctx) {
@@ -1640,13 +1698,18 @@
           if (!AudioCtx) return null;
           ctx = new AudioCtx();
           masterGain = ctx.createGain();
-          masterGain.gain.value = isMuted ? 0 : 0.9;
+          masterGain.gain.value = isMuted ? 0 : 0.95;
           masterGain.connect(ctx.destination);
-          stringFilter = ctx.createBiquadFilter();
-          stringFilter.type = "lowpass";
-          stringFilter.frequency.value = 1850;
-          stringFilter.Q.value = 0.7;
-          stringFilter.connect(masterGain);
+
+          dryBus = ctx.createGain();
+          dryBus.gain.value = 0.78;
+          dryBus.connect(masterGain);
+
+          const reverb = buildConcertReverb(ctx);
+          reverbSend = ctx.createGain();
+          reverbSend.gain.value = 0.42;
+          reverbSend.connect(reverb);
+          reverb.connect(masterGain);
         }
         if (ctx.state === "suspended") {
           ctx.resume().catch(() => {});
@@ -1654,42 +1717,148 @@
         return ctx;
       };
 
-      const playStringNote = (freq, startTime, duration, peakGain, dest, type = "sawtooth") => {
-        if (!ctx || !dest || !freq) return;
+      // Warm detuned orchestral string voice (bowed filter sweep + stereo ensemble detune)
+      const playOrchestralString = (freq, startTime, duration, peakGain) => {
+        if (!ctx || !freq) return;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(620, startTime);
+        filter.frequency.exponentialRampToValueAtTime(1750, startTime + Math.min(0.06, duration * 0.35));
+        filter.frequency.exponentialRampToValueAtTime(1050, startTime + duration);
+        filter.Q.value = 0.9;
+
+        const env = ctx.createGain();
+        env.gain.setValueAtTime(0.0001, startTime);
+        env.gain.exponentialRampToValueAtTime(peakGain, startTime + 0.028);
+        env.gain.setValueAtTime(peakGain * 0.85, startTime + Math.max(0.035, duration * 0.72));
+        env.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + 0.05);
+
+        filter.connect(env);
+        env.connect(dryBus);
+        env.connect(reverbSend);
+
+        for (const detuneCents of [-7, 7]) {
+          const osc = ctx.createOscillator();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(freq, startTime);
+          osc.detune.setValueAtTime(detuneCents, startTime);
+          osc.connect(filter);
+          osc.start(startTime);
+          osc.stop(startTime + duration + 0.06);
+        }
+      };
+
+      // Soaring violin / vocal lead voice
+      const playLeadVoice = (freq, startTime, duration, peakGain) => {
+        if (!ctx || !freq) return;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(2400, startTime);
+
+        const env = ctx.createGain();
+        env.gain.setValueAtTime(0.0001, startTime);
+        env.gain.exponentialRampToValueAtTime(peakGain, startTime + 0.03);
+        env.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + 0.06);
+
+        filter.connect(env);
+        env.connect(dryBus);
+        env.connect(reverbSend);
+
+        const osc1 = ctx.createOscillator();
+        osc1.type = "triangle";
+        osc1.frequency.setValueAtTime(freq, startTime);
+        osc1.connect(filter);
+        osc1.start(startTime);
+        osc1.stop(startTime + duration + 0.08);
+
+        const osc2 = ctx.createOscillator();
+        osc2.type = "sawtooth";
+        osc2.frequency.setValueAtTime(freq * 2, startTime);
+        const hiGain = ctx.createGain();
+        hiGain.gain.value = 0.18;
+        osc2.connect(hiGain);
+        hiGain.connect(filter);
+        osc2.start(startTime);
+        osc2.stop(startTime + duration + 0.08);
+      };
+
+      // Deep booming concert bass drum / timpani pulse
+      const playConcertKick = (startTime) => {
+        if (!ctx) return;
         const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.0001, startTime);
-        gain.gain.exponentialRampToValueAtTime(peakGain, startTime + 0.022);
-        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-        osc.connect(gain);
-        gain.connect(dest);
+        const env = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(98, startTime);
+        osc.frequency.exponentialRampToValueAtTime(42, startTime + 0.14);
+        env.gain.setValueAtTime(0.24, startTime);
+        env.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.28);
+        osc.connect(env);
+        env.connect(dryBus);
+        env.connect(reverbSend);
         osc.start(startTime);
-        osc.stop(startTime + duration + 0.03);
+        osc.stop(startTime + 0.3);
+      };
+
+      // Jerusalem tubular church bell chime
+      const playChurchBell = (freq, startTime) => {
+        if (!ctx || !freq) return;
+        for (const [ratio, gainVal, decay] of [[1, 0.048, 1.35], [2.76, 0.022, 0.85], [5.4, 0.01, 0.45]]) {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq * ratio, startTime);
+          g.gain.setValueAtTime(0.0001, startTime);
+          g.gain.exponentialRampToValueAtTime(gainVal, startTime + 0.008);
+          g.gain.exponentialRampToValueAtTime(0.0001, startTime + decay);
+          osc.connect(g);
+          g.connect(reverbSend);
+          g.connect(dryBus);
+          osc.start(startTime);
+          osc.stop(startTime + decay + 0.05);
+        }
       };
 
       const tick = () => {
         if (!isPlaying || !ctx) return;
-        const stepSec = 0.217; // 138 BPM eighth notes
-        const step = VIVA_PATTERN[stepIdx % VIVA_PATTERN.length];
+        const stepSec = 0.217; // 138 BPM eighth-note pulse
+        const barStep = stepIdx % 32;
+        const phraseIdx = Math.floor(stepIdx / 32) % 3; // 0 = Intro Strings, 1 = Chorus Melody, 2 = Stadium Chant
+        const ost = VIVA_OSTINATO[barStep];
         const t = ctx.currentTime + 0.02;
 
-        if (step.chord && VIVA_CHORDS[step.chord]) {
-          const vol = step.accent ? 0.052 : 0.036;
-          for (const f of VIVA_CHORDS[step.chord]) {
-            playStringNote(f, t, stepSec * 0.78, vol, stringFilter, "sawtooth");
+        // 1. Signature syncopated orchestral string chords
+        if (ost.chord && VIVA_CHORDS[ost.chord]) {
+          const chordGain = ost.accent ? 0.036 : 0.026;
+          for (const f of VIVA_CHORDS[ost.chord]) {
+            playOrchestralString(f, t, stepSec * ost.dur, chordGain);
           }
         }
-        if (step.lead) {
-          playStringNote(step.lead, t, stepSec * (step.dur || 1.0), 0.105, masterGain, "triangle");
-          playStringNote(step.lead, t, stepSec * (step.dur || 1.0), 0.03, stringFilter, "sawtooth");
+
+        // 2. Booming 4-on-the-floor concert bass drum
+        if (ost.kick) {
+          playConcertKick(t);
         }
-        if (step.bass) {
-          playStringNote(step.bass, t, stepSec * 1.9, 0.095, masterGain, "sine");
-          playStringNote(step.bass * 2, t, stepSec * 1.4, 0.035, stringFilter, "triangle");
+
+        // 3. Deep cello / contrabass pedal
+        if (ost.bass) {
+          playOrchestralString(ost.bass, t, stepSec * 3.6, 0.048);
         }
-        stepIdx = (stepIdx + 1) % VIVA_PATTERN.length;
+
+        // 4. Shimmering Jerusalem church bells (phrases 1 & 2)
+        if (ost.bell && phraseIdx >= 1) {
+          playChurchBell(ost.bell, t);
+        }
+
+        // 5. Soaring chorus melody (Phrase 1) or Stadium "Oh-oh-oh" chant (Phrase 2)
+        if (phraseIdx === 1) {
+          const m = VIVA_CHORUS_MELODY[barStep];
+          if (m) playLeadVoice(m.f * 2, t, stepSec * m.d, 0.085);
+        } else if (phraseIdx === 2) {
+          const c = VIVA_CHANT_MELODY[barStep];
+          if (c) playLeadVoice(c.f, t, stepSec * c.d, 0.095);
+        }
+
+        stepIdx = (stepIdx + 1) % 96; // 12-bar full orchestral cycle
       };
 
       return {
@@ -1713,7 +1882,7 @@
         setMuted(muted) {
           isMuted = Boolean(muted);
           if (masterGain && ctx) {
-            masterGain.gain.setTargetAtTime(isMuted ? 0 : 0.9, ctx.currentTime, 0.02);
+            masterGain.gain.setTargetAtTime(isMuted ? 0 : 0.95, ctx.currentTime, 0.02);
           }
         },
         isPlaying() {
