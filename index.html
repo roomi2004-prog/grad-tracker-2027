@@ -4117,14 +4117,41 @@
 
             const finalPull = await pullFromMasterState({ forceRemote: true, silent: false });
             const doneTime = fmtNow();
-            const recCount = finalPull && finalPull.remote ? (finalPull.remote.recommendations || []).length : rawRecs.length;
+            const remoteObj = finalPull && finalPull.remote ? finalPull.remote : null;
+            const pulledRecs = remoteObj && Array.isArray(remoteObj.recommendations) ? remoteObj.recommendations : rawRecs;
+            const pulledApps = remoteObj && Array.isArray(remoteObj.applications) ? remoteObj.applications : rawApps;
+            const pulledHandled = new Set([
+              ...((remoteObj && Array.isArray(remoteObj.handledRecIds)) ? remoteObj.handledRecIds : handledRecs),
+              ...((remoteObj && Array.isArray(remoteObj.dismissedIds)) ? remoteObj.dismissedIds : [])
+            ]);
+            const pulledShortlisted = new Set((remoteObj && Array.isArray(remoteObj.shortlistedRecIds)) ? remoteObj.shortlistedRecIds : shortlistedRecs);
+            const pulledSnoozed = (remoteObj && remoteObj.snoozedRecs && typeof remoteObj.snoozedRecs === "object") ? remoteObj.snoozedRecs : snoozedRecs;
+            const pulledAppSlugs = new Set(pulledApps.map(a => makeRecSlug(a.company || a.firm, a.role)));
+            const pulledAppFirms = new Set(pulledApps.map(a => canonicalFirmKey(a.company || a.firm)).filter(Boolean));
+            const nowMs = Date.now();
+            let openCount = 0;
+            let shortlistedCount = 0;
+            let archivedCount = 0;
+            for (const r of pulledRecs) {
+              const slug = makeRecSlug(r.company, r.role);
+              const fk = canonicalFirmKey(r.company);
+              if (pulledHandled.has(r.id) || pulledHandled.has(slug) || pulledAppSlugs.has(slug) || (fk && pulledAppFirms.has(fk))) continue;
+              const snz = pulledSnoozed[r.id] || pulledSnoozed[slug];
+              if (snz && Number(snz) > nowMs) { archivedCount++; continue; }
+              if (pulledShortlisted.has(r.id) || pulledShortlisted.has(slug)) { shortlistedCount++; continue; }
+              openCount++;
+            }
+            const summaryParts = [`${openCount} open`];
+            if (shortlistedCount > 0) summaryParts.push(`${shortlistedCount} shortlisted`);
+            if (archivedCount > 0) summaryParts.push(`${archivedCount} archived`);
+            const countSummary = summaryParts.join(", ");
             setTrackrSyncStage({ phase: "done", text: completedRun ? "Trackr Updated" : "Trackr Refreshed", time: doneTime });
             setSyncStatus({
               ok: true,
               time: doneTime,
               message: completedRun
-                ? `Trackr scrape complete — ${recCount} recommendations available.`
-                : `Recommendations refreshed (${recCount}). Trackr is still finishing in the background.`,
+                ? `Trackr scrape complete — ${countSummary}.`
+                : `Recommendations refreshed (${countSummary}). Trackr is still finishing in the background.`,
               emails: []
             });
           } else {

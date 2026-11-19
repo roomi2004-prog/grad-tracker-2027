@@ -226,7 +226,7 @@ function inferSector(text, fallback) {
   return fallback;
 }
 
-function isWithinLastDays(isoDate, days = 4) {
+function isWithinLastDays(isoDate, days = 30) {
   if (!isoDate) return false;
   const now = new Date();
   const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
@@ -235,6 +235,20 @@ function isWithinLastDays(isoDate, days = 4) {
   const targetUtc = Date.UTC(parts[0], parts[1] - 1, parts[2]);
   const diffDays = (todayUtc - targetUtc) / 86400000;
   return diffDays >= -1 && diffDays <= days;
+}
+
+function isStillOpen(closingDate) {
+  const s = String(closingDate || "").trim();
+  if (!s) return true;
+  const low = s.toLowerCase();
+  if (low === "closed" || low.includes("expired") || low.includes("filled")) return false;
+  if (low.includes("rolling") || low.includes("ongoing") || low.includes("asap")) return true;
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return true;
+  const now = new Date();
+  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const closeUtc = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return closeUtc >= todayUtc;
 }
 
 function extractCandidatesFromJson(payload, sourceMeta) {
@@ -253,8 +267,11 @@ function extractCandidatesFromJson(payload, sourceMeta) {
         const closingRaw = node.closingDate || node.closeDate || node.deadline || node.closing_date || "Rolling Deadline";
         const applyLink = node.url || node.applyUrl || node.applicationUrl || node.link || sourceMeta.url;
         const division = node.division || node.category || node.track || "";
+        const statusStr = String(node.status || "").toLowerCase();
+        if (node.closed === true || node.isClosed === true || statusStr === "closed") return;
         const combined = `${company} ${role} ${division}`.toLowerCase();
-        if (!combined.includes("2025") && !combined.includes("2026") && (combined.includes("2027") || combined.includes("summer") || combined.includes("intern"))) {
+        const isOldCycle = combined.includes("2025") || (combined.includes("2026") && !combined.includes("2027") && !combined.includes("2026/27"));
+        if (!isOldCycle && (combined.includes("2027") || combined.includes("summer") || combined.includes("intern"))) {
           const openedDate = parseDateToIso(openedRaw);
           const closingIso = parseDateToIso(closingRaw);
           results.push({
@@ -394,7 +411,7 @@ async function scrapeGradcrackerSource(sourceMeta) {
       const locationRaw = locationMatch ? decodeHtmlEntities(locationMatch[1]) : "";
 
       const combined = `${company} ${role} ${startingRaw} ${locationRaw}`.toLowerCase();
-      if (combined.includes("2025") || combined.includes("2026")) continue;
+      if (combined.includes("2025") || (combined.includes("2026") && !combined.includes("2027") && !combined.includes("2026/27"))) continue;
       if (GRADCRACKER_NEGATIVE_KEYWORDS.some((kw) => combined.includes(kw))) continue;
       // Exclude law vacation schemes (keep consulting/finance vacation schemes like Deloitte/PwC/EY)
       if (combined.includes("vacation scheme") && !/(deloitte|pwc|ey|kpmg|consult|finance|advisory|tax|audit|assurance)/i.test(combined)) continue;
@@ -642,8 +659,15 @@ async function main() {
 
       console.log(`Scraped ${scraped.length} candidate rows across Trackr UK Finance & Consulting.`);
 
+      // Sort newest-opened first so the freshest open Trackr roles appear at the top
+      scraped.sort((a, b) => String(b.openedDate || "").localeCompare(String(a.openedDate || "")));
+      const MAX_NEW_TRACKR_PER_RUN = 15;
+      let trackrAdded = 0;
+
       for (const item of scraped) {
-        if (!isWithinLastDays(item.openedDate, 4)) continue;
+        if (trackrAdded >= MAX_NEW_TRACKR_PER_RUN) break;
+        if (!isWithinLastDays(item.openedDate, 30)) continue;
+        if (!isStillOpen(item.closingDate)) continue;
         const slug = makeRecSlug(item.company, item.role);
         const firmKey = canonicalFirmKey(item.company);
         const recId = `rec-trackr-${slugify(item.company)}-${slugify(item.role).slice(0, 20)}-2027`;
@@ -671,6 +695,7 @@ async function main() {
           notes: `Auto-discovered via GitHub Actions Daily Trackr Scrape (opened ${item.openedDate}).`
         });
         addedCount++;
+        trackrAdded++;
       }
 
       // Also scrape Gradcracker UK Finance, Business & Economics Summer Internships (2027)
@@ -685,6 +710,7 @@ async function main() {
       let gcAdded = 0;
       for (const item of gcScraped) {
         if (gcAdded >= MAX_NEW_GRADCRACKER_PER_RUN) break;
+        if (!isStillOpen(item.closingDate)) continue;
         const slug = makeRecSlug(item.company, item.role);
         const firmKey = canonicalFirmKey(item.company);
         const recId = `rec-gc-${slugify(item.company)}-${slugify(item.role).slice(0, 22)}-2027`;
@@ -724,7 +750,7 @@ async function main() {
     fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2) + "\n", "utf8");
     console.log(`Added ${addedCount} newly opened Trackr role(s) to state.json.`);
   } else {
-    console.log("No brand-new Trackr roles opened in the last 4 days.");
+    console.log("No brand-new open Trackr or Gradcracker roles found in the last 30 days.");
   }
 
   const { content: icsContent, eventCount } = generateIcsFromState(state);
