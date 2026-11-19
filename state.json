@@ -57,15 +57,16 @@
     "1a1ee68a87fb9701",
     "1a1efe340c5c360d",
     "1a1f1081ca8f4d67",
-    "1a1f110342577b31"
+    "1a1f110342577b31",
+    "1a1f37cd8819073c"
   ],
   "dismissedIds": [
     "rec-email-bny-trade-2027",
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
-    "bny::2027 bny summer internship program – trade execution (london) (req 83002)",
-    "bny::2027 bny summer internship program – credit & lending (london) (req 83005)",
+    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
+    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
@@ -79,10 +80,22 @@
     "rec-trackr-pimco-2027",
     "pimco::2027 summer intern ? account management & institutional client coverage (london)"
   ],
-  "lastGmailSync": "2026-11-18T23:32:57.674Z",
+  "lastGmailSync": "2026-11-19T11:24:46.275Z",
   "version": 6,
   "updatedAt": "2026-11-19T01:23:14.980Z",
   "applications": [
+    {
+      "id": "app_1441852b",
+      "firm": "Groupgti",
+      "role": "2027 Summer Internship",
+      "track": "2027 Summer Internship",
+      "stage": "04 ? Stage 2 Video",
+      "status": "Video Interview Due",
+      "appliedDate": "2026-11-19",
+      "lastUpdated": "2026-11-19T11:06:47.000Z",
+      "deadline": "",
+      "notes": "[2026-11-19] Auto-detected from Gmail: You're through to the next stage - Let's go!"
+    },
     {
       "id": 1795051394979,
       "category": "internship",
@@ -1355,8 +1368,8 @@
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
-    "bny::2027 bny summer internship program – trade execution (london) (req 83002)",
-    "bny::2027 bny summer internship program – credit & lending (london) (req 83005)",
+    "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
+    "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
