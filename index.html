@@ -1043,6 +1043,8 @@
     const CACHED_RECS_KEY = "ramis_grad_tracker_2027_recs_cache_v1";
     const HANDLED_RECS_KEY = "ramis_grad_tracker_2027_handled_recs_v1";
     const SHORTLISTED_RECS_KEY = "ramis_grad_tracker_2027_shortlisted_recs_v1";
+    const SNOOZED_RECS_KEY = "ramis_grad_tracker_2027_snoozed_recs_v1";
+    const SNOOZE_DAYS = 7;
     const DELETED_APPS_KEY = "ramis_grad_tracker_2027_deleted_apps_v1";
     const LOCAL_UPDATED_AT_KEY = "ramis_grad_tracker_2027_updated_at_v1";
     const CYCLE_ARCHIVE_KEY = "ramis_grad_tracker_2027_cycle_archive_v1";
@@ -1377,6 +1379,26 @@
       }
     }
 
+    function loadSnoozedRecs() {
+      try {
+        const raw = localStorage.getItem(SNOOZED_RECS_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    // Merge two snooze maps ({ key: expiryISO }), keeping the later expiry per key
+    function mergeSnoozedMaps(a, b) {
+      const out = { ...(a || {}) };
+      for (const [k, v] of Object.entries(b || {})) {
+        if (!out[k] || String(v) > String(out[k])) out[k] = v;
+      }
+      return out;
+    }
+
     function loadDeletedAppIds() {
       try {
         const raw = localStorage.getItem(DELETED_APPS_KEY);
@@ -1475,6 +1497,26 @@
       return false;
     }
 
+    // Recruitment-vendor sender names that actually belong to a specific employer.
+    // Emails from these senders update the real firm's card (stage + status) instead of creating a separate card.
+    const VENDOR_FIRM_ALIASES = {
+      groupgti: "Sky"
+    };
+
+    const PIPELINE_STAGE_RANK = {
+      "Application Submitted": 1,
+      "Action Required": 1,
+      "Stage 1 - Online Assessment": 2,
+      "Stage 2 - Video Interview": 3,
+      "Stage 3 - Assessment Centre": 4,
+      "Offer / Successful": 5
+    };
+
+    function resolveVendorAlias(app) {
+      const key = String((app && (app.company || app.firm)) || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      return VENDOR_FIRM_ALIASES[key] || null;
+    }
+
     function sanitizeAndDedupeApps(list, deletedIds = []) {
       const deletedSet = new Set((deletedIds || []).map(String));
       const normalized = (Array.isArray(list) ? list : [])
@@ -1494,12 +1536,43 @@
         }
       }
 
+      // Merge recruitment-vendor emails (e.g. Groupgti) into the real employer card (e.g. Sky):
+      // advance its pipeline stage + status automatically and drop the stray vendor card.
+      const mergedVendorIds = new Set();
+      for (const v of normalized) {
+        if (!isSyntheticGmailCard(v) || deletedSet.has(String(v.id))) continue;
+        const targetName = resolveVendorAlias(v);
+        if (!targetName) continue;
+        const targetKey = canonicalFirmKey(targetName);
+        const idx = realApps.findIndex(r => canonicalFirmKey(r.company) === targetKey);
+        if (idx < 0) continue;
+        mergedVendorIds.add(String(v.id));
+        const target = realApps[idx];
+        const vRank = PIPELINE_STAGE_RANK[v.stage] || 0;
+        const tRank = PIPELINE_STAGE_RANK[target.stage] || 0;
+        if (vRank > tRank) {
+          const stamp = String(v.appliedDate || localTodayStr()).slice(0, 10);
+          const nextSub = String(v.subStatus || "").trim();
+          realApps[idx] = {
+            ...target,
+            stage: v.stage,
+            subStatus: nextSub ? `${v.stage === "Stage 2 - Video Interview" ? "Stage 2: " : ""}${nextSub}` : target.subStatus,
+            deadline: v.deadline || null,
+            calendarSynced: false,
+            notes: `${target.notes ? `${target.notes} ` : ""}[${stamp}] Moved to ${v.stage} (auto-detected from Gmail; stage before assumed completed).`.trim(),
+            _gmailSubStatus: nextSub || target._gmailSubStatus,
+            _gmailDeadline: v.deadline || null
+          };
+        }
+      }
+
       // Only keep synthetic Gmail cards that are real firms, not deleted, and not duplicates of existing/closed firms
       const seenSynthKeys = new Set();
       const keptSynth = [];
       for (const a of normalized) {
         if (!isSyntheticGmailCard(a)) continue;
         if (deletedSet.has(String(a.id))) continue;
+        if (mergedVendorIds.has(String(a.id))) continue;
         if (isJunkEmailCard(a)) continue;
         const fk = canonicalFirmKey(a.company);
         if (!fk) continue;
@@ -2489,6 +2562,7 @@
       const [rawRecs, setRawRecs] = useState(loadCachedRecs);
       const [handledRecs, setHandledRecs] = useState(loadHandledRecs);
       const [shortlistedRecs, setShortlistedRecs] = useState(loadShortlistedRecs);
+      const [snoozedRecs, setSnoozedRecs] = useState(loadSnoozedRecs);
       const [deletedAppIds, setDeletedAppIds] = useState(loadDeletedAppIds);
       const [isStateLoading, setIsStateLoading] = useState(() => loadMergedApps().length === 0 && !loadCycleArchive());
 
@@ -2505,8 +2579,8 @@
       const [isTestingToken, setIsTestingToken] = useState(false);
       const cloudQueueRef = React.useRef(Promise.resolve());
       const remoteExtrasRef = React.useRef({});
-      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, archive: cycleArchive, deletedIds: deletedAppIds });
-      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, archive: cycleArchive, deletedIds: deletedAppIds };
+      const latestStateRef = React.useRef({ apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, snoozed: snoozedRecs, archive: cycleArchive, deletedIds: deletedAppIds });
+      latestStateRef.current = { apps: rawApps, recs: rawRecs, handled: handledRecs, shortlisted: shortlistedRecs, snoozed: snoozedRecs, archive: cycleArchive, deletedIds: deletedAppIds };
       const [recSourceFilter, setRecSourceFilter] = useState("All");
       const [recsCollapsed, setRecsCollapsed] = useState(false);
       const [navFilterExpanded, setNavFilterExpanded] = useState(false);
@@ -2742,6 +2816,8 @@
 
       // Live Full-Stack Sync state (Gmail Apps Script + GitHub Actions Trackr + state.json)
       const [isRefreshing, setIsRefreshing] = useState(false);
+      const [isTrackrSyncing, setIsTrackrSyncing] = useState(false);
+      const [trackrSyncStage, setTrackrSyncStage] = useState(null);
       const [liveSyncStage, setLiveSyncStage] = useState(null);
       const [liveSyncToast, setLiveSyncToast] = useState(null);
       const [syncStatus, setSyncStatus] = useState(null);
@@ -2892,6 +2968,10 @@
       }, [shortlistedRecs]);
 
       useEffect(() => {
+        try { localStorage.setItem(SNOOZED_RECS_KEY, JSON.stringify(snoozedRecs)); } catch {}
+      }, [snoozedRecs]);
+
+      useEffect(() => {
         try { localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(rawRecs)); } catch {}
       }, [rawRecs]);
 
@@ -2906,6 +2986,7 @@
         const nextRecs = overrides.recommendations !== undefined ? overrides.recommendations : cur.recs;
         const nextHandled = overrides.handledRecIds !== undefined ? overrides.handledRecIds : cur.handled;
         const nextShortlisted = overrides.shortlistedRecIds !== undefined ? overrides.shortlistedRecIds : cur.shortlisted;
+        const nextSnoozed = overrides.snoozedRecs !== undefined ? overrides.snoozedRecs : cur.snoozed;
         const nextDeleted = overrides.deletedAppIds !== undefined ? overrides.deletedAppIds : cur.deletedIds;
         const nextArchive = overrides.cycleArchive !== undefined ? overrides.cycleArchive : cur.archive;
         const cleanApps = sanitizeAndDedupeApps(nextApps, nextDeleted);
@@ -2922,6 +3003,7 @@
           handledRecIds: nextHandled,
           dismissedIds: nextHandled,
           shortlistedRecIds: nextShortlisted,
+          snoozedRecs: nextSnoozed,
           deletedAppIds: nextDeleted,
           cycleArchive: nextArchive || null,
           offerAccepted: nextOfferAccepted,
@@ -2934,6 +3016,7 @@
           localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(nextRecs));
           localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(nextHandled));
           localStorage.setItem(SHORTLISTED_RECS_KEY, JSON.stringify(nextShortlisted));
+          localStorage.setItem(SNOOZED_RECS_KEY, JSON.stringify(nextSnoozed || {}));
           localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(nextDeleted));
         } catch {}
 
@@ -2968,7 +3051,7 @@
           if (!remote || !Array.isArray(remote.applications)) return null;
 
           // Keep extra keys written by external sync jobs (e.g. processedEmailIds from Cloud Gmail Sync)
-          const { version, updatedAt, applications, recommendations, handledRecIds, shortlistedRecIds: remoteShortlistedIds, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
+          const { version, updatedAt, applications, recommendations, handledRecIds, shortlistedRecIds: remoteShortlistedIds, snoozedRecs: remoteSnoozedRecs, deletedAppIds: remoteDeletedIds, cycleArchive: _ca, offerAccepted: _oa, recommendationsPaused: _rp, ...extraKeys } = remote;
           remoteExtrasRef.current = extraKeys;
 
           const mergedDeletedIds = Array.from(new Set([
@@ -2991,6 +3074,11 @@
           const localIdSet = new Set(localAppsNow.map(a => String(a.id)));
           const remoteHasUnseenApps = normalizedRemoteApps.some(a => !localIdSet.has(String(a.id)));
           const remoteIsNewer = forceRemote || !hasLocalData || remoteHasUnseenApps || (remoteUpdatedAt && (!localUpdatedAt || remoteUpdatedAt > localUpdatedAt));
+
+          // Merge 7-day archive (snooze) timestamps from cloud + this device, keeping the later expiry
+          if (remoteSnoozedRecs && typeof remoteSnoozedRecs === "object" && !Array.isArray(remoteSnoozedRecs)) {
+            setSnoozedRecs(mergeSnoozedMaps(loadSnoozedRecs(), remoteSnoozedRecs));
+          }
 
           // Always union handledRecIds + dismissedIds so applied/dismissed roles never reappear
           const mergedHandled = Array.from(new Set([
@@ -3137,6 +3225,15 @@
         return shortlistedRecSet.has(rec.id) || shortlistedRecSet.has(slug);
       };
 
+      const isRecSnoozed = (rec, nowMs = Date.now()) => {
+        if (!rec) return false;
+        const slug = makeRecSlug(rec.company, rec.role);
+        const exp = snoozedRecs[rec.id] || snoozedRecs[slug];
+        return Boolean(exp) && new Date(exp).getTime() > nowMs;
+      };
+
+      const snoozeMinuteTick = Math.floor(now / 60000);
+
       const unhandledRecommendations = useMemo(() => {
         const handledSet = new Set(handledRecs);
         const existingAppSlugs = new Set(apps.map(a => makeRecSlug(a.company, a.role)));
@@ -3153,25 +3250,46 @@
         });
       }, [rawRecs, handledRecs, apps, appliedFirmKeys, recsPaused]);
 
+      // Roles dismissed in the last 7 days are archived (hidden) and automatically return afterwards
+      const archivedRecommendations = useMemo(() => {
+        const nowMs = Date.now();
+        return unhandledRecommendations
+          .filter(rec => isRecSnoozed(rec, nowMs))
+          .sort((a, b) => {
+            const ea = snoozedRecs[a.id] || snoozedRecs[makeRecSlug(a.company, a.role)] || "";
+            const eb = snoozedRecs[b.id] || snoozedRecs[makeRecSlug(b.company, b.role)] || "";
+            return String(ea).localeCompare(String(eb));
+          });
+      }, [unhandledRecommendations, snoozedRecs, snoozeMinuteTick]);
+
+      const visibleRecommendations = useMemo(() => {
+        const nowMs = Date.now();
+        return unhandledRecommendations.filter(rec => !isRecSnoozed(rec, nowMs));
+      }, [unhandledRecommendations, snoozedRecs, snoozeMinuteTick]);
+
+      // Shortlisted roles live ONLY in the Shortlisted tab — they are removed from All / Trackr / Gradcracker / Email tabs
       const activeRecommendations = useMemo(() => {
-        const filtered = unhandledRecommendations.filter(rec => {
-          if (recSourceFilter === "Shortlisted") return isRecShortlisted(rec);
+        if (recSourceFilter === "Archived") return archivedRecommendations;
+        if (recSourceFilter === "Shortlisted") {
+          return visibleRecommendations.filter(rec => isRecShortlisted(rec));
+        }
+        return visibleRecommendations.filter(rec => {
+          if (isRecShortlisted(rec)) return false;
           if (recSourceFilter !== "All" && rec.source !== recSourceFilter) return false;
           return true;
         });
-        // Pin shortlisted roles to the front so top targets are always immediately visible
-        return [...filtered].sort((a, b) => {
-          const aStar = isRecShortlisted(a) ? 1 : 0;
-          const bStar = isRecShortlisted(b) ? 1 : 0;
-          return bStar - aStar;
-        });
-      }, [unhandledRecommendations, recSourceFilter, shortlistedRecSet]);
+      }, [visibleRecommendations, archivedRecommendations, recSourceFilter, shortlistedRecSet]);
 
-      const totalUnhandledRecsCount = unhandledRecommendations.length;
+      const totalUnhandledRecsCount = useMemo(
+        () => visibleRecommendations.filter(rec => !isRecShortlisted(rec)).length,
+        [visibleRecommendations, shortlistedRecSet]
+      );
 
       const shortlistedRecsCount = useMemo(() => {
-        return unhandledRecommendations.filter(rec => isRecShortlisted(rec)).length;
-      }, [unhandledRecommendations, shortlistedRecSet]);
+        return visibleRecommendations.filter(rec => isRecShortlisted(rec)).length;
+      }, [visibleRecommendations, shortlistedRecSet]);
+
+      const archivedRecsCount = archivedRecommendations.length;
 
       const handleToggleShortlistRecommendation = (rec) => {
         const slug = makeRecSlug(rec.company, rec.role);
@@ -3227,15 +3345,29 @@
         });
       };
 
+      // Dismiss = archive for 7 days (role automatically returns afterwards). Shortlist is cleared on dismiss.
       const handleDismissRecommendation = (rec) => {
         const slug = makeRecSlug(rec.company, rec.role);
-        const nextHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
+        const expiry = new Date(Date.now() + SNOOZE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+        const nextSnoozed = { ...snoozedRecs, [rec.id]: expiry, [slug]: expiry };
         const nextShortlisted = shortlistedRecs.filter(k => k !== rec.id && k !== slug);
-        setHandledRecs(nextHandled);
+        setSnoozedRecs(nextSnoozed);
         setShortlistedRecs(nextShortlisted);
         pushSnapshotToCloud(
-          { handledRecIds: nextHandled, shortlistedRecIds: nextShortlisted },
-          `Dismissed recommendation: ${rec.company}`
+          { snoozedRecs: nextSnoozed, shortlistedRecIds: nextShortlisted },
+          `Archived for ${SNOOZE_DAYS} days: ${rec.company}`
+        );
+      };
+
+      const handleRestoreArchivedRecommendation = (rec) => {
+        const slug = makeRecSlug(rec.company, rec.role);
+        const nextSnoozed = { ...snoozedRecs };
+        delete nextSnoozed[rec.id];
+        delete nextSnoozed[slug];
+        setSnoozedRecs(nextSnoozed);
+        pushSnapshotToCloud(
+          { snoozedRecs: nextSnoozed },
+          `Restored from archive: ${rec.company}`
         );
       };
 
@@ -3338,9 +3470,54 @@
         [theme]
       );
 
+      // Gmail-only live sync (header "Sync Now"): pings the Gmail Apps Script, then pulls the latest cloud state.
       const handleRefreshEmail = async () => {
         if (isRefreshing) return;
         setIsRefreshing(true);
+        setLiveSyncToast(null);
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        const fmtNow = () => new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
+
+        try {
+          setLiveSyncStage({ phase: "step1", text: "1/2 Scanning Gmail..." });
+          await fetch(GMAIL_WEBAPP_URL, {
+            method: "GET",
+            mode: "no-cors",
+            cache: "no-store"
+          }).catch(() => {});
+
+          await sleep(4000);
+          setLiveSyncStage({ phase: "step2", text: "2/2 Pulling Gmail updates..." });
+          const pull = await pullFromMasterState({ forceRemote: true, silent: false });
+
+          const doneTime = fmtNow();
+          const appCount = pull && pull.remote ? pull.remote.applications.length : rawApps.length;
+          setLiveSyncStage({ phase: "done", text: "Gmail Synced", time: doneTime });
+          setSyncStatus({
+            ok: Boolean(pull),
+            time: doneTime,
+            message: pull
+              ? `Gmail scanned & dashboard refreshed (${appCount} applications).`
+              : "Offline or unreachable — showing your locally cached applications.",
+            emails: []
+          });
+        } catch (err) {
+          setLiveSyncStage(null);
+          setSyncStatus({
+            ok: false,
+            time: fmtNow(),
+            message: `Sync error: ${err && err.message ? err.message : "Could not complete Gmail sync."}`,
+            emails: []
+          });
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+
+      // Trackr-only live sync (button inside "Recommended to Apply"): dispatches the scraper workflow and polls until done.
+      const handleTrackrSync = async () => {
+        if (isTrackrSyncing) return;
+        setIsTrackrSyncing(true);
         setLiveSyncToast(null);
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         const fmtNow = () => new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London" });
@@ -3350,14 +3527,7 @@
         const dispatchStartedMs = Date.now() - 4000;
 
         try {
-          // STEP 1: Simultaneously ping Gmail Apps Script Web App & dispatch GitHub Actions Trackr scraper
-          setLiveSyncStage({ phase: "step1", text: "1/3 Scanning Gmail..." });
-
-          const gmailPingPromise = fetch(GMAIL_WEBAPP_URL, {
-            method: "GET",
-            mode: "no-cors",
-            cache: "no-store"
-          }).catch(() => {});
+          setTrackrSyncStage({ phase: "step1", text: "Starting Trackr scrape..." });
 
           let trackrDispatched = false;
           let tokenPermissionIssue = null;
@@ -3394,20 +3564,8 @@
             setLiveSyncToast({ type: "warning", message: tokenPermissionIssue });
           }
 
-          await gmailPingPromise;
-
-          // STEP 2: After 4 seconds, pull latest state.json from GitHub Contents API so Gmail updates render live
-          await sleep(4000);
-          setLiveSyncStage({
-            phase: "step2",
-            text: trackrDispatched ? "2/3 Gmail synced · Scraping Trackr..." : "2/3 Pulling Gmail updates..."
-          });
-
-          const step2Pull = await pullFromMasterState({ forceRemote: true, silent: false });
-
-          // STEP 3: If Trackr workflow was dispatched, poll runs every 5s (up to 90s) until completed, then live re-fetch state.json
           if (trackrDispatched && ghToken) {
-            setLiveSyncStage({ phase: "step3", text: "3/3 Updating Trackr roles..." });
+            setTrackrSyncStage({ phase: "step2", text: "Scraping Trackr..." });
             const pollStart = Date.now();
             const maxPollMs = 90000;
             let completedRun = null;
@@ -3442,10 +3600,7 @@
                       completedRun = latestRun;
                       break;
                     }
-                    setLiveSyncStage({
-                      phase: "step3",
-                      text: `3/3 Updating Trackr roles... (${elapsedSec}s)`
-                    });
+                    setTrackrSyncStage({ phase: "step2", text: `Scraping Trackr... (${elapsedSec}s)` });
                   }
                 }
               } catch {}
@@ -3453,51 +3608,29 @@
 
             const finalPull = await pullFromMasterState({ forceRemote: true, silent: false });
             const doneTime = fmtNow();
-            const appCount = finalPull && finalPull.remote ? finalPull.remote.applications.length : rawApps.length;
             const recCount = finalPull && finalPull.remote ? (finalPull.remote.recommendations || []).length : rawRecs.length;
-
-            setLiveSyncStage({
-              phase: "done",
-              text: "Live Sync Complete",
-              time: doneTime
-            });
+            setTrackrSyncStage({ phase: "done", text: completedRun ? "Trackr Updated" : "Trackr Refreshed", time: doneTime });
             setSyncStatus({
               ok: true,
               time: doneTime,
               message: completedRun
-                ? `Live Sync Complete — Gmail scanned & Trackr updated (${appCount} applications, ${recCount} recommendations).`
-                : `Gmail synced & dashboard refreshed (${appCount} applications, ${recCount} recommendations). Trackr is still finishing in the background.`,
+                ? `Trackr scrape complete — ${recCount} recommendations available.`
+                : `Recommendations refreshed (${recCount}). Trackr is still finishing in the background.`,
               emails: []
             });
           } else {
-            const doneTime = fmtNow();
-            const appCount = step2Pull && step2Pull.remote ? step2Pull.remote.applications.length : rawApps.length;
-            const recCount = step2Pull && step2Pull.remote ? (step2Pull.remote.recommendations || []).length : rawRecs.length;
-            setLiveSyncStage({
-              phase: "done",
-              text: "Gmail Synced",
-              time: doneTime
-            });
-            setSyncStatus({
-              ok: Boolean(step2Pull),
-              time: doneTime,
-              message: step2Pull
-                ? `Gmail scanned & dashboard refreshed (${appCount} applications, ${recCount} recommendations).`
-                : "Offline or unreachable — showing your locally cached applications.",
-              emails: []
-            });
+            setTrackrSyncStage(null);
           }
         } catch (err) {
-          const errTime = fmtNow();
-          setLiveSyncStage(null);
+          setTrackrSyncStage(null);
           setSyncStatus({
             ok: false,
-            time: errTime,
-            message: `Sync error: ${err && err.message ? err.message : "Could not complete live sync."}`,
+            time: fmtNow(),
+            message: `Trackr sync error: ${err && err.message ? err.message : "Could not complete Trackr sync."}`,
             emails: []
           });
         } finally {
-          setIsRefreshing(false);
+          setIsTrackrSyncing(false);
         }
       };
 
@@ -4033,7 +4166,7 @@
                     <button
                       onClick={handleRefreshEmail}
                       disabled={isRefreshing}
-                      title="Scan Gmail, scrape Trackr, and refresh your dashboard in real time"
+                      title="Scan Gmail and refresh your applications in real time"
                       className="flex items-center gap-1.5 glass-surface hover:border-current disabled:opacity-60 disabled:cursor-wait text-white font-semibold text-xs px-3 py-2 rounded-xl transition-all shrink-0"
                     >
                       <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
@@ -4535,6 +4668,28 @@
                   <span className="text-[11px] text-slate-400">
                     • 2027 UK Finance & Consulting Summer Internships (Trackr, Gradcracker & Email Alerts)
                   </span>
+                  <button
+                    type="button"
+                    onClick={handleTrackrSync}
+                    disabled={isTrackrSyncing}
+                    title="Scrape Trackr & Gradcracker for newly opened roles (separate from the Gmail Sync Now button)"
+                    className="flex items-center gap-1.5 theme-input hover:border-current disabled:opacity-60 disabled:cursor-wait text-[11px] font-bold px-2.5 py-1 rounded-lg transition"
+                  >
+                    <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isTrackrSyncing ? "animate-spin" : ""}`} />
+                    {isTrackrSyncing ? "Syncing Trackr..." : "Sync Trackr"}
+                  </button>
+                  {trackrSyncStage && (
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border whitespace-nowrap ${
+                        trackrSyncStage.phase === "done"
+                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/40"
+                          : "bg-amber-500/15 text-amber-200 border-amber-400/40"
+                      }`}
+                    >
+                      <span>{trackrSyncStage.text}</span>
+                      {trackrSyncStage.time && <span className="font-mono-num opacity-80">• {trackrSyncStage.time}</span>}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1.5">
@@ -4543,7 +4698,8 @@
                     { id: "Shortlisted", label: `★ Shortlisted (${shortlistedRecsCount})`, isShortlist: true },
                     { id: "Trackr", label: "Trackr" },
                     { id: "Gradcracker", label: "Gradcracker" },
-                    { id: "Email", label: "Email Alerts" }
+                    { id: "Email", label: "Email Alerts" },
+                    { id: "Archived", label: `🗄 Archived (${archivedRecsCount})`, isArchive: true }
                   ].map(tab => (
                     <button
                       key={tab.id}
@@ -4552,6 +4708,8 @@
                         recSourceFilter === tab.id
                           ? tab.isShortlist
                             ? "bg-amber-400 text-slate-950 font-extrabold shadow-sm"
+                            : tab.isArchive
+                            ? "bg-slate-300 text-slate-900 font-extrabold shadow-sm"
                             : "theme-accent-btn shadow-sm"
                           : tab.isShortlist && shortlistedRecsCount > 0
                           ? "bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25"
@@ -4629,7 +4787,33 @@
                               </div>
                             </div>
 
-                            {/* Action Buttons: Rectangular Shortlist Toggle + "Applied", "Role ↗", and "Dismiss" */}
+                            {/* Action Buttons: Rectangular Shortlist Toggle + "Applied", "Role ↗", and "Dismiss (archive 7 days)" */}
+                            {recSourceFilter === "Archived" ? (
+                              <div className="pt-2.5 border-t border-white/[0.07] space-y-1.5">
+                                <div className="text-[10px] font-mono-num text-slate-400 text-center">
+                                  Returns {new Date(snoozedRecs[rec.id] || snoozedRecs[makeRecSlug(rec.company, rec.role)]).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                                </div>
+                                <div className="flex items-center justify-between gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRestoreArchivedRecommendation(rec)}
+                                    className="flex-1 theme-accent-btn font-bold text-[11px] px-2.5 py-1.5 rounded-lg transition"
+                                  >
+                                    ↩ Restore now
+                                  </button>
+                                  {rec.applyLink && (
+                                    <a
+                                      href={rec.applyLink}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg theme-input text-slate-200 hover:text-white flex items-center gap-1 transition"
+                                    >
+                                      Role <Icon name="ExternalLink" className="w-3 h-3" />
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
                             <div className="pt-2.5 border-t border-white/[0.07] space-y-1.5">
                               <button
                                 type="button"
@@ -4682,13 +4866,14 @@
 
                                 <button
                                   onClick={() => handleDismissRecommendation(rec)}
-                                  title="Dismiss this recommendation permanently"
+                                  title="Archive this role for 7 days (it returns automatically afterwards)"
                                   className="text-[11px] text-slate-400 hover:text-rose-300 px-2 py-1.5 rounded-lg theme-input transition"
                                 >
                                   Dismiss
                                 </button>
                               </div>
                             </div>
+                            )}
                           </div>
                         );
                       })}
@@ -4696,10 +4881,12 @@
                   ) : (
                     <div className="text-center py-6 text-xs text-slate-400 border border-dashed border-white/[0.08] rounded-xl">
                       {recSourceFilter === "Shortlisted"
-                        ? "No roles shortlisted yet — click the ★ star on any suggested role to pin it to your shortlist."
+                        ? "No roles shortlisted yet — tap Shortlist on any suggested role to move it here."
+                        : recSourceFilter === "Archived"
+                        ? "Nothing archived. Roles you dismiss are parked here for 7 days, then return automatically."
                         : recSourceFilter !== "All"
                         ? `No active suggestions from ${recSourceFilter === "Email" ? "Email Alerts" : recSourceFilter} right now.`
-                        : "All current recommendations have been marked as Applied or Dismissed. Next automatic check: Hourly Gmail Sync & Daily 8:00 AM Scrape."}
+                        : "No new suggestions right now (dismissed roles are archived for 7 days; shortlisted roles live in ★ Shortlisted). Next automatic check: Hourly Gmail Sync & Daily 8:00 AM Scrape."}
                     </div>
                   )}
                 </div>
