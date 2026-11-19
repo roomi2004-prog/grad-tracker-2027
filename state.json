@@ -111,6 +111,8 @@
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
+    "bny::2027 bny summer internship program – trade execution (london) (req 83002)",
+    "bny::2027 bny summer internship program – credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
@@ -126,7 +128,7 @@
   ],
   "lastGmailSync": "2026-11-19T18:37:14.339Z",
   "version": 6,
-  "updatedAt": "2026-11-19T18:40:00.000Z",
+  "updatedAt": "2026-11-19T18:45:33.394Z",
   "applications": [
     {
       "id": "app_4af24edd",
@@ -143,7 +145,9 @@
       "lastUpdated": "2026-11-12T19:50:52.000Z",
       "deadline": null,
       "rejectedAfterStage": null,
-      "notes": "[2026-11-12] Auto-detected from Gmail: Thanks for applying to Google"
+      "notes": "[2026-11-12] Auto-detected from Gmail: Thanks for applying to Google",
+      "portalLink": "",
+      "calendarSynced": false
     },
     {
       "id": "app_b43f4971",
@@ -160,7 +164,9 @@
       "lastUpdated": "2026-11-11T09:06:14.000Z",
       "deadline": null,
       "rejectedAfterStage": null,
-      "notes": "[2026-11-11] Auto-detected from Gmail: Titan Worldwide - CV shortlisted"
+      "notes": "[2026-11-11] Auto-detected from Gmail: Titan Worldwide - CV shortlisted",
+      "portalLink": "",
+      "calendarSynced": false
     },
     {
       "id": "app_f40b2a25",
@@ -1362,13 +1368,13 @@
       "role": "Customer Experience Advisor | S1 | Retail Banking | Kingston Work Caf?",
       "sector": "Retail Banking",
       "appliedDate": "2026-09-15",
-      "stage": "Stage 2 - Video Interview",
+      "stage": "Closed / Unsuccessful",
       "subStatus": "Assessments & Video Interview Under Review (Oct 14)",
       "deadline": null,
       "portalLink": "https://www.santanderjobs.co.uk",
       "calendarSynced": false,
       "notes": "Applied Sep 15; completed assessments & digital interview Sep 17; Santander Resourcing confirmed Oct 14 assessments are under review.",
-      "rejectedAfterStage": null,
+      "rejectedAfterStage": "Stage 2 - Video Interview",
       "_gmailSubStatus": "Assessments & Video Interview Under Review (Oct 14)",
       "_gmailDeadline": null
     }
@@ -1524,6 +1530,8 @@
     "bny::2027 bny summer internship program ? trade execution (london) (req 83002)",
     "rec-email-bny-credit-2027",
     "bny::2027 bny summer internship program ? credit & lending (london) (req 83005)",
+    "bny::2027 bny summer internship program – trade execution (london) (req 83002)",
+    "bny::2027 bny summer internship program – credit & lending (london) (req 83005)",
     "rec-trackr-berenberg-2027",
     "berenberg::2027 summer internship ? equities, sales & trading / specialist coverage (london)",
     "rec-trackr-roland-berger-2027",
@@ -1545,13 +1553,9 @@
   ],
   "snoozedRecs": {},
   "deletedAppIds": [
-    "1795044257639",
-    "49",
-    "53",
     "app-1a1ea06550873c5b",
     "app-1a1efbecac2d1388",
     "app_11efa9e4",
-    "app_1441852b",
     "app_1d20214f",
     "app_39dba5a0",
     "app_409ce3d9",
@@ -1565,6 +1569,10 @@
     "app_c8d844d7",
     "app_e7ca42a4",
     "app_f5a22011",
+    "1795044257639",
+    "49",
+    "53",
+    "app_1441852b",
     "app_1cddcbf1"
   ],
   "cycleArchive": null,
