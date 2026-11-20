@@ -134,7 +134,7 @@
   ],
   "lastGmailSync": "2026-11-19T22:33:01.484Z",
   "version": 6,
-  "updatedAt": "2026-11-20T00:11:20.799Z",
+  "updatedAt": "2026-11-20T00:11:22.942Z",
   "applications": [
     {
       "id": "app_4af24edd",
@@ -1637,7 +1637,10 @@
     "rec-trackr-tudor-group-summer-internship-20-2027",
     "tudor group::summer internship 2027"
   ],
-  "snoozedRecs": {},
+  "snoozedRecs": {
+    "rec-trackr-institute-of-fiscal-studies-economic-research-su-2027": "2026-11-27T00:11:22.941Z",
+    "institute of fiscal studies::economic research summer intern": "2026-11-27T00:11:22.941Z"
+  },
   "pendingEmailReview": [],
   "deletedAppIds": [
     "1795044257639",
