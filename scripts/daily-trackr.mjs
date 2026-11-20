@@ -702,6 +702,60 @@ async function main() {
   state.applications = Array.isArray(state.applications) ? state.applications : [];
   state.recommendations = Array.isArray(state.recommendations) ? state.recommendations : [];
   state.handledRecIds = Array.isArray(state.handledRecIds) ? state.handledRecIds : [];
+  state.dismissedIds = Array.isArray(state.dismissedIds) ? state.dismissedIds : [];
+  state.shortlistedRecIds = Array.isArray(state.shortlistedRecIds) ? state.shortlistedRecIds : [];
+  state.snoozedRecs = (state.snoozedRecs && typeof state.snoozedRecs === "object" && !Array.isArray(state.snoozedRecs))
+    ? state.snoozedRecs
+    : {};
+
+  // Always prune any already-applied firm out of shortlistedRecIds & snoozedRecs
+  const archivedAppsAll = Array.isArray(state.cycleArchive?.archivedApplications)
+    ? state.cycleArchive.archivedApplications
+    : [];
+  const allApplied = [...state.applications, ...archivedAppsAll];
+  const appliedFirmKeySet = new Set(allApplied.map((a) => canonicalFirmKey(a.company || a.firm)).filter(Boolean));
+  const appliedSlugSet = new Set(allApplied.map((a) => makeRecSlug(a.company || a.firm, a.role)));
+  const appliedRecKeys = new Set();
+  for (const rec of state.recommendations) {
+    const slug = makeRecSlug(rec.company || rec.firm, rec.role);
+    const fk = canonicalFirmKey(rec.company || rec.firm);
+    if (appliedSlugSet.has(slug) || (fk && appliedFirmKeySet.has(fk))) {
+      if (rec.id) appliedRecKeys.add(rec.id);
+      appliedRecKeys.add(slug);
+    }
+  }
+  const isAppliedKey = (k) => {
+    if (!k) return false;
+    if (appliedRecKeys.has(k)) return true;
+    if (String(k).includes("::")) {
+      const slugFirm = canonicalFirmKey(String(k).split("::")[0]);
+      if (slugFirm && appliedFirmKeySet.has(slugFirm)) return true;
+    }
+    return false;
+  };
+  const prevShortlistedLen = state.shortlistedRecIds.length;
+  state.shortlistedRecIds = state.shortlistedRecIds.filter((k) => !isAppliedKey(k));
+  let prunedSnoozedCount = 0;
+  for (const k of Object.keys(state.snoozedRecs)) {
+    if (isAppliedKey(k)) {
+      delete state.snoozedRecs[k];
+      prunedSnoozedCount++;
+    }
+  }
+  const prunedShortlistedCount = prevShortlistedLen - state.shortlistedRecIds.length;
+  let statePruned = prunedShortlistedCount > 0 || prunedSnoozedCount > 0;
+  if (appliedRecKeys.size > 0) {
+    const prevHandledLen = state.handledRecIds.length;
+    const prevDismissedLen = state.dismissedIds.length;
+    state.handledRecIds = Array.from(new Set([...state.handledRecIds, ...appliedRecKeys]));
+    state.dismissedIds = Array.from(new Set([...state.dismissedIds, ...appliedRecKeys]));
+    if (state.handledRecIds.length !== prevHandledLen || state.dismissedIds.length !== prevDismissedLen) {
+      statePruned = true;
+    }
+  }
+  if (prunedShortlistedCount > 0 || prunedSnoozedCount > 0) {
+    console.log(`Pruned ${prunedShortlistedCount} shortlisted and ${prunedSnoozedCount} snoozed key(s) for already-applied firms.`);
+  }
 
   const isPaused = Boolean(
     state.recommendationsPaused ||
@@ -836,10 +890,15 @@ async function main() {
     }
   }
 
-  if (addedCount > 0) {
+  if (addedCount > 0 || statePruned) {
     state.updatedAt = new Date().toISOString();
     fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2) + "\n", "utf8");
-    console.log(`Added ${addedCount} newly opened Trackr role(s) to state.json.`);
+    if (addedCount > 0) {
+      console.log(`Added ${addedCount} newly opened Trackr/Gradcracker role(s) to state.json.`);
+    }
+    if (statePruned) {
+      console.log("Saved pruned shortlisted/archived recommendation state to state.json.");
+    }
   } else {
     console.log("No brand-new open Trackr or Gradcracker roles found in the last 30 days.");
   }

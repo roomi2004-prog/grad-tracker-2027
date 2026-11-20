@@ -1838,6 +1838,42 @@
       return out;
     }
 
+    // Automatically remove any already-applied company from Shortlisted & 7-day Archived buckets (and mark handled)
+    function pruneAppliedFromRecBuckets(appsList, recsList, shortlistedIds, snoozedMap, handledIds, archivedApps = []) {
+      const allApps = [...(Array.isArray(appsList) ? appsList : []), ...(Array.isArray(archivedApps) ? archivedApps : [])];
+      const appliedFirms = new Set(allApps.map(a => canonicalFirmKey(a.company || a.firm)).filter(Boolean));
+      const appliedSlugs = new Set(allApps.map(a => makeRecSlug(a.company || a.firm, a.role)));
+      const appliedRecKeys = new Set();
+
+      for (const rec of (Array.isArray(recsList) ? recsList : [])) {
+        const slug = makeRecSlug(rec.company, rec.role);
+        const fk = canonicalFirmKey(rec.company);
+        if (appliedSlugs.has(slug) || (fk && appliedFirms.has(fk))) {
+          if (rec.id) appliedRecKeys.add(rec.id);
+          appliedRecKeys.add(slug);
+        }
+      }
+
+      const isAppliedKey = (k) => {
+        if (!k) return false;
+        if (appliedRecKeys.has(k)) return true;
+        if (String(k).includes("::")) {
+          const slugFirm = canonicalFirmKey(String(k).split("::")[0]);
+          if (slugFirm && appliedFirms.has(slugFirm)) return true;
+        }
+        return false;
+      };
+
+      const nextShortlisted = (Array.isArray(shortlistedIds) ? shortlistedIds : []).filter(k => !isAppliedKey(k));
+      const nextSnoozed = {};
+      for (const [k, v] of Object.entries(snoozedMap || {})) {
+        if (!isAppliedKey(k)) nextSnoozed[k] = v;
+      }
+      const nextHandled = Array.from(new Set([...(Array.isArray(handledIds) ? handledIds : []), ...appliedRecKeys]));
+
+      return { shortlisted: nextShortlisted, snoozed: nextSnoozed, handled: nextHandled };
+    }
+
     function loadDeletedAppIds() {
       try {
         const raw = localStorage.getItem(DELETED_APPS_KEY);
@@ -3460,6 +3496,24 @@
         try { localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(deletedAppIds)); } catch {}
       }, [deletedAppIds]);
 
+      // Invariant: if a shortlisted or archived recommendation has already been applied to,
+      // automatically remove it from Shortlisted & Archived and mark it handled.
+      useEffect(() => {
+        const archivedApps = Array.isArray(cycleArchive && cycleArchive.archivedApplications)
+          ? cycleArchive.archivedApplications
+          : [];
+        const pruned = pruneAppliedFromRecBuckets(rawApps, rawRecs, shortlistedRecs, snoozedRecs, handledRecs, archivedApps);
+        if (pruned.shortlisted.length !== shortlistedRecs.length) {
+          setShortlistedRecs(pruned.shortlisted);
+        }
+        if (Object.keys(pruned.snoozed).length !== Object.keys(snoozedRecs || {}).length) {
+          setSnoozedRecs(pruned.snoozed);
+        }
+        if (pruned.handled.length !== handledRecs.length) {
+          setHandledRecs(pruned.handled);
+        }
+      }, [rawApps, rawRecs, shortlistedRecs, snoozedRecs, handledRecs, cycleArchive]);
+
       // Build unified master state snapshot and push state.json + deadlines.ics to GitHub if token is configured
       const pushSnapshotToCloud = (overrides = {}, commitMsg = "Mobile sync from Rags to Riches") => {
         const cur = latestStateRef.current;
@@ -3472,6 +3526,11 @@
         const nextDeleted = overrides.deletedAppIds !== undefined ? overrides.deletedAppIds : cur.deletedIds;
         const nextArchive = overrides.cycleArchive !== undefined ? overrides.cycleArchive : cur.archive;
         const cleanApps = sanitizeAndDedupeApps(nextApps, nextDeleted);
+        const archivedApps = Array.isArray(nextArchive && nextArchive.archivedApplications) ? nextArchive.archivedApplications : [];
+        const prunedBuckets = pruneAppliedFromRecBuckets(cleanApps, nextRecs, nextShortlisted, nextSnoozed, nextHandled, archivedApps);
+        const cleanShortlisted = prunedBuckets.shortlisted;
+        const cleanSnoozed = prunedBuckets.snoozed;
+        const cleanHandled = prunedBuckets.handled;
         const nextOfferAccepted = Boolean(nextArchive && nextArchive.offerAccepted);
         const nextPaused = Boolean(nextArchive && (nextArchive.offerAccepted || nextArchive.archived || nextArchive.recommendationsPaused));
         const nowIso = new Date().toISOString();
@@ -3482,10 +3541,10 @@
           updatedAt: nowIso,
           applications: cleanApps,
           recommendations: nextRecs,
-          handledRecIds: nextHandled,
-          dismissedIds: nextHandled,
-          shortlistedRecIds: nextShortlisted,
-          snoozedRecs: nextSnoozed,
+          handledRecIds: cleanHandled,
+          dismissedIds: cleanHandled,
+          shortlistedRecIds: cleanShortlisted,
+          snoozedRecs: cleanSnoozed,
           pendingEmailReview: nextPendingReviews || [],
           deletedAppIds: nextDeleted,
           cycleArchive: nextArchive || null,
@@ -3497,9 +3556,9 @@
           localStorage.setItem(LOCAL_UPDATED_AT_KEY, nowIso);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanApps));
           localStorage.setItem(CACHED_RECS_KEY, JSON.stringify(nextRecs));
-          localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(nextHandled));
-          localStorage.setItem(SHORTLISTED_RECS_KEY, JSON.stringify(nextShortlisted));
-          localStorage.setItem(SNOOZED_RECS_KEY, JSON.stringify(nextSnoozed || {}));
+          localStorage.setItem(HANDLED_RECS_KEY, JSON.stringify(cleanHandled));
+          localStorage.setItem(SHORTLISTED_RECS_KEY, JSON.stringify(cleanShortlisted));
+          localStorage.setItem(SNOOZED_RECS_KEY, JSON.stringify(cleanSnoozed || {}));
           localStorage.setItem(PENDING_REVIEW_KEY, JSON.stringify(nextPendingReviews || []));
           localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(nextDeleted));
         } catch {}
@@ -3559,27 +3618,37 @@
           const remoteHasUnseenApps = normalizedRemoteApps.some(a => !localIdSet.has(String(a.id)));
           const remoteIsNewer = forceRemote || !hasLocalData || remoteHasUnseenApps || (remoteUpdatedAt && (!localUpdatedAt || remoteUpdatedAt > localUpdatedAt));
 
-          // Merge 7-day archive (snooze) timestamps from cloud + this device, keeping the later expiry
-          if (remoteSnoozedRecs && typeof remoteSnoozedRecs === "object" && !Array.isArray(remoteSnoozedRecs)) {
-            setSnoozedRecs(mergeSnoozedMaps(loadSnoozedRecs(), remoteSnoozedRecs));
-          }
-
-          if (Array.isArray(remotePendingReview)) {
-            setPendingReviews(remotePendingReview);
-          }
-
-          // Always union handledRecIds + dismissedIds so applied/dismissed roles never reappear
-          const mergedHandled = Array.from(new Set([
+          // Merge 7-day archive (snooze) timestamps from cloud + this device, keeping the later expiry,
+          // and prune any company already present in applications out of Shortlisted & Archived automatically
+          const baseShortlisted = Array.isArray(remoteShortlistedIds) && (remoteIsNewer || (loadShortlistedRecs().length === 0 && remoteShortlistedIds.length > 0))
+            ? remoteShortlistedIds
+            : loadShortlistedRecs();
+          const baseSnoozed = (remoteSnoozedRecs && typeof remoteSnoozedRecs === "object" && !Array.isArray(remoteSnoozedRecs))
+            ? mergeSnoozedMaps(loadSnoozedRecs(), remoteSnoozedRecs)
+            : loadSnoozedRecs();
+          const baseHandled = Array.from(new Set([
             ...loadHandledRecs(),
             ...(remote.handledRecIds || []),
             ...(remote.dismissedIds || [])
           ]));
-          setHandledRecs(mergedHandled);
+          const archivedAppsForPrune = Array.isArray(remote.cycleArchive && remote.cycleArchive.archivedApplications)
+            ? remote.cycleArchive.archivedApplications
+            : [];
+          const prunedRemoteBuckets = pruneAppliedFromRecBuckets(
+            normalizedRemoteApps,
+            combinedRemoteRecs.length > 0 ? combinedRemoteRecs : loadCachedRecs(),
+            baseShortlisted,
+            baseSnoozed,
+            baseHandled,
+            archivedAppsForPrune
+          );
 
-          if (Array.isArray(remoteShortlistedIds) && remoteIsNewer) {
-            setShortlistedRecs(remoteShortlistedIds);
-          } else if (Array.isArray(remoteShortlistedIds) && loadShortlistedRecs().length === 0 && remoteShortlistedIds.length > 0) {
-            setShortlistedRecs(remoteShortlistedIds);
+          setSnoozedRecs(prunedRemoteBuckets.snoozed);
+          setHandledRecs(prunedRemoteBuckets.handled);
+          setShortlistedRecs(prunedRemoteBuckets.shortlisted);
+
+          if (Array.isArray(remotePendingReview)) {
+            setPendingReviews(remotePendingReview);
           }
 
           if (combinedRemoteRecs.length > 0) {
@@ -3816,13 +3885,14 @@
         };
 
         const nextApps = [newAppEntry, ...rawApps];
-        const nextHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
-        const nextShortlisted = shortlistedRecs.filter(k => k !== rec.id && k !== slug);
+        const baseHandled = Array.from(new Set([...handledRecs, rec.id, slug]));
+        const pruned = pruneAppliedFromRecBuckets(nextApps, rawRecs, shortlistedRecs, snoozedRecs, baseHandled, cycleArchive?.archivedApplications || []);
         setApps(nextApps);
-        setHandledRecs(nextHandled);
-        setShortlistedRecs(nextShortlisted);
+        setHandledRecs(pruned.handled);
+        setShortlistedRecs(pruned.shortlisted);
+        setSnoozedRecs(pruned.snoozed);
         pushSnapshotToCloud(
-          { applications: nextApps, handledRecIds: nextHandled, shortlistedRecIds: nextShortlisted },
+          { applications: nextApps, handledRecIds: pruned.handled, shortlistedRecIds: pruned.shortlisted, snoozedRecs: pruned.snoozed },
           `Applied: ${rec.company} — ${rec.role}`
         );
         setSyncStatus({
@@ -4025,18 +4095,20 @@
             if (parsed && parsed.theme && THEME_PRESETS.some(t => t.id === parsed.theme)) {
               setTheme(parsed.theme);
             }
-            const nextHandled = parsed && Array.isArray(parsed.handledRecommendations)
+            const merged = smartMergeApps(rawApps, restoredApps);
+            const baseHandled = parsed && Array.isArray(parsed.handledRecommendations)
               ? Array.from(new Set([...handledRecs, ...parsed.handledRecommendations]))
               : handledRecs;
-            if (nextHandled !== handledRecs) setHandledRecs(nextHandled);
-            const nextShortlisted = parsed && Array.isArray(parsed.shortlistedRecommendations)
+            const baseShortlisted = parsed && Array.isArray(parsed.shortlistedRecommendations)
               ? Array.from(new Set([...shortlistedRecs, ...parsed.shortlistedRecommendations]))
               : shortlistedRecs;
-            if (nextShortlisted !== shortlistedRecs) setShortlistedRecs(nextShortlisted);
-            const merged = smartMergeApps(rawApps, restoredApps);
+            const pruned = pruneAppliedFromRecBuckets(merged, rawRecs, baseShortlisted, snoozedRecs, baseHandled, cycleArchive?.archivedApplications || []);
+            setHandledRecs(pruned.handled);
+            setShortlistedRecs(pruned.shortlisted);
+            setSnoozedRecs(pruned.snoozed);
             setApps(merged);
             pushSnapshotToCloud(
-              { applications: merged, handledRecIds: nextHandled, shortlistedRecIds: nextShortlisted },
+              { applications: merged, handledRecIds: pruned.handled, shortlistedRecIds: pruned.shortlisted, snoozedRecs: pruned.snoozed },
               `Restored backup from ${file.name}`
             );
             setSyncStatus({
@@ -4512,9 +4584,16 @@
 
       const handleSaveEdit = (updated) => {
         const nextApps = rawApps.map(a => a.id === updated.id ? updated : a);
+        const pruned = pruneAppliedFromRecBuckets(nextApps, rawRecs, shortlistedRecs, snoozedRecs, handledRecs, cycleArchive?.archivedApplications || []);
         setApps(nextApps);
+        setShortlistedRecs(pruned.shortlisted);
+        setSnoozedRecs(pruned.snoozed);
+        setHandledRecs(pruned.handled);
         setSelectedApp(null);
-        pushSnapshotToCloud({ applications: nextApps }, `Update ${updated.company}`);
+        pushSnapshotToCloud(
+          { applications: nextApps, shortlistedRecIds: pruned.shortlisted, snoozedRecs: pruned.snoozed, handledRecIds: pruned.handled },
+          `Update ${updated.company}`
+        );
       };
 
       const handleAddApp = (e) => {
@@ -4528,9 +4607,16 @@
           rejectedAfterStage: newApp.stage === "Closed / Unsuccessful" ? (newApp.rejectedAfterStage || "CV / Application Screen") : null
         };
         const nextApps = [item, ...rawApps];
+        const pruned = pruneAppliedFromRecBuckets(nextApps, rawRecs, shortlistedRecs, snoozedRecs, handledRecs, cycleArchive?.archivedApplications || []);
         setApps(nextApps);
+        setShortlistedRecs(pruned.shortlisted);
+        setSnoozedRecs(pruned.snoozed);
+        setHandledRecs(pruned.handled);
         setShowAddModal(false);
-        pushSnapshotToCloud({ applications: nextApps }, `Add role: ${item.company}`);
+        pushSnapshotToCloud(
+          { applications: nextApps, shortlistedRecIds: pruned.shortlisted, snoozedRecs: pruned.snoozed, handledRecIds: pruned.handled },
+          `Add role: ${item.company}`
+        );
         setNewApp({
           company: "", role: "", sector: "Investment Management",
           appliedDate: new Date().toISOString().slice(0, 10),
