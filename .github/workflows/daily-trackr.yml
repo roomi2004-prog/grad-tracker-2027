@@ -36,6 +36,7 @@ jobs:
         working-directory: scripts
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: node daily-trackr.mjs
 
       - name: Commit and push updated state.json & deadlines.ics
