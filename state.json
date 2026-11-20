@@ -132,7 +132,7 @@
     "rec-email-cgi-2027",
     "cgi::2027 business consulting & finance placement / summer internship (uk)"
   ],
-  "lastGmailSync": "2026-11-20T00:43:58.891Z",
+  "lastGmailSync": "2026-11-20T00:57:52.865Z",
   "version": 6,
   "updatedAt": "2026-11-20T00:12:59.495Z",
   "applications": [
@@ -286,15 +286,16 @@
       "role": "Universal Banker (Job ID: 67424)",
       "sector": "Retail Banking / Flex",
       "appliedDate": "2026-11-19",
-      "stage": "Application Submitted",
-      "subStatus": "Application Received (Nov 19)",
-      "deadline": null,
-      "portalLink": "https://www.hsbc.com/careers",
+      "stage": "Stage 1 - Online Assessment",
+      "subStatus": "Online Assessment Due",
+      "deadline": "2026-11-27T00:53:33",
+      "portalLink": "https://integration-talentcentral.eu.shl.com/Integration/ce/8a29bd6bc8894f32b49d054a67892640/?rid=1720222659",
       "calendarSynced": false,
-      "notes": "[2026-11-19] Applied to HSBC Group ? Universal Banker (Job ID: 67424).",
+      "notes": "[2026-11-19] Applied to HSBC Group ? Universal Banker (Job ID: 67424).\n[2026-11-20] Online Assessment Due: Please take a values-based assessment for Universal Banker (Job ID: 67424 at HSBC Group",
       "rejectedAfterStage": null,
-      "_gmailSubStatus": "Application Received (Nov 19)",
-      "_gmailDeadline": null
+      "_gmailSubStatus": "Online Assessment Due",
+      "_gmailDeadline": "2026-11-27T00:53:33",
+      "lastUpdated": "2026-11-20T00:53:33.000Z"
     },
     {
       "id": 1795051394979,
