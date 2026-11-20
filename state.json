@@ -133,7 +133,7 @@
     "rec-email-cgi-2027",
     "cgi::2027 business consulting & finance placement / summer internship (uk)"
   ],
-  "lastGmailSync": "2026-11-20T08:27:31.022Z",
+  "lastGmailSync": "2026-11-20T10:13:20.613Z",
   "version": 6,
   "updatedAt": "2026-11-20T08:29:54.046Z",
   "applications": [
@@ -198,18 +198,21 @@
       "firm": "Yorkshire Building Society",
       "role": "Customer Service Advisor - 12 Month Fixed Term",
       "track": "Part-Time & Flex",
-      "stage": "Application Submitted",
+      "stage": "Closed / Unsuccessful",
       "status": "Application Submitted",
       "appliedDate": "2026-11-19",
-      "lastUpdated": "2026-11-19T15:21:11.000Z",
+      "lastUpdated": "2026-11-20T09:30:49.000Z",
       "deadline": null,
-      "notes": "[2026-11-19] Applied for Customer Service Advisor - 12 Month Fixed Term at Yorkshire Building Society.",
+      "notes": "[2026-11-19] Applied for Customer Service Advisor - 12 Month Fixed Term at Yorkshire Building Society.\n[2026-11-20] Unsuccessful: Thanks for applying to YBS",
       "category": "parttime",
       "company": "Yorkshire Building Society",
       "sector": "Retail Banking / Flex",
-      "subStatus": "Application Submitted (Nov 19)",
-      "portalLink": "https://www.jobtrain.co.uk/ybscareers",
-      "calendarSynced": false
+      "subStatus": "Unsuccessful",
+      "portalLink": "http://www.jobtrain.co.uk/ybscareers/Account/Login",
+      "calendarSynced": false,
+      "rejectedAfterStage": "CV / Application Screen",
+      "_gmailSubStatus": "Unsuccessful",
+      "_gmailDeadline": null
     },
     {
       "id": 1795128741000,
