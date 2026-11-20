@@ -697,6 +697,82 @@ function generateIcsFromState(state) {
   return { content: lines.map(foldLine).join("\r\n") + "\r\n", eventCount };
 }
 
+function isPendingAssessment(app) {
+  if (!app) return false;
+  if (app.stage === "Closed / Unsuccessful" || app.stage === "Offer / Successful") return false;
+  if (app.stage === "Action Required") return true;
+  if (app.deadline) return true;
+  const sub = String(app.subStatus || app.status || "").toLowerCase();
+  if (/\b(completed|submitted|under review|awaiting|on hold|received)\b/.test(sub)) return false;
+  return /\b(due|invited|invitation|pending|action required|to complete|complete by|deadline|reapply|book|schedule|next step|take test|start assessment)\b/.test(sub);
+}
+
+async function sendNtfyActionDigest(state) {
+  const topic = String(process.env.NTFY_TOPIC || "").trim();
+  if (!topic) return;
+  const server = String(process.env.NTFY_SERVER || "https://ntfy.sh").trim().replace(/\/+$/, "");
+  const trackerUrl = "https://roomi2004-prog.github.io/grad-tracker-2027/";
+
+  const pending = (state.applications || [])
+    .filter(isPendingAssessment)
+    .sort((a, b) => String(a.deadline || "9999").localeCompare(String(b.deadline || "9999")));
+
+  if (pending.length === 0) {
+    console.log("ntfy: 0 Action Required items — skipping daily phone alert.");
+    return;
+  }
+
+  const nowMs = Date.now();
+  let hasUrgent24h = false;
+  const lines = pending.map((app) => {
+    const company = app.company || app.firm || "Unknown";
+    const status = app.subStatus || app.stage || "Action Required";
+    let duePart = "";
+    if (app.deadline) {
+      const dlMs = Date.parse(app.deadline);
+      if (!Number.isNaN(dlMs)) {
+        const hrsLeft = Math.round((dlMs - nowMs) / 3600000);
+        if (hrsLeft <= 24) hasUrgent24h = true;
+        duePart = hrsLeft <= 0
+          ? ` [OVERDUE: ${app.deadline.slice(0, 16).replace("T", " ")}]`
+          : ` [Due in ${hrsLeft < 48 ? `${hrsLeft}h` : `${Math.round(hrsLeft / 24)}d`}: ${app.deadline.slice(0, 10)}]`;
+      } else {
+        duePart = ` [Due: ${app.deadline}]`;
+      }
+    }
+    return `• ${company} — ${status}${duePart}`;
+  });
+
+  const title = `Action Required (${pending.length}) - Rags to Riches`;
+  const actions = [`view, Open Tracker, ${trackerUrl}`];
+  if (pending.length === 1 && pending[0].portalLink && /^https?:\/\//i.test(pending[0].portalLink)) {
+    const safeCompany = String(pending[0].company || "Portal").replace(/[,;]/g, "").slice(0, 24);
+    actions.unshift(`view, Open ${safeCompany}, ${pending[0].portalLink}`);
+  }
+
+  try {
+    const res = await fetch(`${server}/${encodeURIComponent(topic)}`, {
+      method: "POST",
+      headers: {
+        "Title": title,
+        "Priority": hasUrgent24h ? "5" : "4",
+        "Tags": hasUrgent24h ? "rotating_light,briefcase" : "warning,briefcase",
+        "Click": (pending.length === 1 && pending[0].portalLink && /^https?:\/\//i.test(pending[0].portalLink)) ? pending[0].portalLink : trackerUrl,
+        "Actions": actions.join("; "),
+        "Content-Type": "text/plain; charset=utf-8"
+      },
+      body: lines.join("\n")
+    });
+    if (!res.ok) {
+      console.warn(`ntfy digest HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    } else {
+      console.log(`ntfy: Sent daily Action Required digest (${pending.length} item(s)) to phone.`);
+    }
+  } catch (err) {
+    console.warn("ntfy digest failed (non-fatal):", err?.message || err);
+  }
+}
+
 async function main() {
   const state = JSON.parse(fs.readFileSync(STATE_PATH, "utf8"));
   state.applications = Array.isArray(state.applications) ? state.applications : [];
@@ -913,6 +989,8 @@ async function main() {
   } else {
     console.log(`deadlines.ics unchanged (${eventCount} events).`);
   }
+
+  await sendNtfyActionDigest(state);
 }
 
 main().catch((err) => {
