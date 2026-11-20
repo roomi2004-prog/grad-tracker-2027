@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//Ramis Ahmad//2027 Application Tracker//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Rags to Riches — 2027 Deadlines
+X-WR-CALNAME:2027 Application Tracker Deadlines
 X-WR-TIMEZONE:Europe/London
 X-WR-CALDESC:Upcoming Online Assessments, HireVue/Video Interviews, Assessm
  ent Centres, and 2027 Summer Internship Closing Dates
@@ -26,9 +26,66 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
+UID:app-deadline-1795089100002@grad-tracker-2027.github.io
+DTSTAMP:20261120T075237Z
+DTSTART;TZID=Europe/London:20261126T234150
+DTEND;TZID=Europe/London:20261127T004150
+SUMMARY:DEADLINE: HSBC — Online Assessment Due
+DESCRIPTION:Company: HSBC\nRole: Customer Service Representative (Job ID: 6
+ 3588)\nSector: Retail Banking / Flex\nStage: Stage 1 - Online Assessment\n
+ Status: Online Assessment Due\nPortal Link: https://integration-talentcent
+ ral.eu.shl.com/Integration/ce/04ad474b153b4959969151e553148bfa/?rid=172022
+ 0868\nNotes: [2026-11-19] Applied to HSBC Group ? Customer Service Represe
+ ntative (Job ID: 63588).\n[2026-11-20] Online Assessment Due: Please take 
+ a values-based assessment for Customer Service Representative (Job ID: 635
+ 88 at HSBC Group
+STATUS:CONFIRMED
+URL:https://integration-talentcentral.eu.shl.com/Integration/ce/04ad474b153
+ b4959969151e553148bfa/?rid=1720220868
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: DEADLINE: HSBC — Online Assessment Due
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: DEADLINE: HSBC — Online Assessment Du
+ e
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:app-deadline-1795089100001@grad-tracker-2027.github.io
+DTSTAMP:20261120T075237Z
+DTSTART;TZID=Europe/London:20261126T235333
+DTEND;TZID=Europe/London:20261127T005333
+SUMMARY:DEADLINE: HSBC — Online Assessment Due
+DESCRIPTION:Company: HSBC\nRole: Universal Banker (Job ID: 67424)\nSector: 
+ Retail Banking / Flex\nStage: Stage 1 - Online Assessment\nStatus: Online 
+ Assessment Due\nPortal Link: https://integration-talentcentral.eu.shl.com/
+ Integration/ce/8a29bd6bc8894f32b49d054a67892640/?rid=1720222659\nNotes: [2
+ 026-11-19] Applied to HSBC Group ? Universal Banker (Job ID: 67424).\n[202
+ 6-11-20] Online Assessment Due: Please take a values-based assessment for 
+ Universal Banker (Job ID: 67424 at HSBC Group
+STATUS:CONFIRMED
+URL:https://integration-talentcentral.eu.shl.com/Integration/ce/8a29bd6bc88
+ 94f32b49d054a67892640/?rid=1720222659
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: DEADLINE: HSBC — Online Assessment Due
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: DEADLINE: HSBC — Online Assessment Du
+ e
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:rec-closing-rec-trackr-institute-of-fiscal-studies-economic-research-su
  -2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T001301Z
+DTSTAMP:20261120T075237Z
 DTSTART;TZID=Europe/London:20270117T160000
 DTEND;TZID=Europe/London:20270117T170000
 SUMMARY:CLOSING DATE: Institute of Fiscal Studies — Economic Research Sum
@@ -58,7 +115,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-financial-conduct-authority-2027-summer-internsh
  -2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T001301Z
+DTSTAMP:20261120T075237Z
 DTSTART;TZID=Europe/London:20270131T160000
 DTEND;TZID=Europe/London:20270131T170000
 SUMMARY:CLOSING DATE: Financial Conduct Authority — 2027 Summer Internshi
@@ -90,7 +147,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-arch-insurance-international-actuarial-summer-in
  t-2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T001301Z
+DTSTAMP:20261120T075237Z
 DTSTART;TZID=Europe/London:20261201T160000
 DTEND;TZID=Europe/London:20261201T170000
 SUMMARY:CLOSING DATE: Arch Insurance International — Actuarial Summer Int
@@ -121,7 +178,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T001301Z
+DTSTAMP:20261120T075237Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
