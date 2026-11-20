@@ -27,7 +27,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:app-deadline-1795089100002@grad-tracker-2027.github.io
-DTSTAMP:20261120T085003Z
+DTSTAMP:20261120T234658Z
 DTSTART;TZID=Europe/London:20261126T234150
 DTEND;TZID=Europe/London:20261127T004150
 SUMMARY:DEADLINE: HSBC — Online Assessment Due
@@ -56,7 +56,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:app-deadline-1795089100001@grad-tracker-2027.github.io
-DTSTAMP:20261120T085003Z
+DTSTAMP:20261120T234658Z
 DTSTART;TZID=Europe/London:20261126T235333
 DTEND;TZID=Europe/London:20261127T005333
 SUMMARY:DEADLINE: HSBC — Online Assessment Due
@@ -83,9 +83,41 @@ TRIGGER:-PT2H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:rec-closing-rec-trackr-control-risks-summer-2027-consulti-2027@grad-tra
+ cker-2027.github.io
+DTSTAMP:20261120T234658Z
+DTSTART;TZID=Europe/London:20270131T160000
+DTEND;TZID=Europe/London:20270131T170000
+SUMMARY:CLOSING DATE: Control Risks — Summer 2027 Consulting Intern Progr
+ amme
+DESCRIPTION:Recommended Role (The Trackr • UK Finance)\nCompany: Control 
+ Risks\nRole: Summer 2027 Consulting Intern Programme\nSector: Strategy & C
+ onsulting\nOpened: 2026-11-20\nClosing Date: 2027-01-31\nApply Link: https
+ ://apply.workable.com/control-risks-6/j/DBE533D677?utm_source=Trackr&utm_m
+ edium=tracker&utm_campaign=UK_Finance_2027\nNotes: ✨ AI Fit: Control Ris
+ ks offers strategic consulting opportunities that align well with a analyt
+ ical Physics background targeting advisory roles. (via Trackr\, opened 202
+ 6-11-20)
+STATUS:CONFIRMED
+URL:https://apply.workable.com/control-risks-6/j/DBE533D677?utm_source=Trac
+ kr&utm_medium=tracker&utm_campaign=UK_Finance_2027
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: CLOSING DATE: Control Risks — Summer 2027 C
+ onsulting Intern Programme
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: CLOSING DATE: Control Risks — Summer 
+ 2027 Consulting Intern Programme
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:rec-closing-rec-trackr-institute-of-fiscal-studies-economic-research-su
  -2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T085003Z
+DTSTAMP:20261120T234658Z
 DTSTART;TZID=Europe/London:20270117T160000
 DTEND;TZID=Europe/London:20270117T170000
 SUMMARY:CLOSING DATE: Institute of Fiscal Studies — Economic Research Sum
@@ -115,7 +147,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-financial-conduct-authority-2027-summer-internsh
  -2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T085003Z
+DTSTAMP:20261120T234658Z
 DTSTART;TZID=Europe/London:20270131T160000
 DTEND;TZID=Europe/London:20270131T170000
 SUMMARY:CLOSING DATE: Financial Conduct Authority — 2027 Summer Internshi
@@ -147,7 +179,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-arch-insurance-international-actuarial-summer-in
  t-2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T085003Z
+DTSTAMP:20261120T234658Z
 DTSTART;TZID=Europe/London:20261201T160000
 DTEND;TZID=Europe/London:20261201T170000
 SUMMARY:CLOSING DATE: Arch Insurance International — Actuarial Summer Int
@@ -178,7 +210,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261120T085003Z
+DTSTAMP:20261120T234658Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
