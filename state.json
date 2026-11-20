@@ -135,10 +135,27 @@
     "rec-email-cgi-2027",
     "cgi::2027 business consulting & finance placement / summer internship (uk)"
   ],
-  "lastGmailSync": "2026-11-20T14:27:31.853Z",
+  "lastGmailSync": "2026-11-20T17:45:31.118Z",
   "version": 6,
   "updatedAt": "2026-11-20T08:29:54.046Z",
   "applications": [
+    {
+      "id": "app_94995b81",
+      "category": "parttime",
+      "company": "Yorkshire Building Society",
+      "role": "Customer Service Advisor",
+      "sector": "Part-Time & Flex",
+      "track": "Part-Time & Flex",
+      "stage": "Closed / Unsuccessful",
+      "subStatus": "Unsuccessful",
+      "appliedDate": "2026-11-20",
+      "lastUpdated": "2026-11-20T14:34:19.000Z",
+      "deadline": null,
+      "portalLink": "",
+      "calendarSynced": false,
+      "rejectedAfterStage": "CV / Application Screen",
+      "notes": "[2026-11-20] Gemini sync: Thanks for applying to YBS"
+    },
     {
       "id": "app_4af24edd",
       "category": "internship",
