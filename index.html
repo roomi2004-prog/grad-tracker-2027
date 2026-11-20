@@ -4413,6 +4413,16 @@
         return String(a.company || "").localeCompare(String(b.company || ""));
       };
 
+      const isPendingAssessment = (app) => {
+        if (!app) return false;
+        if (app.stage === "Closed / Unsuccessful" || app.stage === "Offer / Successful") return false;
+        if (app.stage === "Action Required") return true;
+        if (app.deadline) return true;
+        const sub = String(app.subStatus || app.status || "").toLowerCase();
+        if (/\b(completed|submitted|under review|awaiting|on hold|received)\b/.test(sub)) return false;
+        return /\b(due|invited|invitation|pending|action required|to complete|complete by|deadline|reapply|book|schedule|next step|take test|start assessment)\b/.test(sub);
+      };
+
       const filteredApps = useMemo(() => {
         const list = categoryApps.filter(app => {
           const q = search.toLowerCase();
@@ -4420,7 +4430,8 @@
             String(app.role || "").toLowerCase().includes(q) ||
             String(app.subStatus || "").toLowerCase().includes(q);
           const matchesSector = sectorFilter === "All" || app.sector === sectorFilter;
-          const matchesStage = stageFilter === "All" || app.stage === stageFilter;
+          const matchesStage = stageFilter === "All"
+            || (stageFilter === "Action Required" ? isPendingAssessment(app) : app.stage === stageFilter);
           const matchesRejection = rejectionFilter === "All" ||
             (app.stage === "Closed / Unsuccessful" && (app.rejectedAfterStage || "CV / Application Screen") === rejectionFilter);
           return matchesSearch && matchesSector && matchesStage && ((activeTab !== "table" && activeTab !== "calendar") || rejectionFilter === "All" || matchesRejection);
@@ -4445,16 +4456,6 @@
         if (!hideArchivedCols) return STAGES;
         return STAGES.filter(s => s.id !== "Closed / Unsuccessful" && s.id !== "On Hold / Waitlist");
       }, [hideArchivedCols, stageFilter]);
-
-      const isPendingAssessment = (app) => {
-        if (!app) return false;
-        if (app.stage === "Closed / Unsuccessful" || app.stage === "Offer / Successful") return false;
-        if (app.stage === "Action Required") return true;
-        if (app.deadline) return true;
-        const sub = String(app.subStatus || app.status || "").toLowerCase();
-        if (/\b(completed|submitted|under review|awaiting|on hold|received)\b/.test(sub)) return false;
-        return /\b(due|invited|invitation|pending|action required|to complete|reapply|book|schedule)\b/.test(sub);
-      };
 
       const urgentItems = useMemo(() => {
         return apps
@@ -4484,7 +4485,9 @@
       const stats = useMemo(() => {
         const internships = apps.filter(a => a.category === "internship");
         const total = internships.length;
-        const action = internships.filter(a => a.stage === "Action Required").length;
+        // Count every pending assessment/interview/deadline (including Stage 1/2/3 due items like Sky) in Action Required as well
+        const action = internships.filter(isPendingAssessment).length;
+        const actionStageOnly = internships.filter(a => a.stage === "Action Required").length;
         const submitted = internships.filter(a => a.stage === "Application Submitted").length;
         const stage1 = internships.filter(a => a.stage === "Stage 1 - Online Assessment").length;
         const stage2 = internships.filter(a => a.stage === "Stage 2 - Video Interview").length;
@@ -4497,7 +4500,7 @@
         const closedAfterAC = closed.filter(a => a.rejectedAfterStage === "Stage 3 - Assessment Centre").length;
         const closedAfterCV = closed.length - closedAfterOA - closedAfterVI - closedAfterAC;
         const active = internships.filter(a => a.stage !== "Closed / Unsuccessful").length;
-        const everReachedStage1Plus = action + stage1 + stage2 + stage3 + offers + closedAfterOA + closedAfterVI + closedAfterAC;
+        const everReachedStage1Plus = actionStageOnly + stage1 + stage2 + stage3 + offers + closedAfterOA + closedAfterVI + closedAfterAC;
         const progressionRate = total > 0 ? Math.round((everReachedStage1Plus / total) * 100) : 0;
         return {
           total, action, submitted, stage1, stage2, stage3, offers, allOffers, active,
@@ -4902,6 +4905,15 @@
                       by Moose
                     </span>
                   </div>
+                  <span
+                    title="Currently in alpha testing phase"
+                    className={`inline-flex items-center gap-1.5 rounded-sm font-extrabold uppercase tracking-wider bg-red-600/25 text-red-200 border border-red-500/80 shadow-[0_0_12px_rgba(239,68,68,0.3)] whitespace-nowrap transition-all duration-200 ${
+                      isHeaderCompact ? "px-2 py-0.5 text-[9px]" : "px-2.5 py-1 text-[10px]"
+                    }`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-[2px] bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse"></span>
+                    {isHeaderCompact ? "Alpha" : "Alpha • Testing Phase"}
+                  </span>
                   {!isHeaderCompact && (
                     <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
@@ -5952,7 +5964,9 @@
                                 dot: st.dotColor,
                                 count: st.id === "Offer / Successful"
                                   ? apps.filter(a => a.stage === "Offer / Successful").length
-                                  : categoryApps.filter(a => a.stage === st.id).length
+                                  : st.id === "Action Required"
+                                    ? categoryApps.filter(isPendingAssessment).length
+                                    : categoryApps.filter(a => a.stage === st.id).length
                               }))
                             ]}
                           />
@@ -6063,7 +6077,9 @@
                       {STAGES.map((st, idx) => {
                         const pool = st.id === "Offer / Successful"
                           ? apps.filter(a => a.stage === "Offer / Successful")
-                          : apps.filter(a => a.category === (roleCategory === "parttime" ? "parttime" : "internship") && a.stage === st.id);
+                          : st.id === "Action Required"
+                            ? apps.filter(a => a.category === (roleCategory === "parttime" ? "parttime" : "internship") && isPendingAssessment(a))
+                            : apps.filter(a => a.category === (roleCategory === "parttime" ? "parttime" : "internship") && a.stage === st.id);
                         const count = pool.length;
                         const isFocused = stageFilter === st.id;
                         return (
@@ -6104,6 +6120,7 @@
                 >
                   {visibleStages.map(stage => {
                     const colApps = filteredApps.filter(a => {
+                      if (stage.id === "Action Required") return isPendingAssessment(a);
                       if (a.stage !== stage.id) return false;
                       if (stage.id === "Closed / Unsuccessful" && rejectionFilter !== "All") {
                         return (a.rejectedAfterStage || "CV / Application Screen") === rejectionFilter;
