@@ -134,11 +134,13 @@
     "rec-trackr-oliver-wyman-2027",
     "oliver wyman::2027 summer consultant internship ? financial services & strategy (london)",
     "rec-email-cgi-2027",
-    "cgi::2027 business consulting & finance placement / summer internship (uk)"
+    "cgi::2027 business consulting & finance placement / summer internship (uk)",
+    "rec-trackr-control-risks-summer-2027-consulti-2027",
+    "control risks::summer 2027 consulting intern programme"
   ],
   "lastGmailSync": "2026-11-21T01:41:40.861Z",
   "version": 6,
-  "updatedAt": "2026-11-21T09:46:19.913Z",
+  "updatedAt": "2026-11-21T11:40:30.722Z",
   "applications": [
     {
       "id": "app_4af24edd",
@@ -213,6 +215,22 @@
       "subStatus": "Application Submitted (Nov 19)",
       "portalLink": "https://www.jobtrain.co.uk/ybscareers",
       "calendarSynced": false
+    },
+    {
+      "id": 1795261230718,
+      "category": "internship",
+      "company": "Control Risks",
+      "role": "Summer 2027 Consulting Intern Programme",
+      "sector": "Strategy & Consulting",
+      "appliedDate": "2026-11-21",
+      "stage": "Application Submitted",
+      "subStatus": "Applied via The Trackr (11-21)",
+      "deadline": null,
+      "portalLink": "https://apply.workable.com/control-risks-6/j/DBE533D677?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027",
+      "calendarSynced": false,
+      "notes": "Applied on 2026-11-21 from Recommended to Apply (The Trackr • UK Finance). ✨ AI Fit: Control Risks offers strategic risk and advisory consulting, providing a strong fit for a Physics student targeting management consulting and analytical advisory roles. (via Trackr, opened 2026-11-20)",
+      "_gmailSubStatus": "Applied via The Trackr (11-21)",
+      "_gmailDeadline": null
     },
     {
       "id": 1795128741000,
@@ -1649,13 +1667,13 @@
     "rec-trackr-oliver-wyman-2027",
     "oliver wyman::2027 summer consultant internship ? financial services & strategy (london)",
     "rec-email-cgi-2027",
-    "cgi::2027 business consulting & finance placement / summer internship (uk)"
+    "cgi::2027 business consulting & finance placement / summer internship (uk)",
+    "rec-trackr-control-risks-summer-2027-consulti-2027",
+    "control risks::summer 2027 consulting intern programme"
   ],
   "shortlistedRecIds": [
     "rec-trackr-tudor-group-summer-internship-20-2027",
-    "tudor group::summer internship 2027",
-    "rec-trackr-control-risks-summer-2027-consulti-2027",
-    "control risks::summer 2027 consulting intern programme"
+    "tudor group::summer internship 2027"
   ],
   "snoozedRecs": {
     "rec-trackr-institute-of-fiscal-studies-economic-research-su-2027": "2026-11-27T00:11:22.941Z",
