@@ -134,7 +134,7 @@
   ],
   "lastGmailSync": "2026-11-20T00:43:58.891Z",
   "version": 6,
-  "updatedAt": "2026-11-21T00:23:23.704Z",
+  "updatedAt": "2026-11-21T00:24:12.612Z",
   "applications": [
     {
       "id": "app_4af24edd",
@@ -1405,6 +1405,18 @@
     }
   ],
   "recommendations": [
+    {
+      "id": "rec-trackr-control-risks-summer-2027-consulti-2027",
+      "source": "Trackr",
+      "sourceDetail": "The Trackr • UK Finance",
+      "company": "Control Risks",
+      "role": "Summer 2027 Consulting Intern Programme",
+      "sector": "Strategy & Consulting",
+      "openedDate": "2026-11-20",
+      "closingDate": "2027-01-31",
+      "applyLink": "https://apply.workable.com/control-risks-6/j/DBE533D677?utm_source=Trackr&utm_medium=tracker&utm_campaign=UK_Finance_2027",
+      "notes": "✨ AI Fit: Control Risks offers strategic risk and advisory consulting, providing a strong fit for a Physics student targeting management consulting and analytical advisory roles. (via Trackr, opened 2026-11-20)"
+    },
     {
       "id": "rec-trackr-tudor-group-summer-internship-20-2027",
       "source": "Trackr",
