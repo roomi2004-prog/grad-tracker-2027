@@ -708,10 +708,14 @@ function isPendingAssessment(app) {
 }
 
 async function sendNtfyActionDigest(state) {
-  const topic = String(process.env.NTFY_TOPIC || "").trim();
-  if (!topic) return;
+  const rawTopic = String(process.env.NTFY_TOPIC || "").trim();
+  if (!rawTopic) return;
   const server = String(process.env.NTFY_SERVER || "https://ntfy.sh").trim().replace(/\/+$/, "");
-  const trackerUrl = "https://roomi2004-prog.github.io/grad-tracker-2027/";
+  const endpoint = /^https?:\/\//i.test(rawTopic)
+    ? rawTopic.replace(/\/+$/, "")
+    : `${server}/${encodeURIComponent(rawTopic.replace(/^\/+/, ""))}`;
+  const token = String(process.env.NTFY_TOKEN || "").trim();
+  const trackerUrl = "https://roomi2004-prog.github.io/grad-tracker-2027/index.html";
 
   const pending = (state.applications || [])
     .filter(isPendingAssessment)
@@ -751,16 +755,18 @@ async function sendNtfyActionDigest(state) {
   }
 
   try {
-    const res = await fetch(`${server}/${encodeURIComponent(topic)}`, {
+    const headers = {
+      "Title": title,
+      "Priority": hasUrgent24h ? "5" : "4",
+      "Tags": hasUrgent24h ? "rotating_light,briefcase" : "warning,briefcase",
+      "Click": (pending.length === 1 && pending[0].portalLink && /^https?:\/\//i.test(pending[0].portalLink)) ? pending[0].portalLink : trackerUrl,
+      "Actions": actions.join("; "),
+      "Content-Type": "text/plain; charset=utf-8"
+    };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(endpoint, {
       method: "POST",
-      headers: {
-        "Title": title,
-        "Priority": hasUrgent24h ? "5" : "4",
-        "Tags": hasUrgent24h ? "rotating_light,briefcase" : "warning,briefcase",
-        "Click": (pending.length === 1 && pending[0].portalLink && /^https?:\/\//i.test(pending[0].portalLink)) ? pending[0].portalLink : trackerUrl,
-        "Actions": actions.join("; "),
-        "Content-Type": "text/plain; charset=utf-8"
-      },
+      headers,
       body: lines.join("\n")
     });
     if (!res.ok) {
