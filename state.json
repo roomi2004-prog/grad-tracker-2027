@@ -137,7 +137,7 @@
   ],
   "lastGmailSync": "2026-11-20T17:45:31.118Z",
   "version": 6,
-  "updatedAt": "2026-11-21T00:03:42.928Z",
+  "updatedAt": "2026-11-21T00:03:43.965Z",
   "applications": [
     {
       "id": "app_94995b81",
@@ -292,8 +292,8 @@
       "sector": "Retail Banking / Flex",
       "appliedDate": "2026-11-19",
       "stage": "Stage 1 - Online Assessment",
-      "subStatus": "Online Assessment Due",
-      "deadline": "2026-11-27T00:41:50",
+      "subStatus": "Online Assessment Completed (21 Nov)",
+      "deadline": null,
       "portalLink": "https://integration-talentcentral.eu.shl.com/Integration/ce/04ad474b153b4959969151e553148bfa/?rid=1720220868",
       "calendarSynced": false,
       "notes": "[2026-11-19] Applied to HSBC Group ? Customer Service Representative (Job ID: 63588).\n[2026-11-20] Online Assessment Due: Please take a values-based assessment for Customer Service Representative (Job ID: 63588 at HSBC Group",
