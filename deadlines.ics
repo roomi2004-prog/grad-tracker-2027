@@ -26,9 +26,37 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
+UID:app-deadline-1795089100003@grad-tracker-2027.github.io
+DTSTAMP:20261121T083901Z
+DTSTART;TZID=Europe/London:20261127T234327
+DTEND;TZID=Europe/London:20261128T004327
+SUMMARY:DEADLINE: HSBC — Online Assessment Due
+DESCRIPTION:Company: HSBC\nRole: Universal Banker (Job ID: 65726)\nSector: 
+ Retail Banking / Flex\nStage: Stage 1 - Online Assessment\nStatus: Online 
+ Assessment Due\nPortal Link: https://integration-talentcentral.eu.shl.com/
+ Integration/ce/6e7d2ed67aab4edcb508a346d0b5b117/?rid=1720373915\nNotes: [2
+ 026-11-19] Applied to HSBC Group ? Universal Banker (Job ID: 65726).\n[202
+ 6-11-21] Online Assessment Due: Please take a values-based assessment for 
+ Universal Banker (Job ID: 65726 at HSBC Group
+STATUS:CONFIRMED
+URL:https://integration-talentcentral.eu.shl.com/Integration/ce/6e7d2ed67aa
+ b4edcb508a346d0b5b117/?rid=1720373915
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:24-Hour Reminder: DEADLINE: HSBC — Online Assessment Due
+TRIGGER:-PT24H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:2-Hour Urgent Reminder: DEADLINE: HSBC — Online Assessment Du
+ e
+TRIGGER:-PT2H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:rec-closing-rec-trackr-control-risks-summer-2027-consulti-2027@grad-tra
  cker-2027.github.io
-DTSTAMP:20261121T002412Z
+DTSTAMP:20261121T083901Z
 DTSTART;TZID=Europe/London:20270131T160000
 DTEND;TZID=Europe/London:20270131T170000
 SUMMARY:CLOSING DATE: Control Risks — Summer 2027 Consulting Intern Progr
@@ -60,7 +88,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-institute-of-fiscal-studies-economic-research-su
  -2027@grad-tracker-2027.github.io
-DTSTAMP:20261121T002412Z
+DTSTAMP:20261121T083901Z
 DTSTART;TZID=Europe/London:20270117T160000
 DTEND;TZID=Europe/London:20270117T170000
 SUMMARY:CLOSING DATE: Institute of Fiscal Studies — Economic Research Sum
@@ -90,7 +118,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-financial-conduct-authority-2027-summer-internsh
  -2027@grad-tracker-2027.github.io
-DTSTAMP:20261121T002412Z
+DTSTAMP:20261121T083901Z
 DTSTART;TZID=Europe/London:20270131T160000
 DTEND;TZID=Europe/London:20270131T170000
 SUMMARY:CLOSING DATE: Financial Conduct Authority — 2027 Summer Internshi
@@ -122,7 +150,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-trackr-arch-insurance-international-actuarial-summer-in
  t-2027@grad-tracker-2027.github.io
-DTSTAMP:20261121T002412Z
+DTSTAMP:20261121T083901Z
 DTSTART;TZID=Europe/London:20261201T160000
 DTEND;TZID=Europe/London:20261201T170000
 SUMMARY:CLOSING DATE: Arch Insurance International — Actuarial Summer Int
@@ -153,7 +181,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:rec-closing-rec-email-lseg-2027@grad-tracker-2027.github.io
-DTSTAMP:20261121T002412Z
+DTSTAMP:20261121T083901Z
 DTSTART;TZID=Europe/London:20261129T160000
 DTEND;TZID=Europe/London:20261129T170000
 SUMMARY:CLOSING DATE: London Stock Exchange Group (LSEG) — 2027 Summer In
