@@ -6,7 +6,7 @@
   <title>Rags to Riches</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Rags to Riches" />
   <meta name="theme-color" content="#12061F" />
   <link rel="manifest" href="./manifest.json" />
@@ -563,6 +563,56 @@
       color: #0369A1 !important;
     }
 
+    html, body {
+      overscroll-behavior-y: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button, a, [role="button"] {
+      touch-action: manipulation;
+    }
+
+    @media (max-width: 767px), (pointer: coarse) {
+      .glass-surface {
+        backdrop-filter: blur(12px) saturate(130%);
+        -webkit-backdrop-filter: blur(12px) saturate(130%);
+      }
+      .glass-card {
+        backdrop-filter: blur(10px) saturate(125%);
+        -webkit-backdrop-filter: blur(10px) saturate(125%);
+      }
+    }
+
+    @media (max-width: 639px) {
+      input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    .mobile-bottom-nav {
+      background-color: var(--bg-header);
+      border-top: 1px solid var(--border-color);
+      backdrop-filter: blur(16px) saturate(145%);
+      -webkit-backdrop-filter: blur(16px) saturate(145%);
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
+      box-shadow: 0 -8px 28px -10px rgba(0, 0, 0, 0.55);
+    }
+
+    @keyframes sheetSlideUp {
+      from { transform: translateY(28px); opacity: 0.7; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 639px) {
+      .sheet-slide-up {
+        animation: sheetSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+    }
+
+    @keyframes splashSpin {
+      to { transform: rotate(360deg); }
+    }
+
     header.theme-header {
       padding-top: calc(env(safe-area-inset-top, 0px) + 0.875rem) !important;
     }
@@ -577,7 +627,21 @@
   </style>
 </head>
 <body data-theme="neon-orchid">
-  <div id="root"></div>
+  <div id="root">
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#12061F;color:#FDF4FF;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;padding:24px;text-align:center;">
+      <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#F72585 0%,#7209B7 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px -6px rgba(247,37,133,0.55);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:800;letter-spacing:-0.02em;">Rags to Riches</div>
+        <div style="font-size:11px;color:#C4A5E0;margin-top:3px;">Loading 2027 Tracker…</div>
+      </div>
+      <div style="width:22px;height:22px;border-radius:9999px;border:2.5px solid rgba(247,37,133,0.22);border-top-color:#F72585;animation:splashSpin 0.8s linear infinite;"></div>
+    </div>
+  </div>
 
   <script type="text/babel">
     const { useState, useEffect, useMemo } = React;
@@ -819,7 +883,11 @@
 
     const ShaderBackground = React.memo(({ theme, mode }) => {
       const canvasRef = React.useRef(null);
-      const [useFallback, setUseFallback] = useState(false);
+      const [useFallback, setUseFallback] = useState(() => {
+        if (typeof window === "undefined") return false;
+        const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+        return Boolean(isCoarse || window.innerWidth < 768);
+      });
       const themeRef = React.useRef(theme);
       const modeRef = React.useRef(mode);
       themeRef.current = theme;
@@ -1487,6 +1555,7 @@
     const DEFAULT_GITHUB_CONFIG = { owner: "roomi2004-prog", repo: "grad-tracker-2027", branch: "main" };
     const DEFAULT_GMAIL_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzIhuyYnyocy5llyMub-jqiHb6Tr-dJHeHRoZDgMnEfSwXjwV8ggRKWauFZjwDMSqMcNw/exec";
     const TRACKER_PUBLIC_URL = "https://roomi2004-prog.github.io/grad-tracker-2027/index.html";
+    const WEBCAL_ICS_URL = "webcal://roomi2004-prog.github.io/grad-tracker-2027/deadlines.ics";
     const TRACKR_WORKFLOW_FILE = "daily-trackr.yml";
 
     function generateId() {
@@ -2545,6 +2614,61 @@
       };
     }
 
+    const CountdownBadge = React.memo(function CountdownBadge({ deadline, appliedDate, variant = "card", children }) {
+      const [tickNow, setTickNow] = useState(() => Date.now());
+
+      useEffect(() => {
+        if (!deadline) return;
+        setTickNow(Date.now());
+        const id = setInterval(() => setTickNow(Date.now()), 1000);
+        return () => clearInterval(id);
+      }, [deadline]);
+
+      const cd = deadline ? formatCountdown(deadline, appliedDate, tickNow) : null;
+
+      if (variant === "radar") {
+        return (
+          <div className="mt-2.5 pt-2 border-t border-white/[0.07] space-y-2">
+            {cd && (
+              <div className="w-full h-1 bg-slate-500/20 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    cd.expired ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : cd.urgent ? "bg-amber-400 shadow-[0_0_8px_#fbbf24]" : "bg-emerald-400"
+                  }`}
+                  style={{ width: `${cd.expired ? 100 : cd.pctElapsed}%` }}
+                />
+              </div>
+            )}
+            <div className="flex items-center justify-between gap-1.5">
+              {cd ? (
+                <span className={`text-[10px] font-mono-num font-semibold px-2 py-0.5 rounded-md border ${
+                  cd.expired
+                    ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                    : cd.urgent
+                    ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                    : "theme-input text-slate-300"
+                }`}>
+                  {cd.text}
+                </span>
+              ) : (
+                <span className="text-[10px] text-slate-400 font-mono-num">Action pending</span>
+              )}
+              {children}
+            </div>
+          </div>
+        );
+      }
+
+      if (!cd) return null;
+      return (
+        <span className={`text-[10px] font-mono-num font-bold shrink-0 ${
+          cd.expired ? "text-rose-400" : "text-amber-300"
+        }`}>
+          {cd.expired ? "DUE" : cd.text.split(" ")[0]}
+        </span>
+      );
+    });
+
     function inferRejectedAfterStage(prevStage, existingRejectedAfter) {
       if (existingRejectedAfter) return existingRejectedAfter;
       if (prevStage === "Stage 3 - Assessment Centre") return "Stage 3 - Assessment Centre";
@@ -3594,7 +3718,6 @@
       acceptableOffers,
       cycleArchive,
       openAcceptOfferModal,
-      now,
       handleDragStart,
       draggedAppId,
       setDraggedAppId,
@@ -3811,7 +3934,6 @@
                       const rejBadge = app.stage === "Closed / Unsuccessful"
                         ? getRejectionBadge(app.rejectedAfterStage)
                         : null;
-                      const cd = app.deadline ? formatCountdown(app.deadline, app.appliedDate, now) : null;
                       return (
                         <div
                           key={app.id}
@@ -3897,14 +4019,10 @@
 
                           <div className="text-[11px] text-slate-300 theme-input rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
                             <span className="truncate">{app.subStatus}</span>
-                            {cd && (
-                              <span className={`text-[10px] font-mono-num font-bold shrink-0 ${
-                                cd.expired ? "text-rose-400" : "text-amber-300"
-                              }`}>
-                                {cd.expired ? "DUE" : cd.text.split(" ")[0]}
-                              </span>
+                            {app.deadline && (
+                              <CountdownBadge deadline={app.deadline} appliedDate={app.appliedDate} variant="card" />
                             )}
-                            {app.calendarSynced && !cd && (
+                            {app.calendarSynced && !app.deadline && (
                               <span className="text-[9px] font-mono-num text-sky-300 shrink-0">GCal</span>
                             )}
                           </div>
@@ -4052,7 +4170,15 @@
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <a
+                  href={WEBCAL_ICS_URL}
+                  title="Subscribe to live deadline alerts in iPhone Apple Calendar"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl theme-input text-[11px] font-semibold text-amber-300 hover:text-amber-200 transition"
+                >
+                  <Icon name="Bell" className="w-3.5 h-3.5" />
+                  <span>iPhone Alerts (Calendar)</span>
+                </a>
                 <button
                   type="button"
                   aria-label="Previous month"
@@ -4497,8 +4623,9 @@
     }) {
       if (!selectedApp) return null;
       return (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setSelectedApp(null)}>
-          <div className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedApp(null)}>
+          <div className="glass-surface rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] sm:pb-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto sheet-slide-up" onClick={e => e.stopPropagation()}>
+            <div className="sm:hidden w-10 h-1 rounded-full bg-white/25 mx-auto -mt-1 mb-1" aria-hidden="true" />
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3">
                 <CompanyMonogram company={selectedApp.company} size="lg" />
@@ -4513,7 +4640,41 @@
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            {/* 1-Tap Stage Switching Pill Grid */}
+            <div className="space-y-1.5">
+              <label className="block text-xs text-slate-400">1-Tap Pipeline Stage</label>
+              <div className="grid grid-cols-2 gap-1.5" role="group" aria-label="1-tap stage switcher">
+                {STAGES.map(s => {
+                  const isActive = selectedApp.stage === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      disabled={viewArchiveMode}
+                      onClick={() => {
+                        setSelectedApp({
+                          ...selectedApp,
+                          stage: s.id,
+                          rejectedAfterStage: s.id === "Closed / Unsuccessful"
+                            ? inferRejectedAfterStage(selectedApp.stage, selectedApp.rejectedAfterStage)
+                            : selectedApp.rejectedAfterStage
+                        });
+                      }}
+                      className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl border text-left text-[11px] font-semibold transition ${
+                        isActive
+                          ? `${s.badge} ring-2 ring-white/60 shadow-sm`
+                          : "theme-input text-slate-300 hover:text-white"
+                      } disabled:opacity-60`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${s.dotColor}`} />
+                      <span className="truncate">{s.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
                 <label className="block text-slate-400 mb-1">Pipeline Stage</label>
                 <select
@@ -4528,7 +4689,7 @@
                         : selectedApp.rejectedAfterStage
                     });
                   }}
-                  className="w-full theme-input rounded-xl px-2.5 py-2"
+                  className="w-full theme-input rounded-xl px-2.5 py-2 text-base sm:text-xs"
                 >
                   {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                 </select>
@@ -4540,7 +4701,7 @@
                   value={selectedApp.deadline || ""}
                   placeholder="YYYY-MM-DDTHH:MM:SS"
                   onChange={e => setSelectedApp({ ...selectedApp, deadline: e.target.value || null })}
-                  className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num"
+                  className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num text-base sm:text-xs"
                 />
               </div>
             </div>
@@ -4551,7 +4712,7 @@
                 <select
                   value={selectedApp.rejectedAfterStage || "CV / Application Screen"}
                   onChange={e => setSelectedApp({ ...selectedApp, rejectedAfterStage: e.target.value })}
-                  className="w-full theme-input rounded-xl px-2.5 py-2"
+                  className="w-full theme-input rounded-xl px-2.5 py-2 text-base sm:text-xs"
                 >
                   {REJECTION_STAGES.map(r => (
                     <option key={r.id} value={r.id}>{r.label}</option>
@@ -4566,7 +4727,7 @@
                 type="text"
                 value={selectedApp.subStatus}
                 onChange={e => setSelectedApp({ ...selectedApp, subStatus: e.target.value })}
-                className="w-full theme-input rounded-xl px-3 py-2"
+                className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs"
               />
             </div>
 
@@ -4576,11 +4737,11 @@
                 rows={3}
                 value={selectedApp.notes}
                 onChange={e => setSelectedApp({ ...selectedApp, notes: e.target.value })}
-                className="w-full theme-input rounded-xl px-3 py-2"
+                className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs"
               />
             </div>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
               {selectedApp.portalLink ? (
                 <a href={selectedApp.portalLink} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:underline flex items-center gap-1 font-semibold">
                   Open Candidate Portal <Icon name="ExternalLink" className="w-3.5 h-3.5" />
@@ -4884,7 +5045,7 @@
           }
         }
       };
-      const [now, setNow] = useState(Date.now());
+      const [snoozeMinuteTick, setSnoozeMinuteTick] = useState(() => Math.floor(Date.now() / 60000));
       const [activeTab, setActiveTab] = useState("kanban");
       const [roleCategory, setRoleCategory] = useState("internship");
       const [search, setSearch] = useState("");
@@ -4957,8 +5118,16 @@
       };
 
       useEffect(() => {
-        const timer = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(timer);
+        const bumpMinute = () => setSnoozeMinuteTick(Math.floor(Date.now() / 60000));
+        const timer = setInterval(bumpMinute, 60000);
+        const onVis = () => {
+          if (document.visibilityState === "visible") bumpMinute();
+        };
+        document.addEventListener("visibilitychange", onVis);
+        return () => {
+          clearInterval(timer);
+          document.removeEventListener("visibilitychange", onVis);
+        };
       }, []);
 
       const headerInnerRef = React.useRef(null);
@@ -5624,8 +5793,6 @@
         const exp = snoozedRecs[rec.id] || snoozedRecs[slug];
         return Boolean(exp) && new Date(exp).getTime() > nowMs;
       };
-
-      const snoozeMinuteTick = Math.floor(now / 60000);
 
       const unhandledRecommendations = useMemo(() => {
         const handledSet = new Set(handledRecs);
@@ -6853,7 +7020,7 @@
       }, [calMonth, filteredApps]);
 
       return (
-        <div className="relative min-h-screen pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
+        <div className="relative min-h-screen pb-24 md:pb-16 selection:bg-indigo-500/30 selection:text-indigo-200">
           <ShaderBackground theme={theme} mode={shaderMode} />
           {/* Fixed Top Command Header (Out of document flow so expanding/collapsing never causes layout-shift flash!) */}
           <header
@@ -6917,8 +7084,8 @@
                   isHeaderCompact ? "flex-nowrap gap-2 shrink-0" : "flex-wrap gap-2"
                 }`}
               >
-                {/* Category Tabs — always visible in both expanded and compact header */}
-                <div className={`glass-surface rounded-xl p-1 flex items-center ${isHeaderCompact ? "flex-nowrap text-[11px]" : "flex-wrap text-xs"}`}>
+                {/* Category Tabs — always visible on desktop; collapsed out of compact mobile header so Sync + Search stay in viewport */}
+                <div className={`glass-surface rounded-xl p-1 items-center ${isHeaderCompact ? "hidden md:flex flex-nowrap text-[11px]" : "flex flex-wrap text-xs"}`}>
                   <button
                     onClick={() => { setRoleCategory("internship"); setSectorFilter("All"); }}
                     className={`${isHeaderCompact ? "px-2.5 py-1" : "px-3 py-1.5"} rounded-lg font-semibold whitespace-nowrap transition-all ${
@@ -6957,7 +7124,7 @@
                 )}
 
                 {/* Live Full-Stack Sync Now Button + Real-Time Step Progress Pill */}
-                {!isHeaderCompact && (
+                {!isHeaderCompact ? (
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       onClick={() => handleRefreshEmail({ silentAuto: false })}
@@ -6991,6 +7158,17 @@
                       </span>
                     )}
                   </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleRefreshEmail({ silentAuto: false })}
+                    disabled={isRefreshing}
+                    aria-label="Sync Gmail and refresh applications"
+                    title="Sync Now"
+                    className="flex items-center justify-center glass-surface hover:border-current disabled:opacity-60 disabled:cursor-wait text-white p-1.5 rounded-xl transition-all shrink-0"
+                  >
+                    <Icon name="RefreshCw" className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  </button>
                 )}
 
                 <input
@@ -7019,7 +7197,7 @@
                         placeholder="Search firm, role, stage..."
                         aria-label="Header search applications"
                         className={`w-full bg-transparent text-white placeholder-slate-400 focus:outline-none px-2 ${
-                          isHeaderCompact ? "py-1 text-[11px]" : "py-1.5 text-xs"
+                          isHeaderCompact ? "py-1 text-base sm:text-[11px]" : "py-1.5 text-base sm:text-xs"
                         }`}
                       />
                       <button
@@ -7055,12 +7233,10 @@
                   )}
                 </div>
 
-                {/* Add Role Button — compact when scrolled down */}
+                {/* Add Role Button — compact when scrolled down (hidden on mobile compact since + Add is in bottom nav) */}
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className={`flex items-center gap-1.5 theme-accent-btn font-bold whitespace-nowrap rounded-xl transition-all shadow-lg shrink-0 ${
-                    isHeaderCompact ? "text-[11px] px-2.5 py-1.5" : "text-xs px-3.5 py-2"
-                  }`}
+                  className={`${isHeaderCompact ? "hidden md:flex text-[11px] px-2.5 py-1.5" : "flex text-xs px-3.5 py-2"} items-center gap-1.5 theme-accent-btn font-bold whitespace-nowrap rounded-xl transition-all shadow-lg shrink-0`}
                 >
                   <Icon name="Plus" className={isHeaderCompact ? "w-3.5 h-3.5" : "w-4 h-4"} />
                   Add Role
@@ -7387,20 +7563,28 @@
                       • EUROPE/LONDON (GMT)
                     </span>
                   </div>
-                  <button
-                    onClick={() => setRadarCollapsed(prev => !prev)}
-                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-lg theme-input transition"
-                  >
-                    <Icon name={radarCollapsed ? "ChevronDown" : "ChevronUp"} className="w-3.5 h-3.5" />
-                    {radarCollapsed ? "Expand Radar" : "Collapse Radar"}
-                  </button>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <a
+                      href={WEBCAL_ICS_URL}
+                      title="Subscribe to live deadline alerts in iPhone Apple Calendar"
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-300 hover:text-amber-200 px-2.5 py-1 rounded-lg theme-input transition"
+                    >
+                      <Icon name="Bell" className="w-3.5 h-3.5" />
+                      <span>iPhone Alerts (Calendar)</span>
+                    </a>
+                    <button
+                      onClick={() => setRadarCollapsed(prev => !prev)}
+                      className="text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-lg theme-input transition"
+                    >
+                      <Icon name={radarCollapsed ? "ChevronDown" : "ChevronUp"} className="w-3.5 h-3.5" />
+                      {radarCollapsed ? "Expand Radar" : "Collapse Radar"}
+                    </button>
+                  </div>
                 </div>
 
                 {!radarCollapsed && (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3.5">
-                    {urgentItems.map(item => {
-                      const cd = formatCountdown(item.deadline, item.appliedDate, now);
-                      return (
+                    {urgentItems.map(item => (
                         <div key={item.id} className="glass-card rounded-xl p-3 flex flex-col justify-between group">
                           <div>
                             <div className="flex items-start justify-between gap-2">
@@ -7425,32 +7609,7 @@
                             <p className="text-[11px] text-amber-200/90 mt-1 font-medium line-clamp-2">{item.subStatus}</p>
                           </div>
 
-                          <div className="mt-2.5 pt-2 border-t border-white/[0.07] space-y-2">
-                            {cd && (
-                              <div className="w-full h-1 bg-slate-500/20 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full transition-all duration-500 ${
-                                    cd.expired ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : cd.urgent ? "bg-amber-400 shadow-[0_0_8px_#fbbf24]" : "bg-emerald-400"
-                                  }`}
-                                  style={{ width: `${cd.expired ? 100 : cd.pctElapsed}%` }}
-                                />
-                              </div>
-                            )}
-
-                            <div className="flex items-center justify-between gap-1.5">
-                              {cd ? (
-                                <span className={`text-[10px] font-mono-num font-semibold px-2 py-0.5 rounded-md border ${
-                                  cd.expired
-                                    ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
-                                    : cd.urgent
-                                    ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                                    : "theme-input text-slate-300"
-                                }`}>
-                                  {cd.text}
-                                </span>
-                              ) : (
-                                <span className="text-[10px] text-slate-400 font-mono-num">Action pending</span>
-                              )}
+                          <CountdownBadge deadline={item.deadline} appliedDate={item.appliedDate} variant="radar">
                               <div className="flex items-center gap-1">
                                 {!viewArchiveMode && (
                                   <button
@@ -7471,11 +7630,9 @@
                                   </a>
                                 )}
                               </div>
-                            </div>
-                          </div>
+                          </CountdownBadge>
                         </div>
-                      );
-                    })}
+                    ))}
                   </div>
                 )}
               </section>
@@ -7855,7 +8012,6 @@
                 acceptableOffers={acceptableOffers}
                 cycleArchive={cycleArchive}
                 openAcceptOfferModal={openAcceptOfferModal}
-                now={now}
                 handleDragStart={handleDragStart}
                 draggedAppId={draggedAppId}
                 setDraggedAppId={setDraggedAppId}
@@ -8300,7 +8456,7 @@
             <div
               role="region"
               aria-label="Barbie Mode Audio Controls"
-              className="fixed bottom-4 right-4 z-40 flex items-center gap-2 px-3.5 py-2 rounded-full shadow-2xl border border-pink-300/80"
+              className="fixed bottom-24 md:bottom-4 right-4 z-40 flex items-center gap-2 px-3.5 py-2 rounded-full shadow-2xl border border-pink-300/80"
               style={{
                 background: "linear-gradient(135deg, #FF1493 0%, #FF4DA6 55%, #FF85C0 100%)",
                 boxShadow: "0 10px 28px -4px rgba(255, 20, 147, 0.55), inset 0 1px 0 rgba(255,255,255,0.45)"
@@ -8872,43 +9028,44 @@
             </div>
           )}
 
-          {/* Add New Role Modal */}
+          {/* Add New Role Modal (Slide-up Bottom Sheet on Mobile) */}
           {showAddModal && (
-            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
-              <form onSubmit={handleAddApp} className="glass-surface rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowAddModal(false)}>
+              <form onSubmit={handleAddApp} className="glass-surface rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] sm:pb-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto sheet-slide-up" onClick={e => e.stopPropagation()}>
+                <div className="sm:hidden w-10 h-1 rounded-full bg-white/25 mx-auto -mt-1 mb-1" aria-hidden="true" />
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-bold text-white">Add New Application</h3>
-                  <button type="button" onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+                  <button type="button" onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white" aria-label="Close add application modal">
                     <Icon name="X" className="w-5 h-5" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="block text-slate-400 mb-1">Company *</label>
-                    <input required type="text" value={newApp.company} onChange={e => setNewApp({ ...newApp, company: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                    <input required type="text" value={newApp.company} onChange={e => setNewApp({ ...newApp, company: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs" />
                   </div>
                   <div>
                     <label className="block text-slate-400 mb-1">Sector</label>
-                    <input type="text" value={newApp.sector} onChange={e => setNewApp({ ...newApp, sector: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                    <input type="text" value={newApp.sector} onChange={e => setNewApp({ ...newApp, sector: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs" />
                   </div>
                 </div>
 
                 <div className="text-xs">
                   <label className="block text-slate-400 mb-1">Role Title *</label>
-                  <input required type="text" value={newApp.role} onChange={e => setNewApp({ ...newApp, role: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                  <input required type="text" value={newApp.role} onChange={e => setNewApp({ ...newApp, role: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="block text-slate-400 mb-1">Stage</label>
-                    <select value={newApp.stage} onChange={e => setNewApp({ ...newApp, stage: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2">
+                    <select value={newApp.stage} onChange={e => setNewApp({ ...newApp, stage: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2 text-base sm:text-xs">
                       {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-slate-400 mb-1">Deadline (Optional)</label>
-                    <input type="datetime-local" value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num" />
+                    <input type="datetime-local" value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })} className="w-full theme-input rounded-xl px-2.5 py-2 font-mono-num text-base sm:text-xs" />
                   </div>
                 </div>
 
@@ -8918,7 +9075,7 @@
                     <select
                       value={newApp.rejectedAfterStage || "CV / Application Screen"}
                       onChange={e => setNewApp({ ...newApp, rejectedAfterStage: e.target.value })}
-                      className="w-full theme-input rounded-xl px-2.5 py-2"
+                      className="w-full theme-input rounded-xl px-2.5 py-2 text-base sm:text-xs"
                     >
                       {REJECTION_STAGES.map(r => (
                         <option key={r.id} value={r.id}>{r.label}</option>
@@ -8929,12 +9086,12 @@
 
                 <div className="text-xs">
                   <label className="block text-slate-400 mb-1">Portal / Assessment Link</label>
-                  <input type="url" value={newApp.portalLink} onChange={e => setNewApp({ ...newApp, portalLink: e.target.value })} placeholder="https://..." className="w-full theme-input rounded-xl px-3 py-2" />
+                  <input type="url" value={newApp.portalLink} onChange={e => setNewApp({ ...newApp, portalLink: e.target.value })} placeholder="https://..." className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs" />
                 </div>
 
                 <div className="text-xs">
                   <label className="block text-slate-400 mb-1">Notes</label>
-                  <textarea rows={2} value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2" />
+                  <textarea rows={2} value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })} className="w-full theme-input rounded-xl px-3 py-2 text-base sm:text-xs" />
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2">
@@ -8944,6 +9101,59 @@
               </form>
             </div>
           )}
+
+          {/* Native iPhone Fixed Bottom Navigation Bar (Mobile Only) */}
+          <nav
+            aria-label="Mobile navigation"
+            className="md:hidden fixed bottom-0 inset-x-0 z-40 mobile-bottom-nav px-2 pt-1.5"
+          >
+            <div className="grid grid-cols-5 items-center gap-1 max-w-md mx-auto">
+              {[
+                { id: "kanban", label: "Pipeline", icon: "LayoutGrid" },
+                { id: "table", label: "Table", icon: "ListFilter" },
+                { id: "__add__", label: "Add", icon: "Plus", isAdd: true },
+                { id: "calendar", label: "Calendar", icon: "Calendar" },
+                { id: "analytics", label: "Analytics", icon: "BarChart3" }
+              ].map(item => {
+                if (item.isAdd) {
+                  return (
+                    <button
+                      key="mobile-add-btn"
+                      type="button"
+                      onClick={() => setShowAddModal(true)}
+                      aria-label="Add new application"
+                      className="flex flex-col items-center justify-center -mt-3"
+                    >
+                      <span className="w-11 h-11 rounded-2xl theme-accent-btn flex items-center justify-center shadow-lg">
+                        <Icon name="Plus" className="w-5 h-5" />
+                      </span>
+                      <span className="text-[10px] font-bold text-white mt-0.5 leading-none">Add</span>
+                    </button>
+                  );
+                }
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      if (pipelineSectionRef.current) {
+                        pipelineSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }
+                    }}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex flex-col items-center justify-center py-1.5 rounded-xl transition ${
+                      isActive ? "theme-accent-text font-bold" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    <Icon name={item.icon} className="w-5 h-5" />
+                    <span className="text-[10px] mt-0.5 leading-none">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
         </div>
       );
     }
